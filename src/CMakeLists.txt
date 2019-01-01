@@ -1,0 +1,14 @@
+add_library(ovm-lib STATIC
+    ovm/test.h
+    ovm/test.c
+)
+
+target_include_directories(ovm-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(ovm main.c)
+target_link_libraries(ovm ovm-lib)
+
+TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
+
+IF(NOT ${IS_BIG_ENDIAN})
+    add_definitions( -DVM_IS_LITTLE_ENDIAN )
+ENDIF()
