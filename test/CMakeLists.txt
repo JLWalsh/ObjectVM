@@ -5,3 +5,5 @@ macro(ovm_add_test name)
     target_link_libraries(${name} ovm-lib unity)
     add_test(${name} ${name})
 endmacro()
+
+ovm_add_test(test_ovmobject)
