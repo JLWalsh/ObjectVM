@@ -1,9 +1,14 @@
 add_library(ovm-lib STATIC
     ovm/ovmobject.h
     ovm/ovmobject.c
-    ovm/ovmptr.h
+    ovm/ovmtypes.h
     ovm/ovmstate.h
     ovm/ovm.h
+    ovm/ovm.c
+    ovm/ovminvoke.h
+    ovm/ovminvoke.c
+    ovm/ovmstack.h
+    ovm/ovmstack.c
 )
 
 target_include_directories(ovm-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

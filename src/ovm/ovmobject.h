@@ -1,7 +1,7 @@
 #ifndef OVMOBJECT_H
 #define OVMOBJECT_H
 
-#include "ovmptr.h"
+#include "ovmtypes.h"
 #include <stdint.h>
 
 typedef struct OVMOBJECT_FUNC_TABLE_T {
@@ -16,10 +16,13 @@ typedef struct OVMOBJECT_T {
   struct OBMOBJECT_T *base;
 } OVMOBJECT;
 
-OVMPTR ovmobject_resolve_method(OVMOBJECT *o, uint8_t method_id);
+OVMPTR ovmobject_resolve_method(OVMOBJECT *o, OVMID method_id);
 
-OVMPTR ovmobject_base_resolve_method(OVMOBJECT *o, uint8_t method_id);
+OVMPTR ovmobject_base_resolve_method(OVMOBJECT *o, OVMID method_id);
 
-OVMPTR ovmobject_interface_resolve_method(OVMOBJECT *o, uint8_t interface_id,
-                                          uint8_t method_id);
+OVMPTR ovmobject_interface_resolve_method(OVMOBJECT *o, OVMID interface_id,
+                                          OVMID method_id);
+
+void ovmobject_free(OVMOBJECT *o);
+
 #endif /* OVMOBJECT_H */

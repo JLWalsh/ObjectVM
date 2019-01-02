@@ -1,4 +1,5 @@
 #include "ovmobject.h"
+#include <stdlib.h>
 
 OVMPTR ovmobject_resolve_method(OVMOBJECT *o, uint8_t method_id) {
 #ifdef VM_STRICT_MODE
@@ -33,4 +34,10 @@ OVMPTR ovmobject_interface_resolve_method(OVMOBJECT *o, uint8_t interface_id,
 #endif
 
   return o->vfuncs[interface_id].func_ptrs[method_id];
+}
+
+void ovmobject_free(OVMOBJECT *o) {
+  free(o->vfuncs);
+  o->vfuncs = NULL;
+  o->num_vfunc_tables = 0;
 }
