@@ -11,8 +11,6 @@ add_library(ovm-lib STATIC
     ovm/ovmbytecode.c
     ovm/ovmexecutor.h
     ovm/ovmexecutor.c
-    ovm/ovmexecutor_invoke.h
-    ovm/ovmexecutor_invoke.c
     ovm/ovmexecutor_int.h
     ovm/ovmexecutor_int.c
 )
