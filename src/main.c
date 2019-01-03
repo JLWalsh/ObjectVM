@@ -1,5 +1,6 @@
 #include <malloc.h>
 #include <ovm/ovm.h>
+#include <ovm/ovmmemory.h>
 #include <ovm/ovmops.h>
 #include <stdio.h>
 
@@ -13,12 +14,12 @@ int main(int argc, const char *argv[])
                 OP_HALT,
 
                 // B::new(int)
-                OP_LOCAL_LOAD, 0,   // Load arg 0 as int
-                OP_GLOBAL_STORE, 0, // Store int at ptr 0 into heap memory
+                OP_LOCAL_LOAD, 0,      // Load arg 0 as int
+                OP_UI_GLOBAL_STORE, 0, // Store int at ptr 0 into heap memory
                 OP_RETURN,
 
                 // B::doPrint
-                OP_GLOBAL_LOAD, 0, // Load A as int
+                OP_UI_GLOBAL_LOAD, 0, // Load A as int
                 OP_UI_PRINT, OP_RETURN};
 
   OVMOBJECT_FUNC_TABLE b_table;
@@ -35,7 +36,7 @@ int main(int argc, const char *argv[])
 
   ovm_init();
 
-  OVMSTATE ovm = ovm_create(10, &exe, sizeof(exe));
+  OVMSTATE ovm = ovm_create(10, &exe, sizeof(exe), 100);
 
   ovm_load_object(&ovm, b);
 
@@ -43,7 +44,6 @@ int main(int argc, const char *argv[])
 
   ovm_free(&ovm);
 
-  ovmobject_free(&a);
   ovmobject_free(&b);
 
   return 0;

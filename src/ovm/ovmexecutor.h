@@ -19,4 +19,6 @@ void ovmexecutor_invoke(OVMSTATE *ovm);
 
 void ovmexecutor_invoke_super(OVMSTATE *ovm);
 
+void ovmexecutor_local_load(OVMSTATE *ovm);
+
 #endif /* OVMEXECUTOR_H */

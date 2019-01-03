@@ -6,7 +6,8 @@
 
 void ovm_init();
 
-OVMSTATE ovm_create(uint16_t stack_size, char *bytecode, uint64_t bytecode_length);
+OVMSTATE ovm_create(uint16_t stack_size, char *bytecode,
+                    uint64_t bytecode_length, uint64_t initial_heap_size);
 
 void ovm_free(OVMSTATE *ovm);
 

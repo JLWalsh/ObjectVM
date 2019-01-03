@@ -1,13 +1,14 @@
 #include "ovm.h"
+#include "ovmbytecode.h"
 #include "ovmexecutor.h"
 #include "ovmstack.h"
-#include "ovmbytecode.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void ovm_init() { ovmexecutor_init_all(); }
 
-OVMSTATE ovm_create(uint16_t stack_size, char *bytecode, uint64_t bytecode_length)
+OVMSTATE ovm_create(uint16_t stack_size, char *bytecode,
+                    uint64_t bytecode_length, uint64_t initial_heap_size)
 {
   OVMSTATE ovm;
   ovm.num_objects = 0;
@@ -19,10 +20,16 @@ OVMSTATE ovm_create(uint16_t stack_size, char *bytecode, uint64_t bytecode_lengt
   ovm.bytecode_length = bytecode_length;
   ovm.bytecode_ptr = 0;
 
+  ovm.memory = ovmmemory_create(initial_heap_size);
+
   return ovm;
 }
 
-void ovm_free(OVMSTATE *ovm) { ovmstack_free(&ovm->stack); }
+void ovm_free(OVMSTATE *ovm)
+{
+  ovmstack_free(&ovm->stack);
+  ovmmemory_free(&ovm->memory);
+}
 
 void ovm_run(OVMSTATE *ovm)
 {
