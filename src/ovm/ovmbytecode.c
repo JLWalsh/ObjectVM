@@ -2,7 +2,7 @@
 
 void *ovmbytecode_read(OVMSTATE *ovm, size_t read_size)
 {
-    void *ptr = (void *)ovm->bytecode[ovm->bytecode_ptr];
+    void *ptr = (void *)&ovm->bytecode[ovm->bytecode_ptr];
     ovm->bytecode_ptr += read_size;
 
     return ptr;

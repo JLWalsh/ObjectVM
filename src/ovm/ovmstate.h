@@ -3,6 +3,7 @@
 
 #include "ovmobject.h"
 #include "ovmstack.h"
+#include "ovmmemory.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -16,6 +17,7 @@ typedef struct OVMSTATE_T
   uint64_t bytecode_length;
   OVMPTR frame_ptr;
   OVMSTACK stack;
+  OVMMEMORY memory;
 } OVMSTATE;
 
 #endif /* OVMSTATE_H */

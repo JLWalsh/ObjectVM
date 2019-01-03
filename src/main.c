@@ -6,7 +6,7 @@
 int main(int argc, const char *argv[])
 {
   char exe[] = {
-
+      OP_HALT,
       // MAIN
       OP_NEW, 1,                      // B is type 1
       OP_UI_PUSH, 2, OP_INVOKE, 1, 0, // Invoke B::new(int)
