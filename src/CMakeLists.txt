@@ -1,4 +1,4 @@
-add_library(ovm-lib STATIC
+SET(OVM_LIB_SOURCES
     ovm/ovmobject.h
     ovm/ovmobject.c
     ovm/ovmtypes.h
@@ -16,6 +16,10 @@ add_library(ovm-lib STATIC
     ovm/ovmmemory.h
     ovm/ovmmemory.c
 )
+
+add_library(ovm-lib STATIC ${OVM_LIB_SOURCES})
+add_library(ovm-lib-strict STATIC ${OVM_LIB_SOURCES})
+target_compile_definitions(ovm-lib-strict PRIVATE -DVM_STRICT_MODE)
 
 target_include_directories(ovm-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(ovm main.c)

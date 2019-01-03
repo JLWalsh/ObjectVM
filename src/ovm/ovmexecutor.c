@@ -2,8 +2,7 @@
 #include "ovm.h"
 #include "ovmbytecode.h"
 
-void ovmexecutor_init_all()
-{
+void ovmexecutor_init_all() {
   EXECUTORS[OP_INVOKE] = ovmexecutor_invoke;
   EXECUTORS[OP_INVOKE_SUPER] = ovmexecutor_invoke_super;
   EXECUTORS[OP_RETURN_VOID] = ovmexecutor_returnvoid;
@@ -21,16 +20,14 @@ void ovmexecutor_returnvoid(OVMSTATE *ovm) { ovm_return(ovm); }
 
 void ovmexecutor_halt(OVMSTATE *ovm) { ovm_exit(ovm, 0); }
 
-void ovmexecutor_invoke(OVMSTATE *ovm)
-{
+void ovmexecutor_invoke(OVMSTATE *ovm) {
+  OVMID obj_id = ovmbytecode_read_uint(ovm);
 #ifdef VM_STRICT_MODE
-  if (object_id >= vm->num_objects)
-  {
+  if (obj_id >= ovm->num_objects) {
     ovm_throw(ovm, "Invoked method on object id out of range.");
   }
 #endif
 
-  OVMID obj_id = ovmbytecode_read_uint(ovm);
   OVMID method_id = ovmbytecode_read_uint(ovm);
   OVMUINT num_args = ovmbytecode_read_uint(ovm);
 
@@ -40,15 +37,14 @@ void ovmexecutor_invoke(OVMSTATE *ovm)
   ovm_call(ovm, bytecode_ptr, num_args);
 }
 
-void ovmexecutor_invoke_super(OVMSTATE *ovm)
-{
+void ovmexecutor_invoke_super(OVMSTATE *ovm) {
+  OVMID obj_id = ovmbytecode_read_uint(ovm);
 #ifdef VM_STRICT_MODE
-  if (object_id >= vm->num_objects)
-  {
+  if (obj_id >= ovm->num_objects) {
     ovm_throw(ovm, "Invoked super method on object id out of range.");
   }
 #endif
-  OVMID obj_id = ovmbytecode_read_uint(ovm);
+
   OVMID method_id = ovmbytecode_read_uint(ovm);
   OVMUINT num_args = ovmbytecode_read_uint(ovm);
 
@@ -58,8 +54,7 @@ void ovmexecutor_invoke_super(OVMSTATE *ovm)
   ovm_call(ovm, bytecode_ptr, num_args);
 }
 
-void ovmexecutor_local_load(OVMSTATE *ovm)
-{
+void ovmexecutor_local_load(OVMSTATE *ovm) {
   OVMUINT offset = ovmbytecode_read_uint(ovm);
 
   OVMSTACK_OBJECT local = ovmstack_at(&ovm->stack, ovm->frame_ptr + offset);
@@ -67,8 +62,7 @@ void ovmexecutor_local_load(OVMSTATE *ovm)
   ovmstack_push(&ovm->stack, local);
 }
 
-void ovmexecutor_new(OVMSTATE *ovm)
-{
+void ovmexecutor_new(OVMSTATE *ovm) {
   OVMID obj_id = ovmbytecode_read_uint(ovm);
   OVMOBJECT obj = ovm->objects[obj_id];
 
@@ -77,8 +71,7 @@ void ovmexecutor_new(OVMSTATE *ovm)
   ovmstack_push(&ovm->stack, ovmstack_obj_of_ptr(obj_ref));
 }
 
-void ovmexecutor_dup(OVMSTATE *ovm)
-{
+void ovmexecutor_dup(OVMSTATE *ovm) {
   OVMSTACK_OBJECT so = ovmstack_top(&ovm->stack, 1);
 
   ovmstack_push(&ovm->stack, so);
