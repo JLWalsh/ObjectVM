@@ -1,11 +1,13 @@
 #include "ovm.h"
 #include "ovmexecutor.h"
 #include "ovmstack.h"
+#include "ovmbytecode.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void ovm_init() { ovmexecutor_init_all(); }
 
-OVMSTATE ovm_create(uint16_t stack_size)
+OVMSTATE ovm_create(uint16_t stack_size, char *bytecode, uint64_t bytecode_length)
 {
   OVMSTATE ovm;
   ovm.num_objects = 0;
@@ -13,15 +15,22 @@ OVMSTATE ovm_create(uint16_t stack_size)
   ovm.this = OVM_NULL;
   ovm.stack = ovmstack_create(stack_size);
 
+  ovm.bytecode = bytecode;
+  ovm.bytecode_length = bytecode_length;
+  ovm.bytecode_ptr = 0;
+
   return ovm;
 }
 
 void ovm_free(OVMSTATE *ovm) { ovmstack_free(&ovm->stack); }
 
-void ovm_run(OVMSTATE *ovm, void *program)
+void ovm_run(OVMSTATE *ovm)
 {
-  while (ovm->running)
+  for (;;)
   {
+    OVMOP op = ovmbytecode_read_op(ovm);
+
+    EXECUTORS[op](ovm);
   }
 }
 
@@ -45,9 +54,33 @@ void ovm_call(OVMSTATE *ovm, OVMPTR bytecode_ptr, OVMUINT num_args)
   OVMPTR frame_ptr = ovm->frame_ptr;
 
   ovm->bytecode_ptr = bytecode_ptr;
-  ovm->frame_ptr = ovmstack_ptr(&ovm->frame_ptr) - num_args;
+  ovm->frame_ptr = ovmstack_ptr(&ovm->stack) - num_args;
 
   ovmstack_push(&ovm->stack, ovmstack_obj_of_uint(num_args));
   ovmstack_push(&ovm->stack, ovmstack_obj_of_ptr(return_ptr));
   ovmstack_push(&ovm->stack, ovmstack_obj_of_ptr(frame_ptr));
+}
+
+void ovm_return(OVMSTATE *ovm)
+{
+  OVMSTACK_OBJECT return_val = ovmstack_pop(&ovm->stack);
+
+  ovm->frame_ptr = ovmstack_pop(&ovm->stack).ptr_val;
+  ovm->bytecode_ptr = ovmstack_pop(&ovm->stack).ptr_val;
+
+  OVMUINT num_args = ovmstack_pop(&ovm->stack).uint_val;
+
+  for (int i = 0; i < num_args; i++)
+  {
+    ovmstack_pop(&ovm->stack);
+  }
+
+  ovmstack_push(&ovm->stack, return_val);
+}
+
+void ovm_exit(OVMSTATE *ovm, OVMUINT exit_code)
+{
+  printf("OVM halted with exit code %u", exit_code);
+
+  exit(exit_code);
 }

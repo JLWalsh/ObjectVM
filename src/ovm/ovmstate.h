@@ -12,9 +12,10 @@ typedef struct OVMSTATE_T
   uint8_t num_objects;
   OVMPTR this;
   OVMPTR bytecode_ptr;
+  char *bytecode;
+  uint64_t bytecode_length;
   OVMPTR frame_ptr;
   OVMSTACK stack;
-  bool running;
 } OVMSTATE;
 
 #endif /* OVMSTATE_H */

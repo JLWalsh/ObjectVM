@@ -1,8 +1,9 @@
-#include "ovminvoke.h"
+#include "ovmexecutor_invoke.h"
 #include "ovm.h"
+#include "ovmbytecode.h"
 #include <stdlib.h>
 
-void ovminvoke(OVMSTATE *ovm)
+void ovmexecutor_invoke(OVMSTATE *ovm)
 {
 #ifdef VM_STRICT_MODE
   if (object_id >= vm->num_objects)
@@ -11,17 +12,17 @@ void ovminvoke(OVMSTATE *ovm)
   }
 #endif
 
-  OVMID obj_id;
-  OVMID method_id;
-  OVMUINT num_args;
+  OVMID obj_id = ovmbytecode_read_uint(ovm);
+  OVMID method_id = ovmbytecode_read_uint(ovm);
+  OVMUINT num_args = ovmbytecode_read_uint(ovm);
 
   ovm->this = ovmstack_pop(&ovm->stack).ptr_val;
   OVMPTR bytecode_ptr = ovmobject_resolve_method(obj_id, method_id);
 
-  ovm_invoke(ovm, bytecode_ptr, num_args);
+  ovm_call(ovm, bytecode_ptr, num_args);
 }
 
-void ovminvoke_super(OVMSTATE *ovm, OVMID object_id, OVMID method_id)
+void ovmexecutor_invoke_super(OVMSTATE *ovm)
 {
 #ifdef VM_STRICT_MODE
   if (object_id >= vm->num_objects)
@@ -29,12 +30,12 @@ void ovminvoke_super(OVMSTATE *ovm, OVMID object_id, OVMID method_id)
 }
 #endif
 
-OVMID obj_id;
-OVMID method_id;
-OVMUINT num_args;
+OVMID obj_id = ovmbytecode_read_uint(ovm);
+OVMID method_id = ovmbytecode_read_uint(ovm);
+OVMUINT num_args = ovmbytecode_read_uint(ovm);
 
 ovm->this = ovmstack_pop(&ovm->stack).ptr_val;
 OVMPTR bytecode_ptr = ovmobject_base_resolve_method(obj_id, method_id);
 
-ovm_invoke(ovm, bytecode_ptr, num_args);
+ovm_call(ovm, bytecode_ptr, num_args);
 }

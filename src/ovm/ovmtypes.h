@@ -7,6 +7,7 @@
 
 typedef uint32_t OVMPTR;
 typedef uint8_t OVMID;
-typedef uint16_t OVMUINT;
+typedef uint8_t OVMUINT;
+typedef OVMUINT OVMOP;
 
 #endif /* OVMTYPES_H */

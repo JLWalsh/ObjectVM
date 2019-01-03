@@ -20,6 +20,7 @@ OVMSTACK ovmstack_create(uint16_t initial_size);
 void ovmstack_free(OVMSTACK *s);
 void ovmstack_push(OVMSTACK *s, OVMSTACK_OBJECT o);
 OVMSTACK_OBJECT ovmstack_pop(OVMSTACK *s);
+OVMSTACK_OBJECT ovmstack_at(OVMSTACK *s, OVMPTR ptr);
 OVMPTR ovmstack_ptr(OVMSTACK *s);
 
 OVMSTACK_OBJECT ovmstack_obj_of_ptr(OVMPTR ptr_val);

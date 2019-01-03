@@ -1,6 +1,5 @@
 #include <malloc.h>
 #include <ovm/ovm.h>
-#include <ovm/ovminvoke.h>
 #include <ovm/ovmops.h>
 #include <stdio.h>
 
@@ -9,19 +8,19 @@ int main(int argc, const char *argv[])
   char exe[] = {
 
       // MAIN
-      OP_NEW, 1,                     // B is type 1
-      OP_I_PUSH, 2, OP_INVOKE, 1, 0, // Invoke B::new(int)
-      OP_INVOKE, 1, 1,               // Invoke B::doPrint
+      OP_NEW, 1,                      // B is type 1
+      OP_UI_PUSH, 2, OP_INVOKE, 1, 0, // Invoke B::new(int)
+      OP_INVOKE, 1, 1, 0,             // Invoke B::doPrint
       OP_HALT,
 
       // B::new(int)
-      OP_LOCAL_I_LOAD, 0,   // Load arg 0 as int
-      OP_GLOBAL_I_STORE, 0, // Store int at ptr 0 into heap memory
+      OP_LOCAL_LOAD, 0,   // Load arg 0 as int
+      OP_GLOBAL_STORE, 0, // Store int at ptr 0 into heap memory
       OP_RETURN,
 
       // B::doPrint
-      OP_GLOBAL_I_LOAD, 0, // Load A as int
-      OP_I_PRINT, OP_RETURN};
+      OP_GLOBAL_LOAD, 0, // Load A as int
+      OP_UI_PRINT, OP_RETURN};
 
   OVMOBJECT_FUNC_TABLE a_table;
   a_table.num_funcs = 1;
@@ -47,11 +46,12 @@ int main(int argc, const char *argv[])
 
   ovm_init();
 
-  OVMSTATE ovm = ovm_create(10);
+  OVMSTATE ovm = ovm_create(10, &exe, sizeof(exe));
+
   ovm_load_object(&ovm, a);
   ovm_load_object(&ovm, b);
 
-  ovminvoke(&ovm);
+  ovm_run(&ovm);
 
   ovm_free(&ovm);
 

@@ -5,10 +5,16 @@ add_library(ovm-lib STATIC
     ovm/ovmstate.h
     ovm/ovm.h
     ovm/ovm.c
-    ovm/ovminvoke.h
-    ovm/ovminvoke.c
     ovm/ovmstack.h
     ovm/ovmstack.c
+    ovm/ovmbytecode.h
+    ovm/ovmbytecode.c
+    ovm/ovmexecutor.h
+    ovm/ovmexecutor.c
+    ovm/ovmexecutor_invoke.h
+    ovm/ovmexecutor_invoke.c
+    ovm/ovmexecutor_int.h
+    ovm/ovmexecutor_int.c
 )
 
 target_include_directories(ovm-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

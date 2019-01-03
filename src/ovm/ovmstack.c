@@ -24,4 +24,25 @@ void ovmstack_push(OVMSTACK *s, OVMSTACK_OBJECT o)
 
 OVMSTACK_OBJECT ovmstack_pop(OVMSTACK *s) { return s->objects[--s->size]; }
 
+OVMSTACK_OBJECT ovmstack_at(OVMSTACK *s, OVMPTR ptr)
+{
+    return s->objects[ptr];
+}
+
 OVMPTR ovmstack_ptr(OVMSTACK *s) { return (OVMPTR)s->size; }
+
+OVMSTACK_OBJECT ovmstack_obj_of_ptr(OVMPTR ptr_val)
+{
+    OVMSTACK_OBJECT o;
+    o.ptr_val = ptr_val;
+
+    return o;
+}
+
+OVMSTACK_OBJECT ovmstack_obj_of_uint(OVMUINT uint_val)
+{
+    OVMSTACK_OBJECT o;
+    o.uint_val = uint_val;
+
+    return o;
+}
