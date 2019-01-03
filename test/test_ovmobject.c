@@ -60,7 +60,7 @@ void test_ovmobject_should_resolve_interface_method()
   TEST_ASSERT_EQUAL_INT(30, resolved_ptr);
 }
 
-void test_strict_ovmobject_should_return_null_given_non_existing_method()
+void test_strict_ovmobject_resolve_should_return_null_given_non_existing_method()
 {
   OVMOBJECT_FUNC_TABLE func_table = gen_ovmobject_func_table(NULL, 0);
   OVMOBJECT o = gen_ovmobject_with(func_table);
@@ -70,15 +70,61 @@ void test_strict_ovmobject_should_return_null_given_non_existing_method()
   TEST_ASSERT_EQUAL_INT(OVM_NULL, resolved_ptr);
 }
 
+void test_strict_ovmobject_should_resolve_base_return_null_given_no_base_object()
+{
+  OVMOBJECT o;
+  o.base = NULL;
+
+  OVMPTR resolved_ptr = ovmobject_base_resolve_method(&o, 0);
+
+  TEST_ASSERT_EQUAL_INT(OVM_NULL, resolved_ptr);
+}
+
+void test_strict_ovmobject_resolve_interface_should_return_null_given_non_existing_interface()
+{
+  OVMPTR vfunc_ptrs1[] = {1, 2, 3, 4};
+  OVMOBJECT_FUNC_TABLE vfunc_table = gen_ovmobject_func_table(&vfunc_ptrs1, 4);
+  OVMOBJECT_FUNC_TABLE vfunc_tables[] = {vfunc_table};
+  OVMOBJECT o;
+  o.vfuncs = &vfunc_tables;
+  o.num_vfunc_tables = 1;
+
+  OVMPTR resolved_ptr = ovmobject_interface_resolve_method(&o, 1, 2);
+
+  TEST_ASSERT_EQUAL_INT(OVM_NULL, resolved_ptr);
+}
+
+void test_strict_ovmobject_resolve_interface_should_return_null_given_non_existing_method()
+{
+  OVMPTR vfunc_ptrs1[] = {1, 2, 3, 4};
+  OVMOBJECT_FUNC_TABLE vfunc_table = gen_ovmobject_func_table(&vfunc_ptrs1, 4);
+  OVMOBJECT_FUNC_TABLE vfunc_tables[] = {vfunc_table};
+  OVMOBJECT o;
+  o.vfuncs = &vfunc_tables;
+  o.num_vfunc_tables = 1;
+
+  OVMPTR resolved_ptr = ovmobject_interface_resolve_method(&o, 0, 5);
+
+  TEST_ASSERT_EQUAL_INT(OVM_NULL, resolved_ptr);
+}
+
 int main(void)
 {
   UNITY_BEGIN();
+
   RUN_TEST(test_ovmobject_should_resolve_existing_method);
   RUN_TEST(test_ovmobject_should_resolve_base_method);
   RUN_TEST(test_ovmobject_should_resolve_interface_method);
 
 #ifdef VM_STRICT_MODE
-  RUN_TEST(test_strict_ovmobject_should_return_null_given_non_existing_method);
+  RUN_TEST(
+      test_strict_ovmobject_resolve_should_return_null_given_non_existing_method);
+  RUN_TEST(
+      test_strict_ovmobject_should_resolve_base_return_null_given_no_base_object);
+  RUN_TEST(
+      test_strict_ovmobject_resolve_interface_should_return_null_given_non_existing_interface);
+  RUN_TEST(
+      test_strict_ovmobject_resolve_interface_should_return_null_given_non_existing_method);
 #endif
 
   return UNITY_END();
