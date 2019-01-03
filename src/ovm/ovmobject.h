@@ -16,6 +16,7 @@ typedef struct OVMOBJECT_T
   OVMOBJECT_FUNC_TABLE *vfuncs;
   uint8_t num_vfunc_tables;
   struct OBMOBJECT_T *base;
+  uint64_t mem_size;
 } OVMOBJECT;
 
 OVMPTR ovmobject_resolve_method(OVMOBJECT *o, OVMID method_id);

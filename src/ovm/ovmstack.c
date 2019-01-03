@@ -24,6 +24,11 @@ void ovmstack_push(OVMSTACK *s, OVMSTACK_OBJECT o)
 
 OVMSTACK_OBJECT ovmstack_pop(OVMSTACK *s) { return s->objects[--s->size]; }
 
+OVMSTACK_OBJECT ovmstack_top(OVMSTACK *s, uint8_t offset)
+{
+    return s->objects[s->size - offset];
+}
+
 OVMSTACK_OBJECT ovmstack_at(OVMSTACK *s, OVMPTR ptr)
 {
     return s->objects[ptr];

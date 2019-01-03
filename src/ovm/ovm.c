@@ -15,6 +15,7 @@ OVMSTATE ovm_create(uint16_t stack_size, char *bytecode,
   ovm.objects = NULL;
   ovm.this = OVM_NULL;
   ovm.stack = ovmstack_create(stack_size);
+  ovm.frame_ptr = 0;
 
   ovm.bytecode = bytecode;
   ovm.bytecode_length = bytecode_length;
@@ -50,7 +51,7 @@ void ovm_load_object(OVMSTATE *ovm, OVMOBJECT o)
 
 void ovm_throw(OVMSTATE *ovm, char *err)
 {
-  printf("Exception encountered: %s", err);
+  printf("Exception encountered: %s\n", err);
 
   exit(1);
 }
@@ -63,15 +64,19 @@ void ovm_call(OVMSTATE *ovm, OVMPTR bytecode_ptr, OVMUINT num_args)
   ovm->bytecode_ptr = bytecode_ptr;
   ovm->frame_ptr = ovmstack_ptr(&ovm->stack) - num_args;
 
+  OVMPTR this = ovmstack_top(&ovm->stack, num_args + 1).ptr_val;
+
   ovmstack_push(&ovm->stack, ovmstack_obj_of_uint(num_args));
   ovmstack_push(&ovm->stack, ovmstack_obj_of_ptr(return_ptr));
   ovmstack_push(&ovm->stack, ovmstack_obj_of_ptr(frame_ptr));
+  ovmstack_push(&ovm->stack, ovmstack_obj_of_ptr(ovm->this));
+
+  ovm->this = this;
 }
 
 void ovm_return(OVMSTATE *ovm)
 {
-  OVMSTACK_OBJECT return_val = ovmstack_pop(&ovm->stack);
-
+  ovm->this = ovmstack_pop(&ovm->stack).ptr_val;
   ovm->frame_ptr = ovmstack_pop(&ovm->stack).ptr_val;
   ovm->bytecode_ptr = ovmstack_pop(&ovm->stack).ptr_val;
 
@@ -81,13 +86,11 @@ void ovm_return(OVMSTATE *ovm)
   {
     ovmstack_pop(&ovm->stack);
   }
-
-  ovmstack_push(&ovm->stack, return_val);
 }
 
 void ovm_exit(OVMSTATE *ovm, OVMUINT exit_code)
 {
-  printf("OVM halted with exit code %u", exit_code);
+  printf("OVM halted with exit code %u.\n", exit_code);
 
   exit(exit_code);
 }
