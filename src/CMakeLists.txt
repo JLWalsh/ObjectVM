@@ -9,10 +9,10 @@ SET(OVM_LIB_SOURCES
     ovm/ovmstack.c
     ovm/obytecode.h
     ovm/obytecode.c
-    ovm/ovmexecutor.h
-    ovm/ovmexecutor.c
-    ovm/ovmexecutor_int.h
-    ovm/ovmexecutor_int.c
+    ovm/oexecutor.h
+    ovm/oexecutor.c
+    ovm/oexecutor_int.h
+    ovm/oexecutor_int.c
     ovm/ovmmemory.h
     ovm/ovmmemory.c
     ovm/ovmmath.h
