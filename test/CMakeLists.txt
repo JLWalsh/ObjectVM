@@ -14,6 +14,6 @@ macro(ovm_add_test name strict)
 endmacro()
 
 ovm_add_test(test_ovmobject true)
-ovm_add_test(test_ovmbytecode false)
+ovm_add_test(test_obytecode false)
 ovm_add_test(test_ovmmemory false)
 ovm_add_test(test_ovmmath false)

@@ -1,5 +1,5 @@
 #include "ovm.h"
-#include "ovmbytecode.h"
+#include "obytecode.h"
 #include "ovmexecutor.h"
 #include "ovmstack.h"
 #include <stdio.h>
@@ -8,8 +8,7 @@
 void ovm_init() { ovmexecutor_init_all(); }
 
 OVMSTATE ovm_create(uint16_t stack_size, char *bytecode,
-                    uint64_t bytecode_length, uint64_t initial_heap_size)
-{
+                    uint64_t bytecode_length, uint64_t initial_heap_size) {
   OVMSTATE ovm;
   ovm.num_objects = 0;
   ovm.objects = NULL;
@@ -26,38 +25,32 @@ OVMSTATE ovm_create(uint16_t stack_size, char *bytecode,
   return ovm;
 }
 
-void ovm_free(OVMSTATE *ovm)
-{
+void ovm_free(OVMSTATE *ovm) {
   ovmstack_free(&ovm->stack);
   ovmmemory_free(&ovm->memory);
 }
 
-void ovm_run(OVMSTATE *ovm)
-{
-  for (;;)
-  {
-    OVMOP op = ovmbytecode_read_op(ovm);
+void ovm_run(OVMSTATE *ovm) {
+  for (;;) {
+    OVMOP op = obytecode_read_op(ovm);
 
     EXECUTORS[op](ovm);
   }
 }
 
-void ovm_load_object(OVMSTATE *ovm, OVMOBJECT o)
-{
+void ovm_load_object(OVMSTATE *ovm, OVMOBJECT o) {
   ovm->num_objects++;
   ovm->objects = realloc(ovm->objects, sizeof(OVMOBJECT) * ovm->num_objects);
   ovm->objects[ovm->num_objects - 1] = o;
 }
 
-void ovm_throw(OVMSTATE *ovm, char *err)
-{
+void ovm_throw(OVMSTATE *ovm, char *err) {
   printf("Exception encountered: %s\n", err);
 
   exit(1);
 }
 
-void ovm_call(OVMSTATE *ovm, OVMPTR bytecode_ptr, OVMUINT num_args)
-{
+void ovm_call(OVMSTATE *ovm, OVMPTR bytecode_ptr, OVMUINT num_args) {
   OVMPTR return_ptr = ovm->bytecode_ptr;
   OVMPTR frame_ptr = ovm->frame_ptr;
 
@@ -74,22 +67,19 @@ void ovm_call(OVMSTATE *ovm, OVMPTR bytecode_ptr, OVMUINT num_args)
   ovm->this = this;
 }
 
-void ovm_return(OVMSTATE *ovm)
-{
+void ovm_return(OVMSTATE *ovm) {
   ovm->this = ovmstack_pop(&ovm->stack).ptr_val;
   ovm->frame_ptr = ovmstack_pop(&ovm->stack).ptr_val;
   ovm->bytecode_ptr = ovmstack_pop(&ovm->stack).ptr_val;
 
   OVMUINT num_args = ovmstack_pop(&ovm->stack).uint_val;
 
-  for (int i = 0; i < num_args; i++)
-  {
+  for (int i = 0; i < num_args; i++) {
     ovmstack_pop(&ovm->stack);
   }
 }
 
-void ovm_exit(OVMSTATE *ovm, OVMUINT exit_code)
-{
+void ovm_exit(OVMSTATE *ovm, OVMUINT exit_code) {
   printf("OVM halted with exit code %u.\n", exit_code);
 
   exit(exit_code);

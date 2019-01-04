@@ -7,8 +7,8 @@ SET(OVM_LIB_SOURCES
     ovm/ovm.c
     ovm/ovmstack.h
     ovm/ovmstack.c
-    ovm/ovmbytecode.h
-    ovm/ovmbytecode.c
+    ovm/obytecode.h
+    ovm/obytecode.c
     ovm/ovmexecutor.h
     ovm/ovmexecutor.c
     ovm/ovmexecutor_int.h

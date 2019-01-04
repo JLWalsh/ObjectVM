@@ -1,6 +1,6 @@
 #include "ovmexecutor.h"
+#include "obytecode.h"
 #include "ovm.h"
-#include "ovmbytecode.h"
 
 void ovmexecutor_init_all() {
   EXECUTORS[OP_INVOKE] = ovmexecutor_invoke;
@@ -21,15 +21,15 @@ void ovmexecutor_returnvoid(OVMSTATE *ovm) { ovm_return(ovm); }
 void ovmexecutor_halt(OVMSTATE *ovm) { ovm_exit(ovm, 0); }
 
 void ovmexecutor_invoke(OVMSTATE *ovm) {
-  OVMUINT obj_id = ovmbytecode_read_uint(ovm);
+  OVMUINT obj_id = obytecode_read_uint(ovm);
 #ifdef VM_STRICT_MODE
   if (obj_id >= ovm->num_objects) {
     ovm_throw(ovm, "Invoked method on object id out of range.");
   }
 #endif
 
-  OVMUINT method_id = ovmbytecode_read_uint(ovm);
-  OVMUINT num_args = ovmbytecode_read_uint(ovm);
+  OVMUINT method_id = obytecode_read_uint(ovm);
+  OVMUINT num_args = obytecode_read_uint(ovm);
 
   OVMPTR bytecode_ptr =
       ovmobject_resolve_method(&ovm->objects[obj_id], method_id);
@@ -38,15 +38,15 @@ void ovmexecutor_invoke(OVMSTATE *ovm) {
 }
 
 void ovmexecutor_invoke_super(OVMSTATE *ovm) {
-  OVMUINT obj_id = ovmbytecode_read_uint(ovm);
+  OVMUINT obj_id = obytecode_read_uint(ovm);
 #ifdef VM_STRICT_MODE
   if (obj_id >= ovm->num_objects) {
     ovm_throw(ovm, "Invoked super method on object id out of range.");
   }
 #endif
 
-  OVMUINT method_id = ovmbytecode_read_uint(ovm);
-  OVMUINT num_args = ovmbytecode_read_uint(ovm);
+  OVMUINT method_id = obytecode_read_uint(ovm);
+  OVMUINT num_args = obytecode_read_uint(ovm);
 
   OVMPTR bytecode_ptr =
       ovmobject_base_resolve_method(&ovm->objects[obj_id], method_id);
@@ -55,7 +55,7 @@ void ovmexecutor_invoke_super(OVMSTATE *ovm) {
 }
 
 void ovmexecutor_local_load(OVMSTATE *ovm) {
-  OVMUINT offset = ovmbytecode_read_uint(ovm);
+  OVMUINT offset = obytecode_read_uint(ovm);
 
   OVMSTACK_OBJECT local = ovmstack_at(&ovm->stack, ovm->frame_ptr + offset);
 
@@ -63,7 +63,7 @@ void ovmexecutor_local_load(OVMSTATE *ovm) {
 }
 
 void ovmexecutor_new(OVMSTATE *ovm) {
-  OVMUINT obj_id = ovmbytecode_read_uint(ovm);
+  OVMUINT obj_id = obytecode_read_uint(ovm);
   OVMOBJECT obj = ovm->objects[obj_id];
 
   OVMPTR obj_ref = ovmmemory_alloc(&ovm->memory, obj.mem_size);
