@@ -4,12 +4,14 @@
 #include "ovmtypes.h"
 #include <stdint.h>
 
-typedef struct OVMOBJECT_FUNC_TABLE_T {
+typedef struct OVMOBJECT_FUNC_TABLE_T
+{
   OVMPTR *func_ptrs;
   uint8_t num_funcs;
 } OVMOBJECT_FUNC_TABLE;
 
-typedef struct OVMOBJECT_T {
+typedef struct OVMOBJECT_T
+{
   OVMOBJECT_FUNC_TABLE funcs;
   OVMOBJECT_FUNC_TABLE *vfuncs;
   uint8_t num_vfunc_tables;
@@ -17,12 +19,12 @@ typedef struct OVMOBJECT_T {
   uint64_t mem_size;
 } OVMOBJECT;
 
-OVMPTR ovmobject_resolve_method(OVMOBJECT *o, OVMID method_id);
+OVMPTR ovmobject_resolve_method(OVMOBJECT *o, OVMUINT method_id);
 
-OVMPTR ovmobject_base_resolve_method(OVMOBJECT *o, OVMID method_id);
+OVMPTR ovmobject_base_resolve_method(OVMOBJECT *o, OVMUINT method_id);
 
-OVMPTR ovmobject_interface_resolve_method(OVMOBJECT *o, OVMID interface_id,
-                                          OVMID method_id);
+OVMPTR ovmobject_interface_resolve_method(OVMOBJECT *o, OVMUINT interface_id,
+                                          OVMUINT method_id);
 
 void ovmobject_free(OVMOBJECT *o);
 

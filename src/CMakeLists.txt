@@ -15,10 +15,13 @@ SET(OVM_LIB_SOURCES
     ovm/ovmexecutor_int.c
     ovm/ovmmemory.h
     ovm/ovmmemory.c
+    ovm/ovmmath.h
+    ovm/ovmmath.c
 )
 
 add_library(ovm-lib STATIC ${OVM_LIB_SOURCES})
 add_library(ovm-lib-strict STATIC ${OVM_LIB_SOURCES})
+
 target_compile_definitions(ovm-lib-strict PRIVATE -DVM_STRICT_MODE)
 
 target_include_directories(ovm-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -44,7 +44,5 @@ OP_RETURN_VOID // Return control back to the instruction after the second OP_INV
 
 ### Short-term TODOs
 
-- Endian-correct bytecode parser
 - Heap automatic resize
-- Resize OVMUINT to 16 bits
 - Properly implement flags in ovmmemory

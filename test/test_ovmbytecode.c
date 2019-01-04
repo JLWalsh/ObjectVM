@@ -45,8 +45,8 @@ void test_ovmbytecode_read_op_should_read_op()
 
 void test_ovmbytecode_read_uint_should_read_uint()
 {
-    char uint_bytecode[] = {4, 5, 6};
-    ovm.bytecode_ptr = 2;
+    char uint_bytecode[] = {4, 0, 6};
+    ovm.bytecode_ptr = 1;
     ovm.bytecode = &uint_bytecode;
 
     OVMUINT uint = ovmbytecode_read_uint(&ovm);
