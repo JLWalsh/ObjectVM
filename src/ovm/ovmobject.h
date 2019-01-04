@@ -4,14 +4,12 @@
 #include "ovmtypes.h"
 #include <stdint.h>
 
-typedef struct OVMOBJECT_FUNC_TABLE_T
-{
+typedef struct OVMOBJECT_FUNC_TABLE_T {
   OVMPTR *func_ptrs;
   uint8_t num_funcs;
 } OVMOBJECT_FUNC_TABLE;
 
-typedef struct OVMOBJECT_T
-{
+typedef struct OVMOBJECT_T {
   OVMOBJECT_FUNC_TABLE funcs;
   OVMOBJECT_FUNC_TABLE *vfuncs;
   uint8_t num_vfunc_tables;

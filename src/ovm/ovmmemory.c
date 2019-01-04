@@ -49,11 +49,11 @@ OVMPTR ovmmemory_alloc(OVMMEMORY *m, uint64_t size)
 
         new_chunk->previous = current;
         new_chunk->next = current->next;
-        current->next = new_chunk;
         if (current->next != NULL)
         {
           current->next->previous = new_chunk;
         }
+        current->next = new_chunk;
 
         new_chunk->size = current->size - sizeof(OVMCHUNK) - size;
         new_chunk->flags = 0;
@@ -90,6 +90,21 @@ OVMPTR ovmmemory_chunk_to_ovmptr(OVMMEMORY *m, OVMCHUNK *c)
 OVMCHUNK *ovmmemory_ovmptr_to_chunk(OVMMEMORY *m, OVMPTR ptr)
 {
   return (OVMCHUNK *)(m->start + ptr - 1);
+}
+
+OVMUINT ovmmemory_num_chunks(OVMMEMORY *m)
+{
+  OVMUINT num_chunks = 0;
+
+  OVMCHUNK *current = m->start;
+
+  while (current != NULL)
+  {
+    num_chunks++;
+    current = current->next;
+  }
+
+  return num_chunks;
 }
 
 void ovmmemory_dump(OVMMEMORY *m)

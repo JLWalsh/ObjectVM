@@ -9,7 +9,8 @@ typedef union OVMSTACK_OBJECT_T {
   OVMUINT uint_val;
 } OVMSTACK_OBJECT;
 
-typedef struct OVMSTACK_T {
+typedef struct OVMSTACK_T
+{
   uint16_t max_size;
   uint16_t size;
   OVMSTACK_OBJECT *objects;
@@ -30,6 +31,7 @@ OVMSTACK_OBJECT ovmstack_at(OVMSTACK *s, OVMPTR ptr);
 OVMPTR ovmstack_ptr(OVMSTACK *s);
 
 OVMSTACK_OBJECT ovmstack_obj_of_ptr(OVMPTR ptr_val);
+
 OVMSTACK_OBJECT ovmstack_obj_of_uint(OVMUINT uint_val);
 
 #endif /* OVMSTACK_H */
