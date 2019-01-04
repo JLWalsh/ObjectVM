@@ -30,6 +30,8 @@ OVMPTR ovmmemory_chunk_to_ovmptr(OVMMEMORY *m, OVMCHUNK *c);
 
 OVMCHUNK *ovmmemory_ovmptr_to_chunk(OVMMEMORY *m, OVMPTR ptr);
 
+OVMUINT ovmmemory_num_chunks(OVMMEMORY *m);
+
 void ovmmemory_dump(OVMMEMORY *m);
 
 #endif /* OVMMEMORY_H */

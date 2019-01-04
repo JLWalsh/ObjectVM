@@ -15,3 +15,4 @@ endmacro()
 
 ovm_add_test(test_ovmobject true)
 ovm_add_test(test_ovmbytecode false)
+ovm_add_test(test_ovmmemory false)
