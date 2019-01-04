@@ -1,4 +1,6 @@
 ## OVM (Object virtual machine)
+[![Build Status](https://travis-ci.org/JLWalsh/ObjectVM.svg?branch=master)](https://travis-ci.org/JLWalsh/ObjectVM)
+
 An object-oriented bytecode virtual machine, inspired by the JVM.
 
 ### Example program
