@@ -1,76 +1,89 @@
+#include <ovm/ovmflag.h>
 #include <ovm/ovmmemory.h>
+#include <stdbool.h>
 #include <unity.h>
 
-void test_ovmmemory_alloc_should_allocate_specified_size_given_exactly_enough_space()
-{
-  unsigned int space_required = 27;
-  OVMMEMORY m = ovmmemory_create(space_required);
+int number_of_chunks(OVMMEMORY memory) {
+  OVMCHUNK *current = (OVMCHUNK *)memory.start;
+  int num_chunks = 0;
 
-  // OVMPTR ptr = ovmmemory_alloc(&m, space_required);
+  while (current != NULL) {
+    num_chunks++;
+    current = current->next;
+  }
 
-  // OVMCHUNK *c = ovmmemory_ovmptr_to_chunk(&m, ptr);
-
-  // TEST_ASSERT_NOT_EQUAL(OVM_NULL, ptr);
-  // TEST_ASSERT_EQUAL_UINT(space_required, c->size);
-  // TEST_ASSERT_EQUAL_UINT(
-  //     1, c->flags); // Right now flags is only used to check if is allocated
-
-  ovmmemory_free(&m);
+  return num_chunks;
 }
 
-void test_ovmmemory_alloc_should_fragment_chunk_given_chunk_with_space_remaining()
-{
-  unsigned int initial_space = 100;
-  unsigned int space_required = 27;
-  OVMMEMORY m = ovmmemory_create(initial_space);
+void test_ovmmemory_alloc_should_create_new_chunk_out_of_remaining_memory() {
+  OVMMEMORY memory = ovmmemory_create(120);
 
-  OVMPTR ptr = ovmmemory_alloc(&m, space_required);
+  ovmmemory_alloc(&memory, 60);
+  TEST_ASSERT_EQUAL_INT(2, number_of_chunks(memory));
 
-  OVMCHUNK *c = ovmmemory_ovmptr_to_chunk(&m, ptr);
-  OVMCHUNK *new_chunk = c->next;
-  TEST_ASSERT_EQUAL_UINT(2, ovmmemory_num_chunks(&m));
-  TEST_ASSERT_EQUAL_UINT(initial_space - space_required - sizeof(OVMCHUNK),
-                         new_chunk->size);
-  TEST_ASSERT_EQUAL_UINT(0, new_chunk->flags); // Flag 0 = unallocated
-  TEST_ASSERT_EQUAL_PTR(c, new_chunk->previous);
-  TEST_ASSERT_EQUAL_PTR(new_chunk, c->next);
-
-  ovmmemory_free(&m);
+  ovmmemory_free(&memory);
 }
 
-void test_ovmmemory_alloc_should_return_null_given_not_enough_space()
-{
-  OVMMEMORY m = ovmmemory_create(100);
+void test_ovmmemory_alloc_should_create_chunk_with_specified_size() {
+  OVMMEMORY memory = ovmmemory_create(120);
 
-  OVMPTR ptr = ovmmemory_alloc(&m, 120);
+  OVMPTR ptr = ovmmemory_alloc(&memory, 60);
 
-  TEST_ASSERT_EQUAL_UINT(OVM_NULL, ptr);
+  OVMCHUNK *allocated_chunk = ovmmemory_ovmptr_to_chunk(&memory, ptr);
+  TEST_ASSERT_EQUAL_UINT(60, allocated_chunk->size);
+  TEST_ASSERT_TRUE(
+      OVMFLAG_READ(allocated_chunk->flags, OVMCHUNK_FLAGS_ALLOCATED));
 
-  ovmmemory_free(&m);
+  ovmmemory_free(&memory);
 }
 
-void test_ovmmemory_dealloc_should_mark_chunk_as_unallocated()
-{
-  OVMMEMORY m = ovmmemory_create(27);
-  OVMPTR ptr = ovmmemory_alloc(&m, 27);
-  OVMCHUNK *c = ovmmemory_ovmptr_to_chunk(&m, ptr);
+void test_ovmmemory_alloc_should_not_split_chunks_when_not_enough_memory_for_new_chunk() {
+  int first_chunk_size = 120;
+  OVMMEMORY memory = ovmmemory_create(first_chunk_size);
 
-  ovmmemory_dealloc(&m, ptr);
+  OVMPTR ptr = ovmmemory_alloc(&memory, first_chunk_size);
 
-  TEST_ASSERT_EQUAL_UINT(0, c->flags);
+  TEST_ASSERT_EQUAL_INT(1, number_of_chunks(memory));
+  TEST_ASSERT_EQUAL_UINT(first_chunk_size,
+                         ovmmemory_ovmptr_to_chunk(&memory, ptr)->size);
 
-  ovmmemory_free(&m);
+  ovmmemory_free(&memory);
 }
 
-void main(void)
-{
+void test_ovmmemory_alloc_should_return_null_if_allocation_exceeds_memory_available() {
+  int memory_available = 120;
+  OVMMEMORY memory = ovmmemory_create(memory_available);
+
+  OVMPTR ptr = ovmmemory_alloc(&memory, memory_available + 20);
+
+  TEST_ASSERT_EQUAL_INT(OVM_NULL, ptr);
+
+  ovmmemory_free(&memory);
+}
+
+void test_ovmmemory_dealloc_should_remove_allocated_flag() {
+  OVMMEMORY memory = ovmmemory_create(120);
+  OVMPTR allocated_ptr = ovmmemory_alloc(&memory, 5);
+  OVMCHUNK *allocated_chunk = ovmmemory_ovmptr_to_chunk(&memory, allocated_ptr);
+
+  ovmmemory_dealloc(&memory, allocated_ptr);
+  bool is_allocated =
+      OVMFLAG_READ(allocated_chunk->flags, OVMCHUNK_FLAGS_ALLOCATED);
+  TEST_ASSERT_FALSE(is_allocated);
+
+  ovmmemory_free(&memory);
+}
+
+int main(void) {
   UNITY_BEGIN();
-
+  RUN_TEST(test_ovmmemory_alloc_should_create_chunk_with_specified_size);
   RUN_TEST(
-      test_ovmmemory_alloc_should_allocate_specified_size_given_exactly_enough_space);
-  // RUN_TEST(
-  //     test_ovmmemory_alloc_should_fragment_chunk_given_chunk_with_space_remaining);
-  // RUN_TEST(test_ovmmemory_alloc_should_return_null_given_not_enough_space);
-  // RUN_TEST(test_ovmmemory_dealloc_should_mark_chunk_as_unallocated);
+      test_ovmmemory_alloc_should_not_split_chunks_when_not_enough_memory_for_new_chunk);
+  RUN_TEST(
+      test_ovmmemory_alloc_should_return_null_if_allocation_exceeds_memory_available);
+  RUN_TEST(
+      test_ovmmemory_alloc_should_create_new_chunk_out_of_remaining_memory);
+  RUN_TEST(test_ovmmemory_dealloc_should_remove_allocated_flag);
+
   return UNITY_END();
 }
