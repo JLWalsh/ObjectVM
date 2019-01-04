@@ -6,4 +6,4 @@ INCLUDE(TestBigEndian)
 
 add_subdirectory(src)
 add_subdirectory(test)
-add_subdirectory(Unity)
+add_subdirectory(lib)
