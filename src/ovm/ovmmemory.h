@@ -4,15 +4,18 @@
 #include "ovmtypes.h"
 #include <stdint.h>
 
-typedef struct OVMCHUNK_T {
+typedef struct OVMCHUNK_T
+{
   struct OVMCHUNK_T *previous;
   struct OVMCHUNK_T *next;
   uint64_t size;
   uint8_t flags;
 } OVMCHUNK;
 
-typedef struct OVMMEMORY_T {
-  OVMCHUNK *start;
+typedef struct OVMMEMORY_T
+{
+  char *start;
+  OVMCHUNK *chunk_start;
   uint64_t size;
 } OVMMEMORY;
 
