@@ -4,30 +4,32 @@
 #include <ovm/ovmops.h>
 #include <stdio.h>
 
-int main(int argc, const char *argv[]) {
-  char exe[] = {
-      // MAIN
-      OP_NEW, 0,     // B is type 0
-      OP_DUP,        // REF REF
-      OP_UI_PUSH, 3, // for B::new(int)                            // REF REF 2
-      OP_INVOKE, 0, 0, 1, // Invoke B::new(int) with 1 arg (int)        // REF
-      OP_INVOKE, 0, 1, 0, // Invoke B::doPrint with 0 args              // -
-      OP_HALT,
+int main(int argc, const char *argv[])
+{
+  char exe[] = {                  // MAIN
+                OP_NEW, 0, 0,     // B is type 0
+                OP_DUP,           // REF REF
+                OP_UI_PUSH, 0, 3, // for B::new(int) // REF REF 2
+                OP_INVOKE, 0, 0, 0, 0, 0,
+                1, // Invoke B::new(int) with 1 arg (int)        // REF
+                OP_INVOKE, 0, 0, 0, 1, 0,
+                0, // Invoke B::doPrint with 0 args              // -
+                OP_HALT,
 
-      // B::new(int)
-      OP_LOCAL_LOAD, 0,      // Load arg 0 as int
-      OP_UI_GLOBAL_STORE, 0, // Store int at ptr 0 into heap memory
-      OP_RETURN_VOID,
+                // B::new(int)
+                OP_LOCAL_LOAD, 0, 0,      // Load arg 0 as int
+                OP_UI_GLOBAL_STORE, 0, 0, // Store int at ptr 0 into heap memory
+                OP_RETURN_VOID,
 
-      // B::doPrint
-      OP_UI_GLOBAL_LOAD, 0, // Load A as int
-      OP_UI_PRINT, OP_RETURN_VOID};
+                // B::doPrint
+                OP_UI_GLOBAL_LOAD, 0, 0, // Load A as int
+                OP_UI_PRINT, OP_RETURN_VOID};
 
   OVMOBJECT_FUNC_TABLE b_table;
   b_table.num_funcs = 1;
   b_table.func_ptrs = (OVMPTR *)malloc(sizeof(OVMPTR) * 2);
-  b_table.func_ptrs[0] = 14;
-  b_table.func_ptrs[1] = 19;
+  b_table.func_ptrs[0] = 22;
+  b_table.func_ptrs[1] = 29;
 
   OVMOBJECT b;
   b.base = NULL;

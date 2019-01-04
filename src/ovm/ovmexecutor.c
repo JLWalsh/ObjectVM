@@ -21,14 +21,14 @@ void ovmexecutor_returnvoid(OVMSTATE *ovm) { ovm_return(ovm); }
 void ovmexecutor_halt(OVMSTATE *ovm) { ovm_exit(ovm, 0); }
 
 void ovmexecutor_invoke(OVMSTATE *ovm) {
-  OVMID obj_id = ovmbytecode_read_uint(ovm);
+  OVMUINT obj_id = ovmbytecode_read_uint(ovm);
 #ifdef VM_STRICT_MODE
   if (obj_id >= ovm->num_objects) {
     ovm_throw(ovm, "Invoked method on object id out of range.");
   }
 #endif
 
-  OVMID method_id = ovmbytecode_read_uint(ovm);
+  OVMUINT method_id = ovmbytecode_read_uint(ovm);
   OVMUINT num_args = ovmbytecode_read_uint(ovm);
 
   OVMPTR bytecode_ptr =
@@ -38,14 +38,14 @@ void ovmexecutor_invoke(OVMSTATE *ovm) {
 }
 
 void ovmexecutor_invoke_super(OVMSTATE *ovm) {
-  OVMID obj_id = ovmbytecode_read_uint(ovm);
+  OVMUINT obj_id = ovmbytecode_read_uint(ovm);
 #ifdef VM_STRICT_MODE
   if (obj_id >= ovm->num_objects) {
     ovm_throw(ovm, "Invoked super method on object id out of range.");
   }
 #endif
 
-  OVMID method_id = ovmbytecode_read_uint(ovm);
+  OVMUINT method_id = ovmbytecode_read_uint(ovm);
   OVMUINT num_args = ovmbytecode_read_uint(ovm);
 
   OVMPTR bytecode_ptr =
@@ -63,7 +63,7 @@ void ovmexecutor_local_load(OVMSTATE *ovm) {
 }
 
 void ovmexecutor_new(OVMSTATE *ovm) {
-  OVMID obj_id = ovmbytecode_read_uint(ovm);
+  OVMUINT obj_id = ovmbytecode_read_uint(ovm);
   OVMOBJECT obj = ovm->objects[obj_id];
 
   OVMPTR obj_ref = ovmmemory_alloc(&ovm->memory, obj.mem_size);
