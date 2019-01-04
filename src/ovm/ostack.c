@@ -26,11 +26,11 @@ OSTACK_OBJECT ostack_top(OSTACK *s, uint8_t offset)
     return s->objects[s->size - offset];
 }
 
-OSTACK_OBJECT ostack_at(OSTACK *s, OVMPTR ptr) { return s->objects[ptr]; }
+OSTACK_OBJECT ostack_at(OSTACK *s, OVM_PTR ptr) { return s->objects[ptr]; }
 
-OVMPTR ostack_ptr(OSTACK *s) { return (OVMPTR)s->size; }
+OVM_PTR ostack_ptr(OSTACK *s) { return (OVM_PTR)s->size; }
 
-OSTACK_OBJECT ostack_obj_of_ptr(OVMPTR ptr_val)
+OSTACK_OBJECT ostack_obj_of_ptr(OVM_PTR ptr_val)
 {
     OSTACK_OBJECT o;
     o.ptr_val = ptr_val;
@@ -38,7 +38,7 @@ OSTACK_OBJECT ostack_obj_of_ptr(OVMPTR ptr_val)
     return o;
 }
 
-OSTACK_OBJECT ostack_obj_of_uint(OVMUINT uint_val)
+OSTACK_OBJECT ostack_obj_of_uint(OVM_UINT uint_val)
 {
     OSTACK_OBJECT o;
     o.uint_val = uint_val;

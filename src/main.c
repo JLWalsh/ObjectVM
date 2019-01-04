@@ -27,7 +27,7 @@ int main(int argc, const char *argv[])
 
   OOBJECT_FUNC_TABLE b_table;
   b_table.num_funcs = 1;
-  b_table.func_ptrs = (OVMPTR *)malloc(sizeof(OVMPTR) * 2);
+  b_table.func_ptrs = (OVM_PTR *)malloc(sizeof(OVM_PTR) * 2);
   b_table.func_ptrs[0] = 22;
   b_table.func_ptrs[1] = 29;
 
@@ -36,7 +36,7 @@ int main(int argc, const char *argv[])
   b.funcs = b_table;
   b.vfuncs = NULL;
   b.num_vfunc_tables = 0;
-  b.mem_size = sizeof(OVMUINT);
+  b.mem_size = sizeof(OVM_UINT);
 
   ovm_init();
 

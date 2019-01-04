@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 typedef union OSTACK_OBJECT_T {
-  OVMPTR ptr_val;
-  OVMUINT uint_val;
+  OVM_PTR ptr_val;
+  OVM_UINT uint_val;
 } OSTACK_OBJECT;
 
 typedef struct OSTACK_T {
@@ -25,12 +25,12 @@ OSTACK_OBJECT ostack_pop(OSTACK *s);
 
 OSTACK_OBJECT ostack_top(OSTACK *s, uint8_t offset);
 
-OSTACK_OBJECT ostack_at(OSTACK *s, OVMPTR ptr);
+OSTACK_OBJECT ostack_at(OSTACK *s, OVM_PTR ptr);
 
-OVMPTR ostack_ptr(OSTACK *s);
+OVM_PTR ostack_ptr(OSTACK *s);
 
-OSTACK_OBJECT ostack_obj_of_ptr(OVMPTR ptr_val);
+OSTACK_OBJECT ostack_obj_of_ptr(OVM_PTR ptr_val);
 
-OSTACK_OBJECT ostack_obj_of_uint(OVMUINT uint_val);
+OSTACK_OBJECT ostack_obj_of_uint(OVM_UINT uint_val);
 
 #endif /* OSTACK_H */

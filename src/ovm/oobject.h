@@ -4,12 +4,14 @@
 #include "otypes.h"
 #include <stdint.h>
 
-typedef struct OOBJECT_FUNC_TABLE_T {
-  OVMPTR *func_ptrs;
+typedef struct OOBJECT_FUNC_TABLE_T
+{
+  OVM_PTR *func_ptrs;
   uint8_t num_funcs;
 } OOBJECT_FUNC_TABLE;
 
-typedef struct OOBJECT_T {
+typedef struct OOBJECT_T
+{
   OOBJECT_FUNC_TABLE funcs;
   OOBJECT_FUNC_TABLE *vfuncs;
   uint8_t num_vfunc_tables;
@@ -17,12 +19,12 @@ typedef struct OOBJECT_T {
   uint64_t mem_size;
 } OOBJECT;
 
-OVMPTR oobject_resolve_method(OOBJECT *o, OVMUINT method_id);
+OVM_PTR oobject_resolve_method(OOBJECT *o, OVM_UINT method_id);
 
-OVMPTR oobject_base_resolve_method(OOBJECT *o, OVMUINT method_id);
+OVM_PTR oobject_base_resolve_method(OOBJECT *o, OVM_UINT method_id);
 
-OVMPTR oobject_interface_resolve_method(OOBJECT *o, OVMUINT interface_id,
-                                        OVMUINT method_id);
+OVM_PTR oobject_interface_resolve_method(OOBJECT *o, OVM_UINT interface_id,
+                                         OVM_UINT method_id);
 
 void oobject_free(OOBJECT *o);
 

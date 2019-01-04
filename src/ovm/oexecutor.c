@@ -23,7 +23,7 @@ void oexecutor_halt(OSTATE *ovm) { ovm_exit(ovm, 0); }
 
 void oexecutor_invoke(OSTATE *ovm)
 {
-  OVMUINT obj_id = obytecode_read_uint(ovm);
+  OVM_UINT obj_id = obytecode_read_uint(ovm);
 #ifdef VM_STRICT_MODE
   if (obj_id >= ovm->num_objects)
   {
@@ -31,10 +31,10 @@ void oexecutor_invoke(OSTATE *ovm)
   }
 #endif
 
-  OVMUINT method_id = obytecode_read_uint(ovm);
-  OVMUINT num_args = obytecode_read_uint(ovm);
+  OVM_UINT method_id = obytecode_read_uint(ovm);
+  OVM_UINT num_args = obytecode_read_uint(ovm);
 
-  OVMPTR bytecode_ptr =
+  OVM_PTR bytecode_ptr =
       oobject_resolve_method(&ovm->objects[obj_id], method_id);
 
   ovm_call(ovm, bytecode_ptr, num_args);
@@ -42,7 +42,7 @@ void oexecutor_invoke(OSTATE *ovm)
 
 void oexecutor_invoke_super(OSTATE *ovm)
 {
-  OVMUINT obj_id = obytecode_read_uint(ovm);
+  OVM_UINT obj_id = obytecode_read_uint(ovm);
 #ifdef VM_STRICT_MODE
   if (obj_id >= ovm->num_objects)
   {
@@ -50,10 +50,10 @@ void oexecutor_invoke_super(OSTATE *ovm)
   }
 #endif
 
-  OVMUINT method_id = obytecode_read_uint(ovm);
-  OVMUINT num_args = obytecode_read_uint(ovm);
+  OVM_UINT method_id = obytecode_read_uint(ovm);
+  OVM_UINT num_args = obytecode_read_uint(ovm);
 
-  OVMPTR bytecode_ptr =
+  OVM_PTR bytecode_ptr =
       oobject_base_resolve_method(&ovm->objects[obj_id], method_id);
 
   ovm_call(ovm, bytecode_ptr, num_args);
@@ -61,7 +61,7 @@ void oexecutor_invoke_super(OSTATE *ovm)
 
 void oexecutor_local_load(OSTATE *ovm)
 {
-  OVMUINT offset = obytecode_read_uint(ovm);
+  OVM_UINT offset = obytecode_read_uint(ovm);
 
   OSTACK_OBJECT local = ostack_at(&ovm->stack, ovm->frame_ptr + offset);
 
@@ -70,10 +70,10 @@ void oexecutor_local_load(OSTATE *ovm)
 
 void oexecutor_new(OSTATE *ovm)
 {
-  OVMUINT obj_id = obytecode_read_uint(ovm);
+  OVM_UINT obj_id = obytecode_read_uint(ovm);
   OOBJECT obj = ovm->objects[obj_id];
 
-  OVMPTR obj_ref = omemory_alloc(&ovm->memory, obj.mem_size);
+  OVM_PTR obj_ref = omemory_alloc(&ovm->memory, obj.mem_size);
 
   ostack_push(&ovm->stack, ostack_obj_of_ptr(obj_ref));
 }

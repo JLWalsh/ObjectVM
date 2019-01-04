@@ -5,8 +5,8 @@
 
 #define OVM_NULL 0
 
-typedef uint32_t OVMPTR;
-typedef uint8_t OVMOP;
-typedef uint16_t OVMUINT;
+typedef uint32_t OVM_PTR;
+typedef uint8_t OVM_OP;
+typedef uint16_t OVM_UINT;
 
 #endif /* OTYPES_H */

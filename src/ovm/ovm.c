@@ -32,7 +32,7 @@ void ovm_free(OSTATE *ovm) {
 
 void ovm_run(OSTATE *ovm) {
   for (;;) {
-    OVMOP op = obytecode_read_op(ovm);
+    OVM_OP op = obytecode_read_op(ovm);
 
     EXECUTORS[op](ovm);
   }
@@ -50,14 +50,14 @@ void ovm_throw(OSTATE *ovm, char *err) {
   exit(1);
 }
 
-void ovm_call(OSTATE *ovm, OVMPTR bytecode_ptr, OVMUINT num_args) {
-  OVMPTR return_ptr = ovm->bytecode_ptr;
-  OVMPTR frame_ptr = ovm->frame_ptr;
+void ovm_call(OSTATE *ovm, OVM_PTR bytecode_ptr, OVM_UINT num_args) {
+  OVM_PTR return_ptr = ovm->bytecode_ptr;
+  OVM_PTR frame_ptr = ovm->frame_ptr;
 
   ovm->bytecode_ptr = bytecode_ptr;
   ovm->frame_ptr = ostack_ptr(&ovm->stack) - num_args;
 
-  OVMPTR this = ostack_top(&ovm->stack, num_args + 1).ptr_val;
+  OVM_PTR this = ostack_top(&ovm->stack, num_args + 1).ptr_val;
 
   ostack_push(&ovm->stack, ostack_obj_of_uint(num_args));
   ostack_push(&ovm->stack, ostack_obj_of_ptr(return_ptr));
@@ -72,14 +72,14 @@ void ovm_return(OSTATE *ovm) {
   ovm->frame_ptr = ostack_pop(&ovm->stack).ptr_val;
   ovm->bytecode_ptr = ostack_pop(&ovm->stack).ptr_val;
 
-  OVMUINT num_args = ostack_pop(&ovm->stack).uint_val;
+  OVM_UINT num_args = ostack_pop(&ovm->stack).uint_val;
 
   for (int i = 0; i < num_args; i++) {
     ostack_pop(&ovm->stack);
   }
 }
 
-void ovm_exit(OSTATE *ovm, OVMUINT exit_code) {
+void ovm_exit(OSTATE *ovm, OVM_UINT exit_code) {
   printf("OVM halted with exit code %u.\n", exit_code);
 
   exit(exit_code);

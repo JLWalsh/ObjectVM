@@ -1,7 +1,8 @@
 #ifndef OOPS_H
 #define OOPS_H
 
-enum OVMOP {
+enum OVM_OP
+{
   OP_HALT,
   OP_NEW,
   OP_INVOKE,

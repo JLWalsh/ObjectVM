@@ -1,7 +1,7 @@
 #include "oobject.h"
 #include <stdlib.h>
 
-OVMPTR oobject_resolve_method(OOBJECT *o, OVMUINT method_id)
+OVM_PTR oobject_resolve_method(OOBJECT *o, OVM_UINT method_id)
 {
 #ifdef VM_STRICT_MODE
   if (method_id >= o->funcs.num_funcs)
@@ -13,7 +13,7 @@ OVMPTR oobject_resolve_method(OOBJECT *o, OVMUINT method_id)
   return o->funcs.func_ptrs[method_id];
 }
 
-OVMPTR oobject_base_resolve_method(OOBJECT *o, OVMUINT method_id)
+OVM_PTR oobject_base_resolve_method(OOBJECT *o, OVM_UINT method_id)
 {
 #ifdef VM_STRICT_MODE
   if (o->base == NULL)
@@ -25,8 +25,8 @@ OVMPTR oobject_base_resolve_method(OOBJECT *o, OVMUINT method_id)
   return oobject_resolve_method(o->base, method_id);
 }
 
-OVMPTR oobject_interface_resolve_method(OOBJECT *o, OVMUINT interface_id,
-                                        OVMUINT method_id)
+OVM_PTR oobject_interface_resolve_method(OOBJECT *o, OVM_UINT interface_id,
+                                         OVM_UINT method_id)
 {
 #ifdef VM_STRICT_MODE
   if (interface_id >= o->num_vfunc_tables)

@@ -7,15 +7,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef struct OSTATE_T
-{
+typedef struct OSTATE_T {
   OOBJECT *objects;
   uint8_t num_objects;
-  OVMPTR this;
-  OVMPTR bytecode_ptr;
+  OVM_PTR this;
+  OVM_PTR bytecode_ptr;
   char *bytecode;
   uint64_t bytecode_length;
-  OVMPTR frame_ptr;
+  OVM_PTR frame_ptr;
   OSTACK stack;
   OMEMORY memory;
 } OSTATE;

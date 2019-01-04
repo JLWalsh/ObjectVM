@@ -9,19 +9,19 @@ void *obytecode_read(OSTATE *ovm, size_t read_size)
   return ptr;
 }
 
-OVMOP obytecode_read_op(OSTATE *ovm)
+OVM_OP obytecode_read_op(OSTATE *ovm)
 {
-  OVMOP op = *((OVMOP *)obytecode_read(ovm, sizeof(OVMOP)));
+  OVM_OP op = *((OVM_OP *)obytecode_read(ovm, sizeof(OVM_OP)));
 
   return op;
 }
 
-OVMOP obytecode_read_uint(OSTATE *ovm)
+OVM_OP obytecode_read_uint(OSTATE *ovm)
 {
-  OVMUINT uint = *((OVMUINT *)obytecode_read(ovm, sizeof(OVMUINT)));
+  OVM_UINT uint = *((OVM_UINT *)obytecode_read(ovm, sizeof(OVM_UINT)));
 
 #ifdef VM_IS_LITTLE_ENDIAN
-  uint = (OVMUINT)omath_int16_endian_swap(uint);
+  uint = (OVM_UINT)omath_int16_endian_swap(uint);
 #endif
 
   return uint; // TODO endian flip if required

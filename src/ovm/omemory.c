@@ -28,7 +28,7 @@ void omemory_free(OMEMORY *o) {
   free(o->start - 1); // First byte is reserved for VM_NULL
 }
 
-OVMPTR omemory_alloc(OMEMORY *o, uint64_t size) {
+OVM_PTR omemory_alloc(OMEMORY *o, uint64_t size) {
   OVMCHUNK *current = (OVMCHUNK *)o->start;
 
   while (current != NULL) {
@@ -36,7 +36,7 @@ OVMPTR omemory_alloc(OMEMORY *o, uint64_t size) {
     bool is_readonly = OFLAG_READ(current->flags, OVMCHUNK_FLAGS_READONLY);
 
     if (current->size >= size && !is_allocated && !is_readonly) {
-      OVMPTR pointer = omemory_ptr_of_chunk(o, current);
+      OVM_PTR pointer = omemory_ptr_of_chunk(o, current);
       current->flags = OFLAG_ENABLE(current->flags, OVMCHUNK_FLAGS_ALLOCATED);
 
       if (current->size > size + sizeof(OVMCHUNK)) {
@@ -65,33 +65,33 @@ OVMPTR omemory_alloc(OMEMORY *o, uint64_t size) {
   return OVM_NULL;
 }
 
-void omemory_dealloc(OMEMORY *o, OVMPTR value) {
+void omemory_dealloc(OMEMORY *o, OVM_PTR value) {
   OVMCHUNK *chunk = omemory_ovmptr_to_chunk(o, value);
 
   chunk->flags = OFLAG_DISABLE(chunk->flags, OVMCHUNK_FLAGS_ALLOCATED);
 }
 
-void *omemory_at(OMEMORY *o, OVMPTR value) {
+void *omemory_at(OMEMORY *o, OVM_PTR value) {
   char *chunk_start = &o->start[value];
   chunk_start += sizeof(OVMCHUNK);
 
   return (void *)chunk_start;
 }
 
-OVMPTR omemory_ptr_of_chunk(OMEMORY *o, OVMCHUNK *chunk) {
-  OVMPTR offset_from_start = (char *)chunk - o->start;
+OVM_PTR omemory_ptr_of_chunk(OMEMORY *o, OVMCHUNK *chunk) {
+  OVM_PTR offset_from_start = (char *)chunk - o->start;
 
   return offset_from_start;
 }
 
-OVMCHUNK *omemory_ovmptr_to_chunk(OMEMORY *o, OVMPTR ptr) {
+OVMCHUNK *omemory_ovmptr_to_chunk(OMEMORY *o, OVM_PTR ptr) {
   char *chunk_ptr = o->start + ptr;
 
   return (OVMCHUNK *)chunk_ptr;
 }
 
-OVMUINT omemory_num_chunks(OMEMORY *o) {
-  OVMUINT num_chunks = 0;
+OVM_UINT omemory_num_chunks(OMEMORY *o) {
+  OVM_UINT num_chunks = 0;
   OVMCHUNK *current = (OVMCHUNK *)o->start;
 
   while (current != NULL) {

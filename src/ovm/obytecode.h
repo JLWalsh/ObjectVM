@@ -6,8 +6,8 @@
 
 void *obytecode_read(OSTATE *ovm, size_t read_size);
 
-OVMOP obytecode_read_op(OSTATE *ovm);
+OVM_OP obytecode_read_op(OSTATE *ovm);
 
-OVMOP obytecode_read_uint(OSTATE *ovm);
+OVM_OP obytecode_read_uint(OSTATE *ovm);
 
 #endif /* OBYTECODE_H */

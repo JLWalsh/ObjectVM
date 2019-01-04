@@ -17,10 +17,10 @@ void ovm_load_object(OSTATE *ovm, OOBJECT o);
 
 void ovm_throw(OSTATE *ovm, char *err);
 
-void ovm_call(OSTATE *ovm, OVMPTR bytecode_ptr, OVMUINT num_args);
+void ovm_call(OSTATE *ovm, OVM_PTR bytecode_ptr, OVM_UINT num_args);
 
 void ovm_return(OSTATE *ovm);
 
-void ovm_exit(OSTATE *ovm, OVMUINT exit_code);
+void ovm_exit(OSTATE *ovm, OVM_UINT exit_code);
 
 #endif /* OVM_H */

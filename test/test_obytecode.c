@@ -13,7 +13,7 @@ void set_up() {
 
 void test_obytecode_read_should_advance_bytecode_ptr_by_read_size() {
   size_t read_size = 2;
-  OVMUINT initial_bytecode_ptr = 1;
+  OVM_UINT initial_bytecode_ptr = 1;
   ovm.bytecode_ptr = initial_bytecode_ptr;
 
   obytecode_read(&ovm, read_size);
@@ -34,7 +34,7 @@ void test_obytecode_read_op_should_read_op() {
   ovm.bytecode_ptr = 1;
   ovm.bytecode = &op_bytecode;
 
-  OVMOP op = obytecode_read_op(&ovm);
+  OVM_OP op = obytecode_read_op(&ovm);
 
   TEST_ASSERT_EQUAL_UINT(2, op);
 }
@@ -44,7 +44,7 @@ void test_obytecode_read_uint_should_read_uint() {
   ovm.bytecode_ptr = 1;
   ovm.bytecode = &uint_bytecode;
 
-  OVMUINT uint = obytecode_read_uint(&ovm);
+  OVM_UINT uint = obytecode_read_uint(&ovm);
 
   TEST_ASSERT_EQUAL_UINT(6, uint);
 }

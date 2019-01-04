@@ -26,17 +26,17 @@ OMEMORY omemory_create(uint64_t start_size);
 
 void omemory_free(OMEMORY *o);
 
-OVMPTR omemory_alloc(OMEMORY *o, uint64_t size);
+OVM_PTR omemory_alloc(OMEMORY *o, uint64_t size);
 
-void omemory_dealloc(OMEMORY *o, OVMPTR value);
+void omemory_dealloc(OMEMORY *o, OVM_PTR value);
 
-void *omemory_at(OMEMORY *o, OVMPTR value);
+void *omemory_at(OMEMORY *o, OVM_PTR value);
 
-OVMPTR omemory_ptr_of_chunk(OMEMORY *o, OVMCHUNK *chunk);
+OVM_PTR omemory_ptr_of_chunk(OMEMORY *o, OVMCHUNK *chunk);
 
-OVMCHUNK *omemory_ovmptr_to_chunk(OMEMORY *o, OVMPTR ptr);
+OVMCHUNK *omemory_ovmptr_to_chunk(OMEMORY *o, OVM_PTR ptr);
 
-OVMUINT omemory_num_chunks(OMEMORY *o);
+OVM_UINT omemory_num_chunks(OMEMORY *o);
 
 void omemory_dump(OMEMORY *o);
 
