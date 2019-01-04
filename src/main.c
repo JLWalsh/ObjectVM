@@ -1,7 +1,7 @@
 #include <malloc.h>
+#include <ovm/omemory.h>
+#include <ovm/oops.h>
 #include <ovm/ovm.h>
-#include <ovm/ovmmemory.h>
-#include <ovm/ovmops.h>
 #include <stdio.h>
 
 int main(int argc, const char *argv[])
@@ -25,13 +25,13 @@ int main(int argc, const char *argv[])
                 OP_UI_GLOBAL_LOAD, 0, 0, // Load A as int
                 OP_UI_PRINT, OP_RETURN_VOID};
 
-  OVMOBJECT_FUNC_TABLE b_table;
+  OOBJECT_FUNC_TABLE b_table;
   b_table.num_funcs = 1;
   b_table.func_ptrs = (OVMPTR *)malloc(sizeof(OVMPTR) * 2);
   b_table.func_ptrs[0] = 22;
   b_table.func_ptrs[1] = 29;
 
-  OVMOBJECT b;
+  OOBJECT b;
   b.base = NULL;
   b.funcs = b_table;
   b.vfuncs = NULL;
@@ -40,7 +40,7 @@ int main(int argc, const char *argv[])
 
   ovm_init();
 
-  OVMSTATE ovm = ovm_create(10, &exe, sizeof(exe), 100);
+  OSTATE ovm = ovm_create(10, &exe, sizeof(exe), 100);
 
   ovm_load_object(&ovm, b);
 
@@ -48,7 +48,7 @@ int main(int argc, const char *argv[])
 
   ovm_free(&ovm);
 
-  ovmobject_free(&b);
+  oobject_free(&b);
 
   return 0;
 }

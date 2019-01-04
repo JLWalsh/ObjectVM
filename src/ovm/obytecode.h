@@ -1,13 +1,13 @@
-#ifndef obytecode_H
-#define obytecode_H
+#ifndef OBYTECODE_H
+#define OBYTECODE_H
 
-#include "ovmstate.h"
+#include "ostate.h"
 #include <stdlib.h>
 
-void *obytecode_read(OVMSTATE *ovm, size_t read_size);
+void *obytecode_read(OSTATE *ovm, size_t read_size);
 
-OVMOP obytecode_read_op(OVMSTATE *ovm);
+OVMOP obytecode_read_op(OSTATE *ovm);
 
-OVMOP obytecode_read_uint(OVMSTATE *ovm);
+OVMOP obytecode_read_uint(OSTATE *ovm);
 
-#endif /* obytecode_H */
+#endif /* OBYTECODE_H */

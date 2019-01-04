@@ -50,4 +50,4 @@ OP_RETURN_VOID // Return control back to the instruction after the second OP_INV
 ### Short-term TODOs
 
 - Heap automatic resize
-- Properly implement flags in ovmmemory
+- Properly implement flags in omemory

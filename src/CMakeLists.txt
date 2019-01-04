@@ -1,22 +1,22 @@
 SET(OVM_LIB_SOURCES
-    ovm/ovmobject.h
-    ovm/ovmobject.c
-    ovm/ovmtypes.h
-    ovm/ovmstate.h
+    ovm/oobject.h
+    ovm/oobject.c
+    ovm/otypes.h
+    ovm/ostate.h
     ovm/ovm.h
     ovm/ovm.c
-    ovm/ovmstack.h
-    ovm/ovmstack.c
+    ovm/ostack.h
+    ovm/ostack.c
     ovm/obytecode.h
     ovm/obytecode.c
     ovm/oexecutor.h
     ovm/oexecutor.c
     ovm/oexecutor_int.h
     ovm/oexecutor_int.c
-    ovm/ovmmemory.h
-    ovm/ovmmemory.c
-    ovm/ovmmath.h
-    ovm/ovmmath.c
+    ovm/omemory.h
+    ovm/omemory.c
+    ovm/omath.h
+    ovm/omath.c
 )
 
 add_library(ovm-lib STATIC ${OVM_LIB_SOURCES})

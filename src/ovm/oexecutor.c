@@ -17,11 +17,11 @@ void oexecutor_init_all()
   EXECUTORS[OP_DUP] = oexecutor_dup;
 }
 
-void oexecutor_returnvoid(OVMSTATE *ovm) { ovm_return(ovm); }
+void oexecutor_returnvoid(OSTATE *ovm) { ovm_return(ovm); }
 
-void oexecutor_halt(OVMSTATE *ovm) { ovm_exit(ovm, 0); }
+void oexecutor_halt(OSTATE *ovm) { ovm_exit(ovm, 0); }
 
-void oexecutor_invoke(OVMSTATE *ovm)
+void oexecutor_invoke(OSTATE *ovm)
 {
   OVMUINT obj_id = obytecode_read_uint(ovm);
 #ifdef VM_STRICT_MODE
@@ -35,12 +35,12 @@ void oexecutor_invoke(OVMSTATE *ovm)
   OVMUINT num_args = obytecode_read_uint(ovm);
 
   OVMPTR bytecode_ptr =
-      ovmobject_resolve_method(&ovm->objects[obj_id], method_id);
+      oobject_resolve_method(&ovm->objects[obj_id], method_id);
 
   ovm_call(ovm, bytecode_ptr, num_args);
 }
 
-void oexecutor_invoke_super(OVMSTATE *ovm)
+void oexecutor_invoke_super(OSTATE *ovm)
 {
   OVMUINT obj_id = obytecode_read_uint(ovm);
 #ifdef VM_STRICT_MODE
@@ -54,33 +54,33 @@ void oexecutor_invoke_super(OVMSTATE *ovm)
   OVMUINT num_args = obytecode_read_uint(ovm);
 
   OVMPTR bytecode_ptr =
-      ovmobject_base_resolve_method(&ovm->objects[obj_id], method_id);
+      oobject_base_resolve_method(&ovm->objects[obj_id], method_id);
 
   ovm_call(ovm, bytecode_ptr, num_args);
 }
 
-void oexecutor_local_load(OVMSTATE *ovm)
+void oexecutor_local_load(OSTATE *ovm)
 {
   OVMUINT offset = obytecode_read_uint(ovm);
 
-  OVMSTACK_OBJECT local = ovmstack_at(&ovm->stack, ovm->frame_ptr + offset);
+  OSTACK_OBJECT local = ostack_at(&ovm->stack, ovm->frame_ptr + offset);
 
-  ovmstack_push(&ovm->stack, local);
+  ostack_push(&ovm->stack, local);
 }
 
-void oexecutor_new(OVMSTATE *ovm)
+void oexecutor_new(OSTATE *ovm)
 {
   OVMUINT obj_id = obytecode_read_uint(ovm);
-  OVMOBJECT obj = ovm->objects[obj_id];
+  OOBJECT obj = ovm->objects[obj_id];
 
-  OVMPTR obj_ref = ovmmemory_alloc(&ovm->memory, obj.mem_size);
+  OVMPTR obj_ref = omemory_alloc(&ovm->memory, obj.mem_size);
 
-  ovmstack_push(&ovm->stack, ovmstack_obj_of_ptr(obj_ref));
+  ostack_push(&ovm->stack, ostack_obj_of_ptr(obj_ref));
 }
 
-void oexecutor_dup(OVMSTATE *ovm)
+void oexecutor_dup(OSTATE *ovm)
 {
-  OVMSTACK_OBJECT so = ovmstack_top(&ovm->stack, 1);
+  OSTACK_OBJECT so = ostack_top(&ovm->stack, 1);
 
-  ovmstack_push(&ovm->stack, so);
+  ostack_push(&ovm->stack, so);
 }

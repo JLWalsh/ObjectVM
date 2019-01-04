@@ -1,5 +1,5 @@
-#ifndef OVMOPS_H
-#define OVMOPS_H
+#ifndef OOPS_H
+#define OOPS_H
 
 enum OVMOP {
   OP_HALT,
@@ -16,4 +16,4 @@ enum OVMOP {
   NUM_OF_OPS
 };
 
-#endif /* OVMOPS_H */
+#endif /* OOPS_H */

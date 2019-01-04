@@ -1,5 +1,5 @@
-#ifndef OVMTYPES_H
-#define OVMTYPES_H
+#ifndef OTYPES_H
+#define OTYPES_H
 
 #include <stdint.h>
 
@@ -9,4 +9,4 @@ typedef uint32_t OVMPTR;
 typedef uint8_t OVMOP;
 typedef uint16_t OVMUINT;
 
-#endif /* OVMTYPES_H */
+#endif /* OTYPES_H */

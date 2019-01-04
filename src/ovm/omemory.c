@@ -1,56 +1,49 @@
-#include "ovmmemory.h"
-#include "ovmflag.h"
+#include "omemory.h"
+#include "oflag.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
-OVMMEMORY ovmmemory_create(uint64_t start_size)
-{
+OMEMORY omemory_create(uint64_t start_size) {
   size_t chunk_headers_size = sizeof(OVMCHUNK);
   size_t full_size = chunk_headers_size + start_size;
 
-  char *ovmmemory_start = (char *)malloc(full_size + 1);
+  char *omemory_start = (char *)malloc(full_size + 1);
   OVMCHUNK *first_chunk =
-      (OVMCHUNK *)(ovmmemory_start + 1); // First byte is reserved for VM_NULL
+      (OVMCHUNK *)(omemory_start + 1); // First byte is reserved for VM_NULL
 
   first_chunk->previous = NULL;
   first_chunk->next = NULL;
   first_chunk->size = start_size;
   first_chunk->flags = 0;
 
-  OVMMEMORY heap;
+  OMEMORY heap;
   heap.size = start_size;
   heap.start = (char *)first_chunk;
 
   return heap;
 }
 
-void ovmmemory_free(OVMMEMORY *o)
-{
+void omemory_free(OMEMORY *o) {
   free(o->start - 1); // First byte is reserved for VM_NULL
 }
 
-OVMPTR ovmmemory_alloc(OVMMEMORY *o, uint64_t size)
-{
+OVMPTR omemory_alloc(OMEMORY *o, uint64_t size) {
   OVMCHUNK *current = (OVMCHUNK *)o->start;
 
-  while (current != NULL)
-  {
-    bool is_allocated = OVMFLAG_READ(current->flags, OVMCHUNK_FLAGS_ALLOCATED);
-    bool is_readonly = OVMFLAG_READ(current->flags, OVMCHUNK_FLAGS_READONLY);
+  while (current != NULL) {
+    bool is_allocated = OFLAG_READ(current->flags, OVMCHUNK_FLAGS_ALLOCATED);
+    bool is_readonly = OFLAG_READ(current->flags, OVMCHUNK_FLAGS_READONLY);
 
-    if (current->size >= size && !is_allocated && !is_readonly)
-    {
-      OVMPTR pointer = ovmmemory_ptr_of_chunk(o, current);
-      current->flags = OVMFLAG_ENABLE(current->flags, OVMCHUNK_FLAGS_ALLOCATED);
+    if (current->size >= size && !is_allocated && !is_readonly) {
+      OVMPTR pointer = omemory_ptr_of_chunk(o, current);
+      current->flags = OFLAG_ENABLE(current->flags, OVMCHUNK_FLAGS_ALLOCATED);
 
-      if (current->size > size + sizeof(OVMCHUNK))
-      {
+      if (current->size > size + sizeof(OVMCHUNK)) {
         OVMCHUNK *data_end =
             (OVMCHUNK *)((char *)current + sizeof(OVMCHUNK) + size);
 
-        if (current->next != NULL)
-        {
+        if (current->next != NULL) {
           current->next->previous = data_end;
         }
 
@@ -72,42 +65,36 @@ OVMPTR ovmmemory_alloc(OVMMEMORY *o, uint64_t size)
   return OVM_NULL;
 }
 
-void ovmmemory_dealloc(OVMMEMORY *o, OVMPTR value)
-{
-  OVMCHUNK *chunk = ovmmemory_ovmptr_to_chunk(o, value);
+void omemory_dealloc(OMEMORY *o, OVMPTR value) {
+  OVMCHUNK *chunk = omemory_ovmptr_to_chunk(o, value);
 
-  chunk->flags = OVMFLAG_DISABLE(chunk->flags, OVMCHUNK_FLAGS_ALLOCATED);
+  chunk->flags = OFLAG_DISABLE(chunk->flags, OVMCHUNK_FLAGS_ALLOCATED);
 }
 
-void *ovmmemory_at(OVMMEMORY *o, OVMPTR value)
-{
+void *omemory_at(OMEMORY *o, OVMPTR value) {
   char *chunk_start = &o->start[value];
   chunk_start += sizeof(OVMCHUNK);
 
   return (void *)chunk_start;
 }
 
-OVMPTR ovmmemory_ptr_of_chunk(OVMMEMORY *o, OVMCHUNK *chunk)
-{
+OVMPTR omemory_ptr_of_chunk(OMEMORY *o, OVMCHUNK *chunk) {
   OVMPTR offset_from_start = (char *)chunk - o->start;
 
   return offset_from_start;
 }
 
-OVMCHUNK *ovmmemory_ovmptr_to_chunk(OVMMEMORY *o, OVMPTR ptr)
-{
+OVMCHUNK *omemory_ovmptr_to_chunk(OMEMORY *o, OVMPTR ptr) {
   char *chunk_ptr = o->start + ptr;
 
   return (OVMCHUNK *)chunk_ptr;
 }
 
-OVMUINT ovmmemory_num_chunks(OVMMEMORY *o)
-{
+OVMUINT omemory_num_chunks(OMEMORY *o) {
   OVMUINT num_chunks = 0;
   OVMCHUNK *current = (OVMCHUNK *)o->start;
 
-  while (current != NULL)
-  {
+  while (current != NULL) {
     num_chunks++;
     current = current->next;
   }
@@ -115,15 +102,12 @@ OVMUINT ovmmemory_num_chunks(OVMMEMORY *o)
   return num_chunks;
 }
 
-void ovmmemory_dump(OVMMEMORY *o)
-{
+void omemory_dump(OMEMORY *o) {
   int chunk_counter = 0;
 
   OVMCHUNK *current = (OVMCHUNK *)o->start;
-  for (;;)
-  {
-    if (current == NULL)
-    {
+  for (;;) {
+    if (current == NULL) {
       break;
     }
 
@@ -131,8 +115,7 @@ void ovmmemory_dump(OVMMEMORY *o)
            current->size);
 
     char *data = (char *)current + sizeof(OVMCHUNK);
-    for (int i = 0; i < current->size; i++)
-    {
+    for (int i = 0; i < current->size; i++) {
       printf("%i\n", data[i]);
     }
     chunk_counter++;

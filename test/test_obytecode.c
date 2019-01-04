@@ -1,9 +1,9 @@
 #include <ovm/obytecode.h>
-#include <ovm/ovmstate.h>
+#include <ovm/ostate.h>
 #include <unity.h>
 
 char bytecode[] = {1, 2, 3, 4};
-OVMSTATE ovm;
+OSTATE ovm;
 
 void set_up() {
   ovm.bytecode = &bytecode;

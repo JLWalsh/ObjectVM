@@ -1,28 +1,28 @@
-#ifndef oexecutor_H
-#define oexecutor_H
+#ifndef OEXECUTOR_H
+#define OEXECUTOR_H
 
 #include "oexecutor_int.h"
-#include "ovmops.h"
-#include "ovmstate.h"
+#include "oops.h"
+#include "ostate.h"
 
-typedef void (*EXECUTOR)(OVMSTATE *ovm);
+typedef void (*EXECUTOR)(OSTATE *ovm);
 
 EXECUTOR EXECUTORS[NUM_OF_OPS];
 
 void oexecutor_init_all();
 
-void oexecutor_returnvoid(OVMSTATE *ovm);
+void oexecutor_returnvoid(OSTATE *ovm);
 
-void oexecutor_halt(OVMSTATE *ovm);
+void oexecutor_halt(OSTATE *ovm);
 
-void oexecutor_invoke(OVMSTATE *ovm);
+void oexecutor_invoke(OSTATE *ovm);
 
-void oexecutor_invoke_super(OVMSTATE *ovm);
+void oexecutor_invoke_super(OSTATE *ovm);
 
-void oexecutor_local_load(OVMSTATE *ovm);
+void oexecutor_local_load(OSTATE *ovm);
 
-void oexecutor_new(OVMSTATE *ovm);
+void oexecutor_new(OSTATE *ovm);
 
-void oexecutor_dup(OVMSTATE *ovm);
+void oexecutor_dup(OSTATE *ovm);
 
-#endif /* oexecutor_H */
+#endif /* OEXECUTOR_H */
