@@ -19,9 +19,8 @@ void ovmexecutor_ui_print(OVMSTATE *ovm)
 void ovmexecutor_ui_global_load(OVMSTATE *ovm)
 {
   OVMUINT offset = ovmbytecode_read_uint(ovm);
-  OVMCHUNK *obj_data_chunk = ovmmemory_ovmptr_to_chunk(&ovm->memory, ovm->this);
 
-  char *obj_data_ptr = ovmmemory_chunk_data_ptr(obj_data_chunk);
+  char *obj_data_ptr = ovmmemory_at(&ovm->memory, ovm->this);
 
   OVMUINT uint = *((OVMUINT *)&obj_data_ptr[offset]);
 
@@ -33,8 +32,7 @@ void ovmexecutor_ui_global_store(OVMSTATE *ovm)
   OVMUINT offset = ovmbytecode_read_uint(ovm);
   OVMUINT uint = ovmstack_pop(&ovm->stack).uint_val;
 
-  OVMCHUNK *obj_data_chunk = ovmmemory_ovmptr_to_chunk(&ovm->memory, ovm->this);
-  char *obj_data_ptr = ovmmemory_chunk_data_ptr(obj_data_chunk);
+  char *obj_data_ptr = ovmmemory_at(&ovm->memory, ovm->this);
 
   memcpy(&obj_data_ptr[offset], &uint, sizeof(OVMUINT));
 }

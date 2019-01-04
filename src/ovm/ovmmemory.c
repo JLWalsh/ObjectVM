@@ -1,68 +1,69 @@
 #include "ovmmemory.h"
-#include <malloc.h>
+#include "ovmflag.h"
 #include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 
-OVMMEMORY ovmmemory_create(uint64_t initial_size)
+OVMMEMORY ovmmemory_create(uint64_t start_size)
 {
-  OVMMEMORY m;
-  m.size = initial_size;
+  size_t chunk_headers_size = sizeof(OVMCHUNK);
+  size_t full_size = chunk_headers_size + start_size;
 
-  // Address 0 is reserved for OVM_NULL
-  m.start = (char *)malloc(initial_size + sizeof(OVMCHUNK) + 1);
+  char *ovmmemory_start = (char *)malloc(full_size + 1);
+  OVMCHUNK *first_chunk =
+      (OVMCHUNK *)(ovmmemory_start + 1); // First byte is reserved for VM_NULL
 
-  m.chunk_start = (OVMCHUNK *)(m.start + 1);
-  m.chunk_start->previous = NULL;
-  m.chunk_start->next = NULL;
-  m.chunk_start->size = initial_size;
-  m.chunk_start->flags = 0;
+  first_chunk->previous = NULL;
+  first_chunk->next = NULL;
+  first_chunk->size = start_size;
+  first_chunk->flags = 0;
 
-  return m;
+  OVMMEMORY heap;
+  heap.size = start_size;
+  heap.start = (char *)first_chunk;
+
+  return heap;
 }
 
-void ovmmemory_free(OVMMEMORY *m)
+void ovmmemory_free(OVMMEMORY *o)
 {
-  if (m->start != NULL)
-  {
-    free(m->start);
-
-    m->start = NULL;
-    m->size = 0;
-  }
+  free(o->start - 1); // First byte is reserved for VM_NULL
 }
 
-OVMPTR ovmmemory_alloc(OVMMEMORY *m, uint64_t size)
+OVMPTR ovmmemory_alloc(OVMMEMORY *o, uint64_t size)
 {
-  OVMCHUNK *current = m->chunk_start;
+  OVMCHUNK *current = (OVMCHUNK *)o->start;
 
   while (current != NULL)
   {
-    bool is_allocated = current->flags == 1;
+    bool is_allocated = OVMFLAG_READ(current->flags, OVMCHUNK_FLAGS_ALLOCATED);
+    bool is_readonly = OVMFLAG_READ(current->flags, OVMCHUNK_FLAGS_READONLY);
 
-    if (current->size >= size && !is_allocated)
+    if (current->size >= size && !is_allocated && !is_readonly)
     {
-      bool can_fragment = current->size - (size + sizeof(OVMCHUNK)) > 0;
+      OVMPTR pointer = ovmmemory_ptr_of_chunk(o, current);
+      current->flags = OVMFLAG_ENABLE(current->flags, OVMCHUNK_FLAGS_ALLOCATED);
 
-      if (can_fragment)
+      if (current->size > size + sizeof(OVMCHUNK))
       {
-        char *new_chunk_start = ovmmemory_chunk_data_ptr(current) + size;
-        OVMCHUNK *new_chunk = (OVMCHUNK *)new_chunk_start;
+        OVMCHUNK *data_end =
+            (OVMCHUNK *)((char *)current + sizeof(OVMCHUNK) + size);
 
-        new_chunk->previous = current;
-        new_chunk->next = current->next;
         if (current->next != NULL)
         {
-          current->next->previous = new_chunk;
+          current->next->previous = data_end;
         }
-        current->next = new_chunk;
 
-        new_chunk->size = current->size - sizeof(OVMCHUNK) - size;
-        new_chunk->flags = 0;
+        data_end->next = current->next;
+        data_end->previous = current;
+        current->next = data_end;
+
+        data_end->flags = 0;
+        data_end->size = current->size - sizeof(OVMCHUNK) - size;
         current->size = size;
       }
 
-      current->flags = 1;
-
-      return ovmmemory_chunk_to_ovmptr(m, current);
+      return pointer;
     }
 
     current = current->next;
@@ -71,32 +72,39 @@ OVMPTR ovmmemory_alloc(OVMMEMORY *m, uint64_t size)
   return OVM_NULL;
 }
 
-void ovmmemory_dealloc(OVMMEMORY *m, OVMPTR ptr)
+void ovmmemory_dealloc(OVMMEMORY *o, OVMPTR value)
 {
-  OVMCHUNK *c = ovmmemory_ovmptr_to_chunk(m, ptr);
-  c->flags = 0;
+  OVMCHUNK *chunk = ovmmemory_ovmptr_to_chunk(o, value);
+
+  chunk->flags = OVMFLAG_DISABLE(chunk->flags, OVMCHUNK_FLAGS_ALLOCATED);
 }
 
-char *ovmmemory_chunk_data_ptr(OVMCHUNK *c)
+void *ovmmemory_at(OVMMEMORY *o, OVMPTR value)
 {
-  return ((char *)c) + sizeof(OVMCHUNK);
+  char *chunk_start = &o->start[value];
+  chunk_start += sizeof(OVMCHUNK);
+
+  return (void *)chunk_start;
 }
 
-OVMPTR ovmmemory_chunk_to_ovmptr(OVMMEMORY *m, OVMCHUNK *c)
+OVMPTR ovmmemory_ptr_of_chunk(OVMMEMORY *o, OVMCHUNK *chunk)
 {
-  return (OVMPTR)((char *)c - m->start) + 1;
+  OVMPTR offset_from_start = (char *)chunk - o->start;
+
+  return offset_from_start;
 }
 
-OVMCHUNK *ovmmemory_ovmptr_to_chunk(OVMMEMORY *m, OVMPTR ptr)
+OVMCHUNK *ovmmemory_ovmptr_to_chunk(OVMMEMORY *o, OVMPTR ptr)
 {
-  return (OVMCHUNK *)(m->start + ptr - 1);
+  char *chunk_ptr = o->start + ptr;
+
+  return (OVMCHUNK *)chunk_ptr;
 }
 
-OVMUINT ovmmemory_num_chunks(OVMMEMORY *m)
+OVMUINT ovmmemory_num_chunks(OVMMEMORY *o)
 {
   OVMUINT num_chunks = 0;
-
-  OVMCHUNK *current = m->chunk_start;
+  OVMCHUNK *current = (OVMCHUNK *)o->start;
 
   while (current != NULL)
   {
@@ -107,15 +115,27 @@ OVMUINT ovmmemory_num_chunks(OVMMEMORY *m)
   return num_chunks;
 }
 
-void ovmmemory_dump(OVMMEMORY *m)
+void ovmmemory_dump(OVMMEMORY *o)
 {
-  OVMCHUNK *current = m->chunk_start;
-  int chunkid = 0;
-  while (current != NULL)
+  int chunk_counter = 0;
+
+  OVMCHUNK *current = (OVMCHUNK *)o->start;
+  for (;;)
   {
-    printf("Chunk #%i: size is %u, flag is %u. \n", chunkid, current->size,
-           current->flags);
-    chunkid++;
+    if (current == NULL)
+    {
+      break;
+    }
+
+    printf("Chunk #%i (Flag: %i, size: %i):\n", chunk_counter, current->flags,
+           current->size);
+
+    char *data = (char *)current + sizeof(OVMCHUNK);
+    for (int i = 0; i < current->size; i++)
+    {
+      printf("%i\n", data[i]);
+    }
+    chunk_counter++;
     current = current->next;
   }
 }
