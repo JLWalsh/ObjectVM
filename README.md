@@ -41,6 +41,9 @@ OP_UI_PRINT, // Print it. This consumes the value.
 OP_RETURN_VOID // Return control back to the instruction after the second OP_INVOKE
 ```
 
+### Notes
+- All numeric values are represented in the big endian format
+
 
 ### Short-term TODOs
 
