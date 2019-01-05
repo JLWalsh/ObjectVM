@@ -7,6 +7,7 @@
 
 typedef union ODICTIONARY_VALUE_T {
   OVM_UINT uint_val;
+  void *ptr_val;
 } ODICTIONARY_VALUE;
 
 typedef struct ODICTIONARY_ENTRY_T

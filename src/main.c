@@ -34,8 +34,7 @@ int main(int argc, const char *argv[])
   OOBJECT b;
   b.base = NULL;
   b.funcs = b_table;
-  b.vfuncs = NULL;
-  b.num_vfunc_tables = 0;
+  // b.vfuncs = odictionary_create()
   b.mem_size = sizeof(OVM_UINT);
 
   ovm_init();
