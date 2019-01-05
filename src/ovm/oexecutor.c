@@ -65,6 +65,11 @@ void oexecutor_invoke_super(OSTATE *ovm) {
   ovm_call(ovm, bytecode_ptr, num_args);
 }
 
+void oexecutor_call(OSTATE *ovm) {
+  OVM_PTR bytecode_ptr = obytecode_read_uint(ovm);
+  OVM_PTR num_args = obytecode_read_uint(ovm);
+}
+
 void oexecutor_local_load(OSTATE *ovm) {
   OVM_UINT offset = obytecode_read_uint(ovm);
 
