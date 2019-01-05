@@ -3,6 +3,21 @@
 
 An object-oriented bytecode virtual machine, inspired by the JVM.
 
+### Roadmap
+Since this is a fairly big project to undertake, this project has been split into a couple parts:
+
+1. Finalize object mechanics. 
+    - Includes figuring out inheritance, interfaces, etc. For now, context binding (this) works!
+2. Implement automatic memory management. 
+    - Includes a mark and sweep GC, memory compaction (to prevent fragmentation), and automatic reference updating (due to the VM moving objects around in memory).
+3. Bytecode parsing.
+    - The VM needs to be able to load a program from a file in order to be remotely useful!
+    - As of now, the VM only knows about certain objects declared in code. Eventually, the VM will need to be able to load objects from a file instead, similar to what the JVM does with .class files. 
+4. More instructions.
+    - Native string support
+    - Instructions to perform operations on ints, floats, etc.
+    - More types: ints, floats, strings, longs, ulongs, etc.
+
 ### Example program
 Suppose the class B is represented as:
 ```java
