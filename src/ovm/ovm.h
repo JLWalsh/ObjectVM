@@ -23,4 +23,6 @@ void ovm_return(OSTATE *ovm);
 
 void ovm_exit(OSTATE *ovm, OVM_UINT exit_code);
 
+OOBJECT *ovm_object_at(OSTATE *ovm, OVM_PTR obj_ptr);
+
 #endif /* OVM_H */

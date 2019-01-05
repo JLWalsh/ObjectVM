@@ -12,7 +12,8 @@ OSTATE ovm_create(uint16_t stack_size, char *bytecode, uint64_t bytecode_length,
   OSTATE ovm;
   ovm.num_objects = 0;
   ovm.objects = NULL;
-  ovm.this = OVM_NULL;
+  ovm.this_ref = OVM_NULL;
+  ovm.this_obj = NULL;
   ovm.stack = ostack_create(stack_size);
   ovm.frame_ptr = 0;
 
@@ -57,18 +58,20 @@ void ovm_call(OSTATE *ovm, OVM_PTR bytecode_ptr, OVM_UINT num_args) {
   ovm->bytecode_ptr = bytecode_ptr;
   ovm->frame_ptr = ostack_ptr(&ovm->stack) - num_args;
 
-  OVM_PTR this = ostack_top(&ovm->stack, num_args + 1).ptr_val;
+  OVM_PTR this_ref = ostack_top(&ovm->stack, num_args + 1).ptr_val;
 
   ostack_push(&ovm->stack, ostack_obj_of_uint(num_args));
   ostack_push(&ovm->stack, ostack_obj_of_ptr(return_ptr));
   ostack_push(&ovm->stack, ostack_obj_of_ptr(frame_ptr));
-  ostack_push(&ovm->stack, ostack_obj_of_ptr(ovm->this));
+  ostack_push(&ovm->stack, ostack_obj_of_ptr(ovm->this_ref));
 
-  ovm->this = this;
+  ovm->this_ref = this_ref;
+  ovm->this_obj = ovm_object_at(ovm, this_ref);
 }
 
 void ovm_return(OSTATE *ovm) {
-  ovm->this = ostack_pop(&ovm->stack).ptr_val;
+  ovm->this_ref = ostack_pop(&ovm->stack).ptr_val;
+  ovm->this_obj = ovm_object_at(ovm, ovm->this_ref);
   ovm->frame_ptr = ostack_pop(&ovm->stack).ptr_val;
   ovm->bytecode_ptr = ostack_pop(&ovm->stack).ptr_val;
 
@@ -83,4 +86,11 @@ void ovm_exit(OSTATE *ovm, OVM_UINT exit_code) {
   printf("OVM halted with exit code %u.\n", exit_code);
 
   exit(exit_code);
+}
+
+OOBJECT *ovm_object_at(OSTATE *ovm, OVM_PTR obj_ptr) {
+  void *obj_data_ptr = omemory_at(&ovm->memory, obj_ptr);
+  OVM_UINT obj_id = oobject_data_get_id(obj_data_ptr);
+
+  return &ovm->objects[obj_id];
 }

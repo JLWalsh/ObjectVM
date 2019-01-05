@@ -4,8 +4,7 @@
 #include <ovm/ovm.h>
 #include <stdio.h>
 
-int main(int argc, const char *argv[])
-{
+int main(int argc, const char *argv[]) {
   char exe[] = {                  // MAIN
                 OP_NEW, 0, 0,     // B is type 0
                 OP_DUP,           // REF REF
@@ -34,6 +33,7 @@ int main(int argc, const char *argv[])
   OOBJECT b;
   b.base = NULL;
   b.funcs = b_table;
+  b.obj_id = 0;
   // b.vfuncs = odictionary_create()
   b.mem_size = sizeof(OVM_UINT);
 
