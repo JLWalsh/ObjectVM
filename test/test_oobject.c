@@ -53,7 +53,7 @@ void test_oobject_should_resolve_interface_method()
   o.vfuncs = &vfunc_tables;
   o.num_vfunc_tables = 2;
 
-  OVM_PTR resolved_ptr = oobject_interface_resolve_method(&o, 1, 2);
+  OVM_PTR resolved_ptr = oobject_virtual_resolve_method(&o, 1, 2);
 
   TEST_ASSERT_EQUAL_INT(30, resolved_ptr);
 }
@@ -87,7 +87,7 @@ void test_strict_oobject_resolve_interface_should_return_null_given_non_existing
   o.vfuncs = &vfunc_tables;
   o.num_vfunc_tables = 1;
 
-  OVM_PTR resolved_ptr = oobject_interface_resolve_method(&o, 1, 2);
+  OVM_PTR resolved_ptr = oobject_virtual_resolve_method(&o, 1, 2);
 
   TEST_ASSERT_EQUAL_INT(OVM_NULL, resolved_ptr);
 }
@@ -101,7 +101,7 @@ void test_strict_oobject_resolve_interface_should_return_null_given_non_existing
   o.vfuncs = &vfunc_tables;
   o.num_vfunc_tables = 1;
 
-  OVM_PTR resolved_ptr = oobject_interface_resolve_method(&o, 0, 5);
+  OVM_PTR resolved_ptr = oobject_virtual_resolve_method(&o, 0, 5);
 
   TEST_ASSERT_EQUAL_INT(OVM_NULL, resolved_ptr);
 }

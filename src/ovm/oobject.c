@@ -25,22 +25,9 @@ OVM_PTR oobject_base_resolve_method(OOBJECT *o, OVM_UINT method_id)
   return oobject_resolve_method(o->base, method_id);
 }
 
-OVM_PTR oobject_interface_resolve_method(OOBJECT *o, OVM_UINT interface_id,
-                                         OVM_UINT method_id)
+OVM_PTR oobject_virtual_resolve_method(OOBJECT *o, OVM_UINT vinterface_id,
+                                       OVM_UINT method_id)
 {
-#ifdef VM_STRICT_MODE
-  if (interface_id >= o->num_vfunc_tables)
-  {
-    return OVM_NULL;
-  }
-
-  if (method_id >= o->vfuncs[interface_id].num_funcs)
-  {
-    return OVM_NULL;
-  }
-#endif
-
-  return o->vfuncs[interface_id].func_ptrs[method_id];
 }
 
 void oobject_free(OOBJECT *o)

@@ -17,6 +17,8 @@ SET(OVM_LIB_SOURCES
     ovm/omemory.c
     ovm/omath.h
     ovm/omath.c
+    ovm/odictionary.h
+    ovm/odictionary.c
 )
 
 add_library(ovm-lib STATIC ${OVM_LIB_SOURCES})
