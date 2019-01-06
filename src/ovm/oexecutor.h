@@ -11,6 +11,8 @@ EXECUTOR EXECUTORS[NUM_OF_OPS];
 
 void oexecutor_init_all();
 
+void oexecutor_return(OSTATE *ovm);
+
 void oexecutor_return_void(OSTATE *ovm);
 
 void oexecutor_halt(OSTATE *ovm);

@@ -5,6 +5,8 @@
 void oexecutor_init_all()
 {
   EXECUTORS[OP_INVOKE] = oexecutor_invoke;
+  EXECUTORS[OP_INVOKE_STATIC] = oexecutor_invoke_static;
+  EXECUTORS[OP_RETURN] = oexecutor_return;
   EXECUTORS[OP_RETURN_VOID] = oexecutor_return_void;
   EXECUTORS[OP_UI_PUSH] = oexecutor_ui_push;
   EXECUTORS[OP_UI_PRINT] = oexecutor_ui_print;
@@ -14,6 +16,15 @@ void oexecutor_init_all()
   EXECUTORS[OP_NEW] = oexecutor_new;
   EXECUTORS[OP_LOCAL_LOAD] = oexecutor_local_load;
   EXECUTORS[OP_DUP] = oexecutor_dup;
+}
+
+void oexecutor_return(OSTATE *ovm)
+{
+  OSTACK_OBJECT return_val = ostack_pop(&ovm->stack);
+
+  ovm_return(ovm);
+
+  ostack_push(&ovm->stack, return_val);
 }
 
 void oexecutor_return_void(OSTATE *ovm) { ovm_return(ovm); }
