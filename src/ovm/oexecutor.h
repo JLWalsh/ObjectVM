@@ -19,9 +19,7 @@ void oexecutor_invoke(OSTATE *ovm);
 
 void oexecutor_invoke_virtual(OSTATE *ovm);
 
-void oexecutor_invoke_super(OSTATE *ovm);
-
-void oexecutor_call(OSTATE *ovm);
+void oexecutor_invoke_static(OSTATE *ovm);
 
 void oexecutor_local_load(OSTATE *ovm);
 
