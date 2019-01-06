@@ -27,6 +27,8 @@ OSTACK_OBJECT ostack_top(OSTACK *s, uint8_t offset);
 
 OSTACK_OBJECT ostack_at(OSTACK *s, OVM_PTR ptr);
 
+void ostack_to_index(OSTACK *s, OVM_PTR index);
+
 OVM_PTR ostack_ptr(OSTACK *s);
 
 OSTACK_OBJECT ostack_obj_of_ptr(OVM_PTR ptr_val);

@@ -1,12 +1,12 @@
 #ifndef OOPS_H
 #define OOPS_H
 
-enum OVM_OP
-{
+enum OVM_OP {
   OP_HALT,
   OP_NEW,
   OP_INVOKE,
   OP_INVOKE_STATIC,
+  OP_INVOKE_VIRTUAL,
   OP_RETURN_VOID,
   OP_RETURN,
   OP_UI_PUSH,
