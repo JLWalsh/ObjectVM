@@ -10,7 +10,6 @@
 typedef struct OSTATE_T {
   OOBJECT *objects;
   uint8_t num_objects;
-  OVM_PTR this;
   OVM_PTR bytecode_ptr;
   char *bytecode;
   uint64_t bytecode_length;

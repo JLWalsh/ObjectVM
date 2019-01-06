@@ -11,13 +11,17 @@ EXECUTOR EXECUTORS[NUM_OF_OPS];
 
 void oexecutor_init_all();
 
-void oexecutor_returnvoid(OSTATE *ovm);
+void oexecutor_return(OSTATE *ovm);
+
+void oexecutor_return_void(OSTATE *ovm);
 
 void oexecutor_halt(OSTATE *ovm);
 
 void oexecutor_invoke(OSTATE *ovm);
 
-void oexecutor_invoke_super(OSTATE *ovm);
+void oexecutor_invoke_virtual(OSTATE *ovm);
+
+void oexecutor_invoke_static(OSTATE *ovm);
 
 void oexecutor_local_load(OSTATE *ovm);
 
