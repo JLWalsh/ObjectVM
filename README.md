@@ -19,7 +19,7 @@ Since this is a fairly big project to undertake, this project has been split int
     - More types: ints, floats, strings, longs, ulongs, etc.
 
 ### Example program
-Suppose the class B is represented as:
+Suppose the class B is represented as (java):
 ```java
 class B {
 
@@ -35,6 +35,7 @@ class B {
 }
 ```
 
+Then the corrosponding program for ObjectVM would be:
 
 ```
 // Main (this = NULL)
@@ -64,5 +65,5 @@ OP_RETURN_VOID // Return control back to the instruction after the second OP_INV
 
 ### Short-term TODOs
 
-- Heap automatic resize
-- Properly implement flags in omemory
+* [ ] Heap automatic resize
+* [ ] Properly implement flags in omemory
