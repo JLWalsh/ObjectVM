@@ -35,6 +35,7 @@ class B {
 }
 ```
 
+Then the corrosponding program for ObjectVM would be:
 
 ```
 // Main (this = NULL)
