@@ -1,5 +1,5 @@
 #include "ostack.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 OSTACK ostack_create(uint16_t initial_size)
 {

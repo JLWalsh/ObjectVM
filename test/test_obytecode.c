@@ -49,8 +49,9 @@ void test_obytecode_read_uint_should_read_uint() {
   TEST_ASSERT_EQUAL_UINT(6, uint);
 }
 
-void main(void) {
+int main(void) {
   set_up();
+  
   UNITY_BEGIN();
 
   RUN_TEST(test_obytecode_read_should_advance_bytecode_ptr_by_read_size);

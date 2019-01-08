@@ -1,4 +1,4 @@
-#include <malloc.h>
+#include <stdlib.h>
 #include <ovm/omemory.h>
 #include <ovm/oops.h>
 #include <ovm/ovm.h>

@@ -1,5 +1,5 @@
 #include "odictionary.h"
-#include <malloc.h>
+#include <stdlib.h>
 
 ODICTIONARY odictionary_create(uint8_t max_entries)
 {
