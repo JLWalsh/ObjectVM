@@ -6,74 +6,93 @@
 
 int main(int argc, const char *argv[])
 {
+    // Gas Engine has id 0
+    // Engine had id 1
+    char exe[] = {
+        0, // Byte 0 is reserved for OVM_NULL
+        // MAIN
+        OP_NEW, 0, 0, // GasEngine type = 0
+        OP_DUP, OP_UI_PUSH, 0, 3,
+        // Invoke GasEngine (0) :: New (0) with 1 argument
+        OP_INVOKE_VIRTUAL, 0, 0, 0, 0, 0, 1,
+        // Invoke PrintEngineStats with 1 argument
+        OP_INVOKE_STATIC, 0, 21, 0, 1, OP_HALT,
 
-  char exe[] = {
-      // MAIN
-      OP_NEW, 0, 0, // GasEngine type = 0
-      OP_DUP, OP_UI_PUSH, 0, 3,
-      // Invoke GasEngine (0) :: New (0) with 1 argument
-      OP_INVOKE, 0, 0, 0, 0, 0, 1,
-      // Invoke PrintEngineTorque with 1 argument
-      OP_INVOKE_STATIC, 0, 20, 0, 1,
-      OP_HALT,
+        // PRINTENGINESTATS 21
+        OP_LOCAL_LOAD, 0, 0, // Load engine reference
+        // Invoke Engine (interface #1) :: GetTorque (0) with 0 args
+        OP_INVOKE_VIRTUAL, 0, 1, 0, 0, 0, 0, OP_UI_PRINT,
+        // Invoke Engine (interface #1) :: PrintSerialCode (1) with 0 args
+        OP_INVOKE_VIRTUAL, 0, 1, 0, 1, 0, 0, OP_RETURN_VOID,
 
-      // PRINTENGINETORQUE
-      OP_LOCAL_LOAD, 0, 0, // Load engine reference
-      // Invoke Engine (interface #0) :: GetTorque (0) with 0 args
-      OP_INVOKE_VIRTUAL, 0, 0, 0, 0, 0, 0,
-      OP_UI_PRINT,
-      OP_RETURN_VOID,
+        // GASENGINE::NEW 40
+        OP_LOCAL_LOAD, 0, 1,      // Load torque variable. Note that variable #0 is the
+                                  // object's reference when doing non-static invoke
+        OP_UI_GLOBAL_STORE, 0, 0, // Store that at memory space 0
+        OP_RETURN_VOID,
 
-      // GASENGINE::NEW
-      OP_LOCAL_LOAD, 0, 1,      // Load torque variable. Note that variable #0 is the
-                                // object's reference when doing non-static invoke
-      OP_UI_GLOBAL_STORE, 0, 0, // Store that at memory space 0
-      OP_RETURN_VOID,
+        // GASENGINE::GETTORQUE 47
+        OP_UI_GLOBAL_LOAD, 0, 0, // Load torque variable from object's memory
+        OP_RETURN,
 
-      // GASENGINE::GETTORQUE
-      OP_UI_GLOBAL_LOAD, 0, 0, // Load torque variable from object's memory
-      OP_RETURN};
+        // GASENGINE::PRINTSERIALCODE 51
+        OP_UI_PUSH, 0, 5, OP_UI_PRINT, OP_RETURN_VOID,
 
-  OOBJECT_FUNC_TABLE gas_engine_funcs;
-  gas_engine_funcs.func_ptrs = (OVM_PTR *)malloc(sizeof(OVM_PTR) * 1);
-  gas_engine_funcs.func_ptrs[0] = 32;
-  gas_engine_funcs.num_funcs = 1; // GasEngine::New. GasEngine::GetTorque is
-                                  // stored in the vfunc table instead
+        // ENGINE::PRINTSERIALCODE 56
+        OP_UI_PUSH, 0, 10, OP_UI_PRINT, OP_RETURN_VOID};
 
-  OOBJECT_FUNC_TABLE gas_engine_vfuncs_for_engine;
-  gas_engine_vfuncs_for_engine.func_ptrs =
-      (OVM_PTR *)malloc(sizeof(OVM_PTR) * 1);
-  gas_engine_vfuncs_for_engine.func_ptrs[0] = 39;
-  gas_engine_vfuncs_for_engine.num_funcs = 1; //  GasEngine::GetTorque
+    OOBJECT_FUNC_TABLE engine_funcs = {.func_ptrs = odictionary_create(1)};
+    ofunc_table_register_method(&engine_funcs, 0, 55); // Engine::PrintSerialCode
 
-  OOBJECT gas_engine;
-  gas_engine.obj_id = 0;
-  gas_engine.funcs = gas_engine_funcs;
-  gas_engine.mem_size =
-      sizeof(OVM_UINT); // Gas engine stores only 1 value, the torque variable
-  gas_engine.base = NULL;
-  gas_engine.vfuncs = odictionary_create(1);
+    OOBJECT engine;
+    engine.base = NULL;
+    engine.mem_size = 0;
+    engine.obj_id = 1;
+    engine.vfuncs = odictionary_create(1);
 
-  ODICTIONARY_VALUE interface_key = {.uint_val =
-                                         0}; // Engine interface has id 0
-  ODICTIONARY_VALUE value = {.ptr_val = &gas_engine_vfuncs_for_engine};
-  odictionary_set(&gas_engine.vfuncs, interface_key, value);
+    oobject_register_interface(&engine, 1, &engine_funcs); // Engine has id 1
 
-  ovm_init();
+    OOBJECT_FUNC_TABLE gas_engine_funcs = {.func_ptrs = odictionary_create(1)};
+    // GasEngine::New. GasEngine::GetTorque is
+    // stored in the vfunc table instead
+    ofunc_table_register_method(&gas_engine_funcs, 0, 40);
 
-  OSTATE ovm = ovm_create(10, &exe, sizeof(exe), 100);
+    OOBJECT_FUNC_TABLE gas_engine_vfuncs_for_engine = {.func_ptrs =
+                                                           odictionary_create(2)};
+    // GasEngine::PrintSerialCode overrides Engine::PrintSerialCode
+    ofunc_table_register_method(&gas_engine_vfuncs_for_engine, 1,
+                                51); // GasEngine::PrintSerialCode
+    ofunc_table_register_method(&gas_engine_vfuncs_for_engine, 0,
+                                47); // GasEngine::GetTorque
 
-  ovm_load_object(&ovm, gas_engine);
+    OOBJECT gas_engine;
+    gas_engine.obj_id = 0;
+    gas_engine.mem_size =
+        sizeof(OVM_UINT); // Gas engine stores only 1 value, the torque variable
+    gas_engine.base = &engine;
+    gas_engine.vfuncs = odictionary_create(2);
 
-  ovm_run(&ovm);
+    oobject_register_interface(&gas_engine, 0,
+                               &gas_engine_funcs); // Gas engine has id 0
+    oobject_register_interface(&gas_engine, 1,
+                               &gas_engine_vfuncs_for_engine); // Engine has id 1
 
-  ovm_free(&ovm);
+    ovm_init();
 
-  oobject_free(&gas_engine);
+    OSTATE ovm = ovm_create(30, &exe, sizeof(exe), 100);
 
-  free(gas_engine_funcs.func_ptrs);
-  free(gas_engine_vfuncs_for_engine.func_ptrs);
-  return 0;
+    ovm_load_object(&ovm, gas_engine);
+
+    ovm_run(&ovm);
+
+    ovm_free(&ovm);
+
+    oobject_free(&gas_engine);
+
+    odictionary_free(&gas_engine_funcs.func_ptrs);
+    odictionary_free(&gas_engine_vfuncs_for_engine.func_ptrs);
+    odictionary_free(&engine_funcs.func_ptrs);
+    return 0;
 }
 
 // Static call & function calling test program. Should print 2

@@ -30,7 +30,10 @@ target_include_directories(ovm-lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(ovm-lib-strict PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(ovm main.c)
+add_executable(ovm-strict main.c)
+
 target_link_libraries(ovm ovm-lib)
+target_link_libraries(ovm-strict ovm-lib-strict)
 
 TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
 

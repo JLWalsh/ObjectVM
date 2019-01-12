@@ -17,8 +17,6 @@ void oexecutor_return_void(OSTATE *ovm);
 
 void oexecutor_halt(OSTATE *ovm);
 
-void oexecutor_invoke(OSTATE *ovm);
-
 void oexecutor_invoke_virtual(OSTATE *ovm);
 
 void oexecutor_invoke_static(OSTATE *ovm);

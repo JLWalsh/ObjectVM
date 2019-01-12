@@ -7,18 +7,17 @@
 
 typedef union ODICTIONARY_VALUE_T {
   OVM_UINT uint_val;
+  OVM_PTR ovm_ptr_val;
   void *ptr_val;
 } ODICTIONARY_VALUE;
 
-typedef struct ODICTIONARY_ENTRY_T
-{
+typedef struct ODICTIONARY_ENTRY_T {
   ODICTIONARY_VALUE key;
   ODICTIONARY_VALUE value;
   bool is_used;
 } ODICTIONARY_ENTRY;
 
-typedef struct ODICTIONARY_T
-{
+typedef struct ODICTIONARY_T {
   ODICTIONARY_ENTRY *records;
   uint8_t num_entries;
   uint8_t max_entries;
