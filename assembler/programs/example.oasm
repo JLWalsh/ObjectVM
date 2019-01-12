@@ -1,0 +1,41 @@
+// This is a comment
+
+#abstract class Engine::
+
+    #PrintSerialCode::
+        OP_UI_PUSH 10
+        OP_UI_PRINT
+        OP_S_PUSH
+        OP_RETURN_VOID
+
+    #abstract GetTorque;
+
+#class GasEngine -> Engine::
+
+    #New(1)::
+        OP_LOCAL_LOAD 1
+        OP_UI_GLOBAL_STORE 0
+        OP_RETURN_VOID
+
+    #PrintSerialCode::
+        OP_UI_PUSH 5
+        OP_UI_PRINT
+        OP_RETURN_VOID
+
+    #Engine::GetTorque::
+        OP_UI_GLOBAL_LOAD 0
+        OP_RETURN
+
+#static PrintEngineStats(1)::
+    OP_LOCAL_LOAD 0
+    OP_INVOKE_VIRTUAL Engine::GetTorque
+    OP_UI_PRINT
+    OP_INVOKE_VIRTUAL Engine::PrintSerialCode
+
+#Main::
+    OP_NEW GasEngine
+    OP_DUP
+    OP_UI_PUSH 3
+    OP_INVOKE_VIRTUAL GasEngine::New
+    OP_INVOKE_STATIC PrintEngineStats
+    OP_HALT
