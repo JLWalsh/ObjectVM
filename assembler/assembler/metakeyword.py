@@ -7,3 +7,4 @@ class MetaKeyword(Enum):
     INTERFACE = 2
     STATIC = 3
     WORD = 5
+    UNKNOWN = 6

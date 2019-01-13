@@ -1,5 +1,5 @@
-from linetokenizer import LineTokenizer
 from lexeme import Lexeme, LexemeType
+from linetokenizer import LineTokenizer
 
 
 def test_should_parse_one_word():

@@ -12,7 +12,10 @@ class KeywordParser:
 
     def parse(self, lexeme: Lexeme) -> MetaKeyword:
         if lexeme.parsed_value not in self.keywords:
-            return MetaKeyword.WORD
+            if lexeme.lexeme_type == LexemeType.WORD:
+                return MetaKeyword.WORD
+            else:
+                return MetaKeyword.UNKNOWN
 
         return self.keywords[lexeme.parsed_value]
 
@@ -49,16 +52,31 @@ class MetaInstructionParser:
             raise ValueError("Instruction should either be a class declaration or a function declaration")
 
     def __parse_func_declaration(self) -> FunctionDeclaration:
-        func_declaration = FunctionDeclaration()
-
         if not self.__match_lexeme(LexemeType.BODY_DECLARATION):
             raise ValueError("Function declaration should be followed by ::")
 
         if self.__match_keyword(MetaKeyword.WORD):
-            func_declaration.with_name(self.lexemes[3].parsed_value)  # If is class func (Class::Method::)
-            func_declaration.with_class_name(self.lexemes[1].parsed_value)
+            return self.__parse_class_func_declaration()
         else:
-            func_declaration.with_name(self.lexemes[1].parsed_value)  # If is static classless (Method::)
+            return self.__parse_classless_func_declaration()
+
+    def __parse_classless_func_declaration(self) -> FunctionDeclaration:
+        func_declaration = FunctionDeclaration()
+        func_declaration.with_name(self.lexemes[1].parsed_value)  # If is static classless (Method::)
+
+        if self.__match_lexeme(LexemeType.LEFT_PAREN):
+            settings = self.__parse_func_settings()
+            func_declaration.with_settings(settings)
+
+        if not self.__is_at_end():
+            raise ValueError("Classless function declaration has excess parameters")
+
+        return func_declaration
+
+    def __parse_class_func_declaration(self) -> FunctionDeclaration:
+        func_declaration = FunctionDeclaration()
+        func_declaration.with_name(self.lexemes[3].parsed_value)  # If is class func (Class::Method::)
+        func_declaration.with_class_name(self.lexemes[1].parsed_value)
 
         if self.__match_lexeme(LexemeType.BODY_DECLARATION):
             if not self.__match_lexeme(LexemeType.LEFT_PAREN):
@@ -66,6 +84,9 @@ class MetaInstructionParser:
 
             settings = self.__parse_func_settings()
             func_declaration.with_settings(settings)
+
+        if not self.__is_at_end():
+            raise ValueError("Function declaration has excess parameters")
 
         return func_declaration
 
@@ -107,7 +128,7 @@ class MetaInstructionParser:
 
     def __parse_class_implementations(self) -> List[str]:
         implementations = []
-        while not self.__is_at_end() and not self.__peek().lexeme_type != LexemeType.RIGHT_PAREN:
+        while not self.__is_at_end() and self.__peek().lexeme_type != LexemeType.RIGHT_PAREN:
             class_name = self.__match_keyword(MetaKeyword.WORD)
 
             if not class_name:

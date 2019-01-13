@@ -10,3 +10,6 @@ pytest = "*"
 
 [requires]
 python_version = "2.7"
+
+[scripts]
+test = "pipenv run python3 -m pytest --cov=src test/"

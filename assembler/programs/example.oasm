@@ -8,7 +8,7 @@
         OP_S_PUSH "Hello, world"
         OP_RETURN_VOID
 
-    #Engine::GetTorque(abstract)
+    #Engine::GetTorque::(abstract)
 
 #interface Doot
 
