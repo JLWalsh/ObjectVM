@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from lexeme import Lexeme, LexemeType
-from metainstruction import FunctionDeclaration, FunctionDeclarationSetting, ClassDeclaration
+from metainstruction import FunctionDeclaration, FunctionDeclarationSetting, ClassDeclaration, InterfaceDeclaration
 from metakeyword import MetaKeyword
 
 
@@ -11,12 +11,10 @@ class KeywordParser:
         self.keywords = keywords
 
     def parse(self, lexeme: Lexeme) -> MetaKeyword:
-        keyword = self.keywords[lexeme.parsed_value]
-
-        if keyword is None:
+        if lexeme.parsed_value not in self.keywords:
             return MetaKeyword.WORD
 
-        return keyword
+        return self.keywords[lexeme.parsed_value]
 
     @staticmethod
     def default():
@@ -45,6 +43,8 @@ class MetaInstructionParser:
             return self.__parse_class_declaration()
         elif self.__match_keyword(MetaKeyword.WORD):
             return self.__parse_func_declaration()
+        elif self.__match_keyword(MetaKeyword.INTERFACE):
+            return self.__parse_interface_declaration()
         else:
             raise ValueError("Instruction should either be a class declaration or a function declaration")
 
@@ -117,6 +117,14 @@ class MetaInstructionParser:
 
         return implementations
 
+    def __parse_interface_declaration(self):
+        name = self.__match_lexeme(LexemeType.WORD)
+
+        if name is None:
+            raise ValueError("Interface declaration should be followed by interface name")
+
+        return InterfaceDeclaration(name)
+
     def __match_keyword(self, wanted_keyword: MetaKeyword):
         keyword = self.keyword_parser.parse(self.__peek())
 
@@ -128,7 +136,7 @@ class MetaInstructionParser:
     def __match_lexeme(self, wanted_lexeme: LexemeType):
         lexeme = self.__peek()
 
-        if lexeme.lexeme_type == wanted_lexeme:
+        if lexeme is not None and lexeme.lexeme_type == wanted_lexeme:
             return self.__advance()
 
         return False

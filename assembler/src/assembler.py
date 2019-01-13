@@ -13,7 +13,9 @@ def main():
 
     parser = Parser(source)
     tokens = parser.parse()
-    print(tokens)
+
+    for token in tokens:
+        print(token)
 
     errors = parser.get_errors()
     for error in errors:

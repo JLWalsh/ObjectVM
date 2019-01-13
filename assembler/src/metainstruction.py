@@ -36,3 +36,9 @@ class ClassDeclaration:
 
     def with_implementations(self, implementations: List[str]):
         self.implementations = implementations
+
+
+class InterfaceDeclaration:
+
+    def __init__(self, name: str):
+        self.name = name

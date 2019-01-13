@@ -42,13 +42,18 @@ class Parser:
                 lexemes = LineTokenizer(line).tokenize()
 
                 parsed_line = self.__parse_line(lexemes)
-                parsed_lines.append(parsed_line)
+
+                if parsed_line is not None:
+                    parsed_lines.append(parsed_line)
             except Exception as e:
                 self.__append_error(e)
 
         return parsed_lines
 
     def __parse_line(self, lexemes: List[Lexeme]):
+        if len(lexemes) == 0:
+            return None
+
         try:
             if self.__is_line_meta(lexemes):
                 return MetaInstructionParser(lexemes).parse()
