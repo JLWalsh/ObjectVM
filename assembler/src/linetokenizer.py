@@ -32,8 +32,6 @@ class LineTokenizer:
                 self.__push_single_char(char, LexemeType.RIGHT_PAREN)
             elif char == Chars.COLON.value:
                 self.__parse_body_declaration()
-            elif char == Chars.DASH.value:
-                self.__parse_implementation()
             elif char == Chars.WHITESPACE.value:
                 continue
             elif char == Chars.COMMENT.value and self.__peek() == Chars.COMMENT.value:
@@ -55,16 +53,6 @@ class LineTokenizer:
 
         literal = self.__extract_literal()
         token = Lexeme(LexemeType.BODY_DECLARATION, literal, literal)
-        self.tokens.append(token)
-
-    def __parse_implementation(self):
-        if self.__peek() != Chars.RIGHT_ARROW.value:
-            raise ValueError("Incomplete implementation. Missing char > after")
-
-        self.__advance()  # Consume the right arrow
-
-        literal = self.__extract_literal()
-        token = Lexeme(LexemeType.IMPLEMENTATION, literal, literal)
         self.tokens.append(token)
 
     def __parse_numeric(self):

@@ -15,7 +15,10 @@ class LexemeType(Enum):
 
 class Lexeme:
 
-    def __init__(self, token_type: LexemeType, parsed_value, raw: str):
-        self.token_type = token_type
+    def __init__(self, lexeme_type: LexemeType, parsed_value, raw: str):
+        self.lexeme_type = lexeme_type
         self.raw = raw
         self.parsed_value = parsed_value
+
+    def __str__(self):
+        return f"[{self.lexeme_type}]: {self.parsed_value}"

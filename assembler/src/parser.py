@@ -1,6 +1,20 @@
 from typing import List
 
 from chars import Chars
+from instructionparser import InstructionParser
+from lexeme import Lexeme, LexemeType
+from linetokenizer import LineTokenizer
+from metainstructionparser import MetaInstructionParser
+
+
+class ParseError:
+
+    def __init__(self, message, line=None):
+        self.message = message
+        self.line = line
+
+    def __str__(self):
+        return f"[{self.line}]: {self.message}."
 
 
 class Parser:
@@ -8,24 +22,47 @@ class Parser:
     def __init__(self, source: str):
         self.source = source
         self.errors = []
+        self.line = None
 
     def parse(self):
         lines = self.source.split(Chars.NEWLINE.value)
 
         return self.__parse_lines(lines)
 
-    def errors(self):
+    def get_errors(self):
         return self.errors
 
     def __parse_lines(self, lines: List[str]):
         parsed_lines = []
 
-        for line in lines:
+        for index, line in enumerate(lines):
+            self.line = index
 
+            try:
+                lexemes = LineTokenizer(line).tokenize()
 
-            if not is_command:
-                parsed_instruction = self.instruction_parser.parse_line(line)
-                parsed_lines.append(parsed_instruction)
+                parsed_line = self.__parse_line(lexemes)
+                parsed_lines.append(parsed_line)
+            except Exception as e:
+                self.__append_error(e)
 
         return parsed_lines
 
+    def __parse_line(self, lexemes: List[Lexeme]):
+        try:
+            if self.__is_line_meta(lexemes):
+                return MetaInstructionParser(lexemes).parse()
+            else:
+                return InstructionParser(lexemes).parse()
+        except Exception as e:
+            self.__append_error(e)
+
+    def __append_error(self, error: Exception):
+        parse_error = ParseError(error, self.line)
+        self.errors.append(parse_error)
+
+    def __is_line_meta(self, lexemes: List[Lexeme]):
+        if len(lexemes) == 0:
+            return False
+
+        return lexemes[0].lexeme_type == LexemeType.META

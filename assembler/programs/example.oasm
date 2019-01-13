@@ -1,38 +1,42 @@
 // This is a comment
 
-#abstract class Engine::
+#class Engine
 
-    #PrintSerialCode::
+    #Engine::PrintSerialCode
         OP_UI_PUSH 10
         OP_UI_PRINT
-        OP_S_PUSH
+        OP_S_PUSH "Hello, world"
         OP_RETURN_VOID
 
-    #abstract GetTorque;
+    #Engine::GetTorque(abstract)
 
-#class GasEngine -> Engine::
+#interface Doot
 
-    #New(1)::
+    #Doot::Hahahaha
+
+#class GasEngine::(Engine Doot)
+
+    #GasEngine::New::(1)
         OP_LOCAL_LOAD 1
         OP_UI_GLOBAL_STORE 0
         OP_RETURN_VOID
 
-    #PrintSerialCode::
+    #GasEngine::PrintSerialCode
         OP_UI_PUSH 5
         OP_UI_PRINT
         OP_RETURN_VOID
 
-    #Engine::GetTorque::
+    #Engine::GetTorque::(static)
         OP_UI_GLOBAL_LOAD 0
         OP_RETURN
 
-#static PrintEngineStats(1)::
+#PrintEngineStats::(1)
     OP_LOCAL_LOAD 0
     OP_INVOKE_VIRTUAL Engine::GetTorque
     OP_UI_PRINT
     OP_INVOKE_VIRTUAL Engine::PrintSerialCode
 
-#Main::
+#Main::(static)
     OP_NEW GasEngine
     OP_DUP
     OP_UI_PUSH 3

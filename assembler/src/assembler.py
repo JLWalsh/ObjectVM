@@ -1,5 +1,6 @@
-from parser import Parser
 import sys
+
+from parser import Parser
 
 
 def main():
@@ -10,8 +11,13 @@ def main():
     file_name = sys.argv[1]
     source = read_source(file_name)
 
-    tokens = Parser(source).parse()
+    parser = Parser(source)
+    tokens = parser.parse()
     print(tokens)
+
+    errors = parser.get_errors()
+    for error in errors:
+        print(error)
 
 
 def read_source(file_name):
