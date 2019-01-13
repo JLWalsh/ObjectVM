@@ -1,24 +1,27 @@
 from typing import List
 
-NEW_LINE = '\n'
-COMMAND_PREFIX = '#'
+from chars import Chars
 
 
 class Parser:
 
-    def __init__(self, instruction_parser):
-        self.instruction_parser = instruction_parser
+    def __init__(self, source: str):
+        self.source = source
+        self.errors = []
 
-    def parse(self, source: str):
-        lines = source.split(NEW_LINE)
+    def parse(self):
+        lines = self.source.split(Chars.NEWLINE.value)
 
-        return lines
+        return self.__parse_lines(lines)
+
+    def errors(self):
+        return self.errors
 
     def __parse_lines(self, lines: List[str]):
         parsed_lines = []
 
         for line in lines:
-            is_command = self.__line_is_command(line)
+
 
             if not is_command:
                 parsed_instruction = self.instruction_parser.parse_line(line)
@@ -26,5 +29,3 @@ class Parser:
 
         return parsed_lines
 
-    def __line_is_command(self, line):
-        return line.replace(" ", "").startsWith(COMMAND_PREFIX)

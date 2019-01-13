@@ -1,13 +1,10 @@
-from typing import List
-
 from char import Char
-from instruction import Instruction
-from token import Token, TokenType
-from tokenassembler import TokenAssembler
 from chars import Chars
+from lexeme import Lexeme, LexemeType
+from tokenassembler import TokenAssembler
 
 
-class LineParser:
+class LineTokenizer:
 
     def __init__(self, line: str):
         self.line = line
@@ -15,7 +12,7 @@ class LineParser:
         self.last_parse_start = 0
         self.tokens = []
 
-    def parse(self):
+    def tokenize(self):
         while not self.__is_at_end():
             self.last_parse_start = self.position
 
@@ -27,6 +24,16 @@ class LineParser:
                 self.__parse_word()
             elif char == Chars.STRING.value:
                 self.__parse_string()
+            elif char == Chars.META_PREFIX.value:
+                self.__push_single_char(char, LexemeType.META)
+            elif char == Chars.LEFT_PAREN.value:
+                self.__push_single_char(char, LexemeType.LEFT_PAREN)
+            elif char == Chars.RIGHT_PAREN.value:
+                self.__push_single_char(char, LexemeType.RIGHT_PAREN)
+            elif char == Chars.COLON.value:
+                self.__parse_body_declaration()
+            elif char == Chars.DASH.value:
+                self.__parse_implementation()
             elif char == Chars.WHITESPACE.value:
                 continue
             elif char == Chars.COMMENT.value and self.__peek() == Chars.COMMENT.value:
@@ -35,6 +42,30 @@ class LineParser:
                 raise ValueError(f"Unrecognized character: {char}")
 
         return self.tokens
+
+    def __push_single_char(self, char: chr, token_type: LexemeType):
+        token = Lexeme(token_type, char, char)
+        self.tokens.append(token)
+
+    def __parse_body_declaration(self):
+        if self.__peek() != Chars.COLON.value:
+            raise ValueError("Incomplete body declaration. Missing char : after")
+
+        self.__advance()  # Consume the second colon
+
+        literal = self.__extract_literal()
+        token = Lexeme(LexemeType.BODY_DECLARATION, literal, literal)
+        self.tokens.append(token)
+
+    def __parse_implementation(self):
+        if self.__peek() != Chars.RIGHT_ARROW.value:
+            raise ValueError("Incomplete implementation. Missing char > after")
+
+        self.__advance()  # Consume the right arrow
+
+        literal = self.__extract_literal()
+        token = Lexeme(LexemeType.IMPLEMENTATION, literal, literal)
+        self.tokens.append(token)
 
     def __parse_numeric(self):
         while not self.__is_at_end() and Char.is_numeric(self.__peek()):
@@ -64,7 +95,7 @@ class LineParser:
             self.__advance()
 
         literal = self.__extract_literal()
-        token = Token(TokenType.WORD, literal, literal)
+        token = Lexeme(LexemeType.WORD, literal, literal)
 
         self.tokens.append(token)
 
@@ -75,7 +106,7 @@ class LineParser:
             string += self.__advance()
 
             if self.__peek() == Chars.ESCAPE_STRING.value:
-                self.__advance()            # Skip escape character
+                self.__advance()  # Skip escape character
                 string += self.__advance()  # Skip over escaped value
 
         if self.__peek() != Chars.STRING.value:
@@ -84,7 +115,7 @@ class LineParser:
         self.__advance()  # Consume the quote at end of string
 
         literal = self.__extract_literal()
-        token = Token(TokenType.STRING, string, literal)
+        token = Lexeme(LexemeType.STRING, string, literal)
 
         self.tokens.append(token)
 

@@ -10,8 +10,7 @@ def main():
     file_name = sys.argv[1]
     source = read_source(file_name)
 
-    tokenizer = Parser()
-    tokens = tokenizer.parse(source)
+    tokens = Parser(source).parse()
     print(tokens)
 
 

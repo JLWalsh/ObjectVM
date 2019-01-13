@@ -1,16 +1,16 @@
-from token import Token, TokenType
+from lexeme import Lexeme, LexemeType
 
 
 class TokenAssembler:
 
     @staticmethod
-    def assemble_integer(literal: str) -> Token:
+    def assemble_integer(literal: str) -> Lexeme:
         integer = int(literal)
 
-        return Token(TokenType.INTEGER, integer, literal)
+        return Lexeme(LexemeType.INTEGER, integer, literal)
 
     @staticmethod
-    def assemble_float(literal: str) -> Token:
+    def assemble_float(literal: str) -> Lexeme:
         float_value = float(literal)
 
-        return Token(TokenType.FLOAT, float_value, literal)
+        return Lexeme(LexemeType.FLOAT, float_value, literal)
