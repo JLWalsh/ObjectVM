@@ -94,7 +94,7 @@ class MetaInstructionParser:
         if not self.__match_keyword(MetaKeyword.WORD):
             raise ValueError("Class declaration should be followed by class name")
 
-        class_declaration.with_name(self.lexemes[1].parsed_value)
+        class_declaration.with_name(self.lexemes[2].parsed_value)
 
         if self.__match_lexeme(LexemeType.BODY_DECLARATION):
             if not self.__match_lexeme(LexemeType.LEFT_PAREN):
@@ -107,13 +107,16 @@ class MetaInstructionParser:
 
     def __parse_class_implementations(self) -> List[str]:
         implementations = []
-        while not self.__is_at_end() and self.__match_lexeme(LexemeType.RIGHT_PAREN):
+        while not self.__is_at_end() and not self.__peek().lexeme_type != LexemeType.RIGHT_PAREN:
             class_name = self.__match_keyword(MetaKeyword.WORD)
 
             if not class_name:
                 raise ValueError(f"Class implementations should only be words (got {self.__peek().parsed_value})")
 
             implementations.append(class_name.parsed_value)
+
+        if not self.__match_lexeme(LexemeType.RIGHT_PAREN):
+            raise ValueError(f"Class implementations must be followed by )")
 
         return implementations
 
@@ -123,7 +126,7 @@ class MetaInstructionParser:
         if name is None:
             raise ValueError("Interface declaration should be followed by interface name")
 
-        return InterfaceDeclaration(name)
+        return InterfaceDeclaration(name.parsed_value)
 
     def __match_keyword(self, wanted_keyword: MetaKeyword):
         keyword = self.keyword_parser.parse(self.__peek())
