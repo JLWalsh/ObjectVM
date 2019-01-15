@@ -58,7 +58,7 @@ class Parser:
             if self.__is_line_meta(lexemes):
                 return MetaInstructionParser(lexemes).parse()
             else:
-                return InstructionParser(lexemes).parse()
+                return InstructionParser.with_default_instructions(lexemes).parse()
         except Exception as e:
             self.__append_error(e)
 

@@ -1,11 +1,11 @@
 from typing import List
 
+from assembler.opcode import Opcode
 from assembler.type import Type
 
 
 class Instruction:
 
-    def __init__(self, literal: str, opcode_id: int, args: List[Type]):
-        self.literal = literal
-        self.opcode_id = opcode_id
+    def __init__(self, opcode: Opcode, args: List[Type] = []):
+        self.opcode = opcode
         self.args = args

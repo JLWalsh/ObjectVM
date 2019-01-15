@@ -8,11 +8,11 @@
         OP_S_PUSH "Hello, world"
         OP_RETURN_VOID
 
-    #Engine::GetTorque::(abstract)
+    #Engine::GetTorque::(virtual)
 
-#interface Doot
+#class Doot
 
-    #Doot::Hahahaha
+    #Doot::Hahahaha::(virtual)
 
 #class GasEngine::(Engine Doot)
 

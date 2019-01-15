@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from assembler.lexeme import Lexeme, LexemeType
-from assembler.metainstruction import FunctionDeclaration, FunctionDeclarationSetting, ClassDeclaration, InterfaceDeclaration
+from assembler.metainstruction import FunctionDeclaration, FunctionDeclarationSetting, ClassDeclaration
 from assembler.metakeyword import MetaKeyword
 
 
@@ -25,7 +25,6 @@ class KeywordParser:
             'static': MetaKeyword.STATIC,
             'abstract': MetaKeyword.ABSTRACT,
             'class': MetaKeyword.CLASS,
-            'interface': MetaKeyword.INTERFACE
         }
 
         return KeywordParser(keywords)
@@ -46,8 +45,6 @@ class MetaInstructionParser:
             return self.__parse_class_declaration()
         elif self.__match_keyword(MetaKeyword.WORD):
             return self.__parse_func_declaration()
-        elif self.__match_keyword(MetaKeyword.INTERFACE):
-            return self.__parse_interface_declaration()
         else:
             raise ValueError("Instruction should either be a class declaration or a function declaration")
 
@@ -140,14 +137,6 @@ class MetaInstructionParser:
             raise ValueError(f"Class implementations must be followed by )")
 
         return implementations
-
-    def __parse_interface_declaration(self):
-        name = self.__match_lexeme(LexemeType.WORD)
-
-        if name is None:
-            raise ValueError("Interface declaration should be followed by interface name")
-
-        return InterfaceDeclaration(name.parsed_value)
 
     def __match_keyword(self, wanted_keyword: MetaKeyword):
         keyword = self.keyword_parser.parse(self.__peek())
