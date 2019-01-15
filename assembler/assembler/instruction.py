@@ -1,6 +1,6 @@
 from typing import List
 
-from type import Type
+from assembler.type import Type
 
 
 class Instruction:

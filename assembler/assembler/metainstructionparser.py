@@ -1,8 +1,8 @@
 from typing import List, Dict
 
-from lexeme import Lexeme, LexemeType
-from metainstruction import FunctionDeclaration, FunctionDeclarationSetting, ClassDeclaration, InterfaceDeclaration
-from metakeyword import MetaKeyword
+from assembler.lexeme import Lexeme, LexemeType
+from assembler.metainstruction import FunctionDeclaration, FunctionDeclarationSetting, ClassDeclaration, InterfaceDeclaration
+from assembler.metakeyword import MetaKeyword
 
 
 class KeywordParser:

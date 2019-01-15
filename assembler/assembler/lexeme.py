@@ -22,3 +22,10 @@ class Lexeme:
 
     def __str__(self):
         return f"[{self.lexeme_type}]: {self.parsed_value}"
+
+    def __eq__(self, other):
+        if isinstance(other, Lexeme):
+            return other.lexeme_type == self.lexeme_type \
+                   and other.raw == self.raw \
+                   and other.parsed_value == self.parsed_value
+        return False

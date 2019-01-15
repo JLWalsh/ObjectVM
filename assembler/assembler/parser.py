@@ -1,10 +1,10 @@
 from typing import List
 
-from chars import Chars
-from instructionparser import InstructionParser
-from lexeme import Lexeme, LexemeType
-from linetokenizer import LineTokenizer
-from metainstructionparser import MetaInstructionParser
+from assembler.chars import Chars
+from assembler.instructionparser import InstructionParser
+from assembler.lexeme import Lexeme, LexemeType
+from assembler.linetokenizer import LineTokenizer
+from assembler.metainstructionparser import MetaInstructionParser
 
 
 class ParseError:

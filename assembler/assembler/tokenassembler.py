@@ -1,4 +1,4 @@
-from lexeme import Lexeme, LexemeType
+from assembler.lexeme import Lexeme, LexemeType
 
 
 class TokenAssembler:

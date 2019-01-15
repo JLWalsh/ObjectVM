@@ -1,7 +1,7 @@
-from char import Char
-from chars import Chars
-from lexeme import Lexeme, LexemeType
-from tokenassembler import TokenAssembler
+from assembler.char import Char
+from assembler.chars import Chars
+from assembler.lexeme import Lexeme, LexemeType
+from assembler.tokenassembler import TokenAssembler
 
 
 class LineTokenizer:
