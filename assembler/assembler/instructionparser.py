@@ -3,7 +3,7 @@ from typing import List
 from assembler.instruction import Instruction
 from assembler.lexeme import Lexeme, LexemeType
 from assembler.opcode import Opcode
-from assembler.type import Type
+from assembler.instructionargument import InstructionArgumentType
 
 
 class OpcodeParser:
@@ -40,6 +40,14 @@ class InstructionParser:
         if len(self.lexemes) - 1 < len(instruction.args):
             raise ValueError(f'Too few arguments provided for instruction {instruction.opcode.value}')
 
+        arg_offset = 1
+        for arg_index, arg_type in enumerate(instruction.args):
+            if self.lexemes[arg_offset + arg_index].lexeme_type
+
+    def __map_lexeme_to_type(self, lexeme: Lexeme) -> InstructionArgumentType:
+        if lexeme.lexeme_type == LexemeType.INTEGER:
+
+
     def __find_matching_instruction_for(self, opcode: Opcode) -> Instruction | None:
         for instruction in self.instructions:
             if instruction.opcode == opcode:
@@ -69,16 +77,16 @@ class InstructionParser:
     def with_default_instructions(lexemes: List[Lexeme]):
         instructions = [
             Instruction(Opcode.HALT),
-            Instruction(Opcode.NEW, [Type.UINT]),
-            Instruction(Opcode.INVOKE_STATIC, [Type.UINT, Type.UINT]),
-            Instruction(Opcode.INVOKE_VIRTUAL, [Type.UINT, Type.UINT, Type.UINT]),
+            Instruction(Opcode.NEW, [InstructionArgumentType.UINT]),
+            Instruction(Opcode.INVOKE_STATIC, [InstructionArgumentType.UINT, InstructionArgumentType.UINT]),
+            Instruction(Opcode.INVOKE_VIRTUAL, [InstructionArgumentType.UINT, InstructionArgumentType.UINT, InstructionArgumentType.UINT]),
             Instruction(Opcode.RETURN_VOID),
             Instruction(Opcode.RETURN),
-            Instruction(Opcode.UI_PUSH, [Type.UINT]),
+            Instruction(Opcode.UI_PUSH, [InstructionArgumentType.UINT]),
             Instruction(Opcode.UI_PRINT),
-            Instruction(Opcode.UI_GLOBAL_STORE, [Type.UINT]),
-            Instruction(Opcode.UI_GLOBAL_LOAD, [Type.UINT]),
-            Instruction(Opcode.LOCAL_LOAD, [Type.UINT]),
+            Instruction(Opcode.UI_GLOBAL_STORE, [InstructionArgumentType.UINT]),
+            Instruction(Opcode.UI_GLOBAL_LOAD, [InstructionArgumentType.UINT]),
+            Instruction(Opcode.LOCAL_LOAD, [InstructionArgumentType.UINT]),
             Instruction(Opcode.DUP)
         ]
 

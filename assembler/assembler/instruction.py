@@ -1,11 +1,11 @@
 from typing import List
 
 from assembler.opcode import Opcode
-from assembler.type import Type
+from assembler.instructionargument import InstructionArgumentType
 
 
 class Instruction:
 
-    def __init__(self, opcode: Opcode, args: List[Type] = []):
+    def __init__(self, opcode: Opcode, args: List[InstructionArgumentType] = []):
         self.opcode = opcode
         self.args = args

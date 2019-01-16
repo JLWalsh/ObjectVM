@@ -22,6 +22,8 @@ class LineTokenizer:
                 self.__parse_numeric()
             elif Char.is_alpha(char):
                 self.__parse_word()
+            elif char == Chars.NEGATE.value:
+                self.__parse_numeric()
             elif char == Chars.STRING.value:
                 self.__parse_string()
             elif char == Chars.META_PREFIX.value:
