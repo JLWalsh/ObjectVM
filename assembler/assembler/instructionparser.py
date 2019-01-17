@@ -1,9 +1,12 @@
 from typing import List
 
-from assembler.instruction import Instruction
+from assembler.float import Float
+from assembler.funcref import FuncRef
+from assembler.instruction import Instruction, ParsedInstruction
+from assembler.instructionargument import InstructionArgument
+from assembler.int import UInt, Int
 from assembler.lexeme import Lexeme, LexemeType
 from assembler.opcode import Opcode
-from assembler.instructionargument import InstructionArgumentType
 
 
 class OpcodeParser:
@@ -23,30 +26,104 @@ class InstructionParser:
         self.instructions = instructions
         self.lexemes = lexemes
         self.position = 0
+        self.args = []
 
-    def parse(self):
+    def parse(self) -> ParsedInstruction:
         opcode = self.__match_lexeme(LexemeType.WORD)
         if not opcode:
             raise ValueError('First keyword must be an opcode (word)')
 
-        self.__validate__instruction_usage(opcode)
-
-    def __validate__instruction_usage(self, opcode: Opcode):
         instruction = self.__find_matching_instruction_for(opcode)
+        if not instruction:
+            raise ValueError(f'Unrecognized opcode: {opcode.parsed_value}')
 
-        if len(self.lexemes) - 1 > len(instruction.args):
-            raise ValueError(f'Too many arguments provided for instruction {instruction.opcode.value}')
+        for arg in instruction.args:
+            if arg == InstructionArgument.FUNC_REF:
+                self.__parse_func_ref()
+            elif arg == InstructionArgument.STATIC_FUNC_REF:
+                self.__parse_static_func_ref()
+            elif arg == InstructionArgument.UINT:
+                self.__parse_uint()
+            elif arg == InstructionArgument.INT:
+                self.__parse_int()
+            elif arg == InstructionArgument.STR:
+                self.__parse_str()
+            elif arg == InstructionArgument.FLOAT:
+                self.__parse_float()
+            else:
+                raise NotImplementedError(f'Argument type {arg.value} has no parser')
 
-        if len(self.lexemes) - 1 < len(instruction.args):
-            raise ValueError(f'Too few arguments provided for instruction {instruction.opcode.value}')
+        if not self.__is_at_end():
+            raise ValueError(f'Too many arguments supplied for opcode {instruction.opcode.value}')
 
-        arg_offset = 1
-        for arg_index, arg_type in enumerate(instruction.args):
-            if self.lexemes[arg_offset + arg_index].lexeme_type
+        return ParsedInstruction(instruction.opcode, self.args)
 
-    def __map_lexeme_to_type(self, lexeme: Lexeme) -> InstructionArgumentType:
-        if lexeme.lexeme_type == LexemeType.INTEGER:
+    def __parse_str(self):
+        str = self.__match_lexeme(LexemeType.STRING)
+        if not str:
+            raise ValueError('Expected string')
 
+        self.args.append(str.parsed_value)
+
+    def __parse_int(self):
+        int = self.__match_lexeme(LexemeType.INTEGER)
+        if not int:
+            raise ValueError('Expected numeric value (int)')
+
+        if not Int.default_size().can_hold(int.parsed_value):
+            raise ValueError(f'Int cannot represent {int}')
+
+        self.args.append(int.parsed_value)
+
+    def __parse_uint(self):
+        uint = self.__match_lexeme(LexemeType.INTEGER)
+        if not uint:
+            raise ValueError('Expected unsigned numeric value (uint)')
+
+        if not UInt.default_size().can_hold(uint.parsed_value):
+            raise ValueError(f'UInt cannot represent {uint.parsed_value}')
+
+        self.args.append(uint.parsed_value)
+
+    def __parse_float(self):
+        flt = self.__match_lexeme(LexemeType.FLOAT)
+        if not flt:
+            raise ValueError('Expected float value')
+
+        if not Float.default_size().can_hold(flt.parsed_value):
+            raise ValueError(f'Float cannot represent {flt.parsed_value}')
+
+        self.args.append(flt.parsed_value)
+
+    def __parse_func_ref(self):
+        class_name = self.__match_lexeme(LexemeType.WORD)
+        if not class_name:
+            raise ValueError('Function reference lacks class name')
+
+        if not self.__match_lexeme(LexemeType.BODY_DECLARATION):
+            raise ValueError('Function reference lacks ::')
+
+        func_name = self.__match_lexeme(LexemeType.WORD)
+        if not func_name:
+            raise ValueError('Function lacks name')
+
+        func_ref = FuncRef(func_name.parsed_value, class_name.parsed_value)
+        self.args.append(func_ref)
+
+    def __parse_static_func_ref(self):
+        first_name = self.__match_lexeme(LexemeType.WORD)
+        if not first_name:
+            raise ValueError('Static function reference lacks class name or function name')
+
+        if not self.__match_lexeme(LexemeType.BODY_DECLARATION):
+            return FuncRef(first_name.parsed_value)
+
+        func_name = self.__match_lexeme(LexemeType.WORD)
+        if not func_name:
+            raise ValueError('Function lacks name')
+
+        func_ref = FuncRef(first_name.parsed_value, func_name.parsed_value)
+        self.args.append(func_ref)
 
     def __find_matching_instruction_for(self, opcode: Opcode) -> Instruction | None:
         for instruction in self.instructions:
@@ -77,16 +154,17 @@ class InstructionParser:
     def with_default_instructions(lexemes: List[Lexeme]):
         instructions = [
             Instruction(Opcode.HALT),
-            Instruction(Opcode.NEW, [InstructionArgumentType.UINT]),
-            Instruction(Opcode.INVOKE_STATIC, [InstructionArgumentType.UINT, InstructionArgumentType.UINT]),
-            Instruction(Opcode.INVOKE_VIRTUAL, [InstructionArgumentType.UINT, InstructionArgumentType.UINT, InstructionArgumentType.UINT]),
+            Instruction(Opcode.NEW, [InstructionArgument.UINT]),
+            Instruction(Opcode.INVOKE_STATIC, [InstructionArgument.UINT, InstructionArgument.UINT]),
+            Instruction(Opcode.INVOKE_VIRTUAL,
+                        [InstructionArgument.UINT, InstructionArgument.UINT, InstructionArgument.UINT]),
             Instruction(Opcode.RETURN_VOID),
             Instruction(Opcode.RETURN),
-            Instruction(Opcode.UI_PUSH, [InstructionArgumentType.UINT]),
+            Instruction(Opcode.UI_PUSH, [InstructionArgument.UINT]),
             Instruction(Opcode.UI_PRINT),
-            Instruction(Opcode.UI_GLOBAL_STORE, [InstructionArgumentType.UINT]),
-            Instruction(Opcode.UI_GLOBAL_LOAD, [InstructionArgumentType.UINT]),
-            Instruction(Opcode.LOCAL_LOAD, [InstructionArgumentType.UINT]),
+            Instruction(Opcode.UI_GLOBAL_STORE, [InstructionArgument.UINT]),
+            Instruction(Opcode.UI_GLOBAL_LOAD, [InstructionArgument.UINT]),
+            Instruction(Opcode.LOCAL_LOAD, [InstructionArgument.UINT]),
             Instruction(Opcode.DUP)
         ]
 

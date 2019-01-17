@@ -1,8 +1,10 @@
 from enum import Enum
 
 
-class InstructionArgumentType(Enum):
+class InstructionArgument(Enum):
     UINT = 0
     FUNC_REF = 1
     STATIC_FUNC_REF = 2
-    PTR = 3
+    FLOAT = 3
+    INT = 4
+    STR = 5

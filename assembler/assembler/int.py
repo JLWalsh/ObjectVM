@@ -1,6 +1,3 @@
-class IntLimits:
-
-
 class Int:
 
     def __init__(self, byte_size: int):
@@ -13,6 +10,10 @@ class Int:
         max_negative_val = max_unsigned_val / 2
 
         return max_negative_val <= value <= max_positive_val
+
+    @staticmethod
+    def default_size():
+        return Int(2)
 
 
 class UInt:
@@ -27,3 +28,7 @@ class UInt:
         max_val = pow(2, self.byte_size * 8) - 1
 
         return value <= max_val
+
+    @staticmethod
+    def default_size():
+        return UInt(2)
