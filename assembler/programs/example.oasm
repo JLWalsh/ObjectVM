@@ -5,16 +5,11 @@
     #Engine::PrintSerialCode
         OP_UI_PUSH 10
         OP_UI_PRINT
-        OP_S_PUSH "Hello, world"
         OP_RETURN_VOID
 
     #Engine::GetTorque::(virtual)
 
-#class Doot
-
-    #Doot::Hahahaha::(virtual)
-
-#class GasEngine::(Engine Doot)
+#class GasEngine::(Engine)
 
     #GasEngine::New::(1)
         OP_LOCAL_LOAD 1
