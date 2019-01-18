@@ -3,9 +3,9 @@ from enum import Enum
 
 class InstructionArgument(Enum):
     UINT = 0
-    FUNC_REF = 1
-    STATIC_FUNC_REF = 2
+    FUNCTION_SIGNATURE = 1
+    STATIC_FUNCTION_SIGNATURE = 2
     FLOAT = 3
     INT = 4
-    STR = 5
-    CLASS_REF = 6
+    STRING = 5
+    CLASS_SIGNATURE = 6

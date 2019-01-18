@@ -1,13 +1,13 @@
 from assembler.lexeme import Lexeme, LexemeType
 
 
-class TokenAssembler:
+class LexemeAssembler:
 
     @staticmethod
     def assemble_integer(literal: str) -> Lexeme:
         integer = int(literal)
 
-        return Lexeme(LexemeType.INTEGER, integer, literal)
+        return Lexeme(LexemeType.INT, integer, literal)
 
     @staticmethod
     def assemble_float(literal: str) -> Lexeme:

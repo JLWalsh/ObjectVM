@@ -1,12 +1,25 @@
-from enum import Enum
-from typing import Dict, List
+from typing import List
 
 
-class FunctionDeclarationSetting(Enum):
-    NUM_ARGS = 0
-    ABSTRACT = 1
-    STATIC = 2
-    VIRTUAL = 3
+class FunctionDeclarationSettings:
+
+    def __init__(self, static: bool = False, abstract: bool = False, virtual: bool = False, num_args: int = 0):
+        self.static = static
+        self.abstract = abstract
+        self.virtual = virtual
+        self.num_args = num_args
+
+    def with_num_args(self, num_args: int):
+        self.num_args = num_args
+
+    def make_abstract(self):
+        self.abstract = True
+
+    def make_virtual(self):
+        self.virtual = True
+
+    def make_static(self):
+        self.static = True
 
 
 class FunctionDeclaration:
@@ -22,7 +35,7 @@ class FunctionDeclaration:
     def with_class_name(self, name: str):
         self.class_name = name
 
-    def with_settings(self, settings: Dict[FunctionDeclarationSetting, any]):
+    def with_settings(self, settings: FunctionDeclarationSettings):
         self.settings = settings
 
     def __str__(self):
@@ -31,10 +44,8 @@ class FunctionDeclaration:
         if not self.settings:
             return str_val
 
-        for setting in enumerate(self.settings):
-            str_val += str(setting)
+        return str_val + f" {str(self.settings)}"
 
-        return str_val
 
 class ClassDeclaration:
 

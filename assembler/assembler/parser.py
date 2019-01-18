@@ -70,4 +70,4 @@ class Parser:
         if len(lexemes) == 0:
             return False
 
-        return lexemes[0].lexeme_type == LexemeType.META
+        return lexemes[0].is_type(LexemeType.META_START)

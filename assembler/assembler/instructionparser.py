@@ -38,19 +38,19 @@ class InstructionParser:
             raise ValueError(f'Unrecognized opcode: {opcode.parsed_value}')
 
         for arg in instruction.args:
-            if arg == InstructionArgument.FUNC_REF:
+            if arg == InstructionArgument.FUNCTION_SIGNATURE:
                 self.__parse_func_ref()
-            elif arg == InstructionArgument.STATIC_FUNC_REF:
+            elif arg == InstructionArgument.STATIC_FUNCTION_SIGNATURE:
                 self.__parse_static_func_ref()
             elif arg == InstructionArgument.UINT:
                 self.__parse_uint()
             elif arg == InstructionArgument.INT:
                 self.__parse_int()
-            elif arg == InstructionArgument.STR:
+            elif arg == InstructionArgument.STRING:
                 self.__parse_str()
             elif arg == InstructionArgument.FLOAT:
                 self.__parse_float()
-            elif arg == InstructionArgument.CLASS_REF:
+            elif arg == InstructionArgument.CLASS_SIGNATURE:
                 self.__parse_class_ref()
             else:
                 raise NotImplementedError(f'Argument type {arg.value} has no parser')
@@ -75,21 +75,21 @@ class InstructionParser:
         self.args.append(str.parsed_value)
 
     def __parse_int(self):
-        int = self.__match_lexeme(LexemeType.INTEGER)
+        int = self.__match_lexeme(LexemeType.INT)
         if not int:
             raise ValueError('Expected numeric value (int)')
 
-        if not Int.default_size().can_hold(int.parsed_value):
+        if not Int.default().can_hold(int.parsed_value):
             raise ValueError(f'Int cannot represent {int}')
 
         self.args.append(int.parsed_value)
 
     def __parse_uint(self):
-        uint = self.__match_lexeme(LexemeType.INTEGER)
+        uint = self.__match_lexeme(LexemeType.INT)
         if not uint:
             raise ValueError('Expected unsigned numeric value (uint)')
 
-        if not UInt.default_size().can_hold(uint.parsed_value):
+        if not UInt.default().can_hold(uint.parsed_value):
             raise ValueError(f'UInt cannot represent {uint.parsed_value}')
 
         self.args.append(uint.parsed_value)
@@ -99,7 +99,7 @@ class InstructionParser:
         if not flt:
             raise ValueError('Expected float value')
 
-        if not Float.default_size().can_hold(flt.parsed_value):
+        if not Float.default().can_hold(flt.parsed_value):
             raise ValueError(f'Float cannot represent {flt.parsed_value}')
 
         self.args.append(flt.parsed_value)
@@ -109,7 +109,7 @@ class InstructionParser:
         if not class_name:
             raise ValueError('Function reference lacks class name')
 
-        if not self.__match_lexeme(LexemeType.BODY_DECLARATION):
+        if not self.__match_lexeme(LexemeType.QUOTE_BLOCK):
             raise ValueError('Function reference lacks ::')
 
         func_name = self.__match_lexeme(LexemeType.WORD)
@@ -124,7 +124,7 @@ class InstructionParser:
         if not first_name:
             raise ValueError('Static function reference lacks class name or function name')
 
-        if not self.__match_lexeme(LexemeType.BODY_DECLARATION):
+        if not self.__match_lexeme(LexemeType.QUOTE_BLOCK):
             return FuncRef(first_name.parsed_value)
 
         func_name = self.__match_lexeme(LexemeType.WORD)
@@ -136,7 +136,7 @@ class InstructionParser:
 
     def __find_matching_instruction_for(self, opcode_str: str) -> Optional[Instruction]:
         for instruction in self.instructions:
-            # Apparently python can't compare strings for shit /rant
+            # <rant salty class="toFix">Apparently python can't compare strings for shit</rant>
             if opcode_str.__eq__(instruction.opcode.name):
                 return instruction
 
@@ -153,7 +153,7 @@ class InstructionParser:
         if not value:
             return False
 
-        if value.lexeme_type == type:
+        if value.is_type(type):
             self.position += 1
             return value
 
@@ -166,10 +166,10 @@ class InstructionParser:
     def with_default_instructions(lexemes: List[Lexeme]):
         instructions = [
             Instruction(Opcode.HALT),
-            Instruction(Opcode.NEW, [InstructionArgument.CLASS_REF]),
-            Instruction(Opcode.INVOKE_STATIC, [InstructionArgument.STATIC_FUNC_REF]),
+            Instruction(Opcode.NEW, [InstructionArgument.CLASS_SIGNATURE]),
+            Instruction(Opcode.INVOKE_STATIC, [InstructionArgument.STATIC_FUNCTION_SIGNATURE]),
             Instruction(Opcode.INVOKE_VIRTUAL,
-                        [InstructionArgument.FUNC_REF]),
+                        [InstructionArgument.FUNCTION_SIGNATURE]),
             Instruction(Opcode.RETURN_VOID),
             Instruction(Opcode.RETURN),
             Instruction(Opcode.UI_PUSH, [InstructionArgument.UINT]),

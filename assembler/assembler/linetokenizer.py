@@ -1,7 +1,7 @@
 from assembler.char import Char
 from assembler.chars import Chars
 from assembler.lexeme import Lexeme, LexemeType
-from assembler.tokenassembler import TokenAssembler
+from assembler.lexemeassembler import LexemeAssembler
 
 
 class LineTokenizer:
@@ -27,7 +27,7 @@ class LineTokenizer:
             elif char == Chars.STRING.value:
                 self.__parse_string()
             elif char == Chars.META_PREFIX.value:
-                self.__push_single_char(char, LexemeType.META)
+                self.__push_single_char(char, LexemeType.META_START)
             elif char == Chars.LEFT_PAREN.value:
                 self.__push_single_char(char, LexemeType.LEFT_PAREN)
             elif char == Chars.RIGHT_PAREN.value:
@@ -54,7 +54,7 @@ class LineTokenizer:
         self.__advance()  # Consume the second colon
 
         literal = self.__extract_literal()
-        token = Lexeme(LexemeType.BODY_DECLARATION, literal, literal)
+        token = Lexeme(LexemeType.QUOTE_BLOCK, literal, literal)
         self.tokens.append(token)
 
     def __parse_numeric(self):
@@ -65,7 +65,7 @@ class LineTokenizer:
             return self.__continue_parse_float()
 
         literal = self.__extract_literal()
-        token = TokenAssembler.assemble_integer(literal)
+        token = LexemeAssembler.assemble_integer(literal)
 
         self.tokens.append(token)
 
@@ -76,7 +76,7 @@ class LineTokenizer:
             self.__advance()
 
         literal = self.__extract_literal()
-        token = TokenAssembler.assemble_float(literal)
+        token = LexemeAssembler.assemble_float(literal)
 
         self.tokens.append(token)
 

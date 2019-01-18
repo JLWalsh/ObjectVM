@@ -9,5 +9,5 @@ class Float:
         return True
 
     @staticmethod
-    def default_size():
+    def default():
         return Float(4)
