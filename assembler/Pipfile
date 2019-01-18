@@ -13,3 +13,4 @@ python_version = "3.7"
 
 [scripts]
 test = "pipenv run python3 -m pytest test/"
+run = "pipenv run python3 -m assembler.assembler"
