@@ -63,7 +63,7 @@ class Parser:
             self.__append_error(e)
 
     def __append_error(self, error: Exception):
-        parse_error = ParseError(error, self.line)
+        parse_error = ParseError(error, self.line + 1)
         self.errors.append(parse_error)
 
     def __is_line_meta(self, lexemes: List[Lexeme]):

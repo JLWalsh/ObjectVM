@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from assembler.float import Float
 from assembler.funcref import FuncRef
@@ -12,7 +12,7 @@ from assembler.opcode import Opcode
 class OpcodeParser:
 
     @staticmethod
-    def parse(raw_opcode: str) -> Opcode | None:
+    def parse(raw_opcode: str) -> Optional[Opcode]:
         for opcode in Opcode:
             if opcode.value == raw_opcode:
                 return opcode
@@ -33,7 +33,7 @@ class InstructionParser:
         if not opcode:
             raise ValueError('First keyword must be an opcode (word)')
 
-        instruction = self.__find_matching_instruction_for(opcode)
+        instruction = self.__find_matching_instruction_for(opcode.parsed_value)
         if not instruction:
             raise ValueError(f'Unrecognized opcode: {opcode.parsed_value}')
 
@@ -50,6 +50,8 @@ class InstructionParser:
                 self.__parse_str()
             elif arg == InstructionArgument.FLOAT:
                 self.__parse_float()
+            elif arg == InstructionArgument.CLASS_REF:
+                self.__parse_class_ref()
             else:
                 raise NotImplementedError(f'Argument type {arg.value} has no parser')
 
@@ -57,6 +59,13 @@ class InstructionParser:
             raise ValueError(f'Too many arguments supplied for opcode {instruction.opcode.value}')
 
         return ParsedInstruction(instruction.opcode, self.args)
+
+    def __parse_class_ref(self):
+        class_name = self.__match_lexeme(LexemeType.WORD)
+        if not class_name:
+            raise ValueError('Expected class name')
+
+        self.args.append(class_name.parsed_value)
 
     def __parse_str(self):
         str = self.__match_lexeme(LexemeType.STRING)
@@ -125,14 +134,15 @@ class InstructionParser:
         func_ref = FuncRef(first_name.parsed_value, func_name.parsed_value)
         self.args.append(func_ref)
 
-    def __find_matching_instruction_for(self, opcode: Opcode) -> Instruction | None:
+    def __find_matching_instruction_for(self, opcode_str: str) -> Optional[Instruction]:
         for instruction in self.instructions:
-            if instruction.opcode == opcode:
+            # Apparently python can't compare strings for shit /rant
+            if opcode_str.__eq__(instruction.opcode.name):
                 return instruction
 
         return None
 
-    def __peek(self):
+    def __peek(self) -> Optional[Lexeme]:
         if self.__is_at_end():
             return None
 
@@ -140,6 +150,8 @@ class InstructionParser:
 
     def __match_lexeme(self, type: LexemeType):
         value = self.__peek()
+        if not value:
+            return False
 
         if value.lexeme_type == type:
             self.position += 1
@@ -154,10 +166,10 @@ class InstructionParser:
     def with_default_instructions(lexemes: List[Lexeme]):
         instructions = [
             Instruction(Opcode.HALT),
-            Instruction(Opcode.NEW, [InstructionArgument.UINT]),
-            Instruction(Opcode.INVOKE_STATIC, [InstructionArgument.UINT, InstructionArgument.UINT]),
+            Instruction(Opcode.NEW, [InstructionArgument.CLASS_REF]),
+            Instruction(Opcode.INVOKE_STATIC, [InstructionArgument.STATIC_FUNC_REF]),
             Instruction(Opcode.INVOKE_VIRTUAL,
-                        [InstructionArgument.UINT, InstructionArgument.UINT, InstructionArgument.UINT]),
+                        [InstructionArgument.FUNC_REF]),
             Instruction(Opcode.RETURN_VOID),
             Instruction(Opcode.RETURN),
             Instruction(Opcode.UI_PUSH, [InstructionArgument.UINT]),

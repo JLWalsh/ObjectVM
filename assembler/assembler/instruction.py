@@ -10,6 +10,13 @@ class ParsedInstruction:
         self.opcode = opcode
         self.args = args
 
+    def __str__(self):
+        str_val = f'{self.opcode.name}: '
+        for arg in self.args:
+            str_val += str(arg)
+
+        return str_val
+
 
 class Instruction:
 

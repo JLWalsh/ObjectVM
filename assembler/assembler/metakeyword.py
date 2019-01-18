@@ -6,4 +6,5 @@ class MetaKeyword(Enum):
     ABSTRACT = 1
     STATIC = 3
     WORD = 5
-    UNKNOWN = 6
+    VIRTUAL = 6
+    UNKNOWN = 7

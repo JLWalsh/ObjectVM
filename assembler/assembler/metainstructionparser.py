@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from assembler.lexeme import Lexeme, LexemeType
 from assembler.metainstruction import FunctionDeclaration, FunctionDeclarationSetting, ClassDeclaration
@@ -25,6 +25,7 @@ class KeywordParser:
             'static': MetaKeyword.STATIC,
             'abstract': MetaKeyword.ABSTRACT,
             'class': MetaKeyword.CLASS,
+            'virtual': MetaKeyword.VIRTUAL
         }
 
         return KeywordParser(keywords)
@@ -49,8 +50,7 @@ class MetaInstructionParser:
             raise ValueError("Instruction should either be a class declaration or a function declaration")
 
     def __parse_func_declaration(self) -> FunctionDeclaration:
-        if not self.__match_lexeme(LexemeType.BODY_DECLARATION):
-            raise ValueError("Function declaration should be followed by ::")
+        self.__match_lexeme(LexemeType.BODY_DECLARATION)
 
         if self.__match_keyword(MetaKeyword.WORD):
             return self.__parse_class_func_declaration()
@@ -101,6 +101,9 @@ class MetaInstructionParser:
         if self.__match_keyword(MetaKeyword.STATIC):
             settings[FunctionDeclarationSetting.STATIC] = True
 
+        if self.__match_keyword(MetaKeyword.VIRTUAL):
+            settings[FunctionDeclarationSetting.VIRTUAL] = True
+
         if not self.__match_lexeme(LexemeType.RIGHT_PAREN):
             raise ValueError("Function settings have not been terminated with char )")
 
@@ -139,7 +142,11 @@ class MetaInstructionParser:
         return implementations
 
     def __match_keyword(self, wanted_keyword: MetaKeyword):
-        keyword = self.keyword_parser.parse(self.__peek())
+        next = self.__peek()
+        if next is None:
+            return False
+
+        keyword = self.keyword_parser.parse(next)
 
         if keyword == wanted_keyword:
             return self.__advance()
@@ -148,13 +155,15 @@ class MetaInstructionParser:
 
     def __match_lexeme(self, wanted_lexeme: LexemeType):
         lexeme = self.__peek()
+        if lexeme is None:
+            return False
 
         if lexeme is not None and lexeme.lexeme_type == wanted_lexeme:
             return self.__advance()
 
         return False
 
-    def __peek(self):
+    def __peek(self) -> Optional[Lexeme]:
         if self.__is_at_end():
             return None
 

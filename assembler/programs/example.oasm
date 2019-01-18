@@ -3,38 +3,42 @@
 #class Engine
 
     #Engine::PrintSerialCode
-        OP_UI_PUSH 10
-        OP_UI_PRINT
-        OP_RETURN_VOID
+        UI_PUSH 10
+        UI_PRINT
+        RETURN_VOID
 
     #Engine::GetTorque::(virtual)
 
 #class GasEngine::(Engine)
 
     #GasEngine::New::(1)
-        OP_LOCAL_LOAD 1
-        OP_UI_GLOBAL_STORE 0
-        OP_RETURN_VOID
+        LOCAL_LOAD 1
+        UI_GLOBAL_STORE 0
+        RETURN_VOID
 
     #GasEngine::PrintSerialCode
-        OP_UI_PUSH 5
-        OP_UI_PRINT
-        OP_RETURN_VOID
+        UI_PUSH 5
+        UI_PRINT
+        RETURN_VOID
 
     #Engine::GetTorque::(static)
-        OP_UI_GLOBAL_LOAD 0
-        OP_RETURN
+        UI_GLOBAL_LOAD 0
+        RETURN
 
 #PrintEngineStats::(1)
-    OP_LOCAL_LOAD 0
-    OP_INVOKE_VIRTUAL Engine::GetTorque
-    OP_UI_PRINT
-    OP_INVOKE_VIRTUAL Engine::PrintSerialCode
+    LOCAL_LOAD 0
+    INVOKE_VIRTUAL Engine::GetTorque
+    UI_PRINT
+    INVOKE_VIRTUAL Engine::PrintSerialCode
+
+#NopStatic
+    LOCAL_LOAD 0
+    UI_PRINT
 
 #Main::(static)
-    OP_NEW GasEngine
-    OP_DUP
-    OP_UI_PUSH 3
-    OP_INVOKE_VIRTUAL GasEngine::New
-    OP_INVOKE_STATIC PrintEngineStats
-    OP_HALT
+    NEW GasEngine
+    DUP
+    UI_PUSH 3
+    INVOKE_VIRTUAL GasEngine::New
+    INVOKE_STATIC PrintEngineStats
+    HALT

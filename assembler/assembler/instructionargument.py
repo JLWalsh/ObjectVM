@@ -8,3 +8,4 @@ class InstructionArgument(Enum):
     FLOAT = 3
     INT = 4
     STR = 5
+    CLASS_REF = 6
