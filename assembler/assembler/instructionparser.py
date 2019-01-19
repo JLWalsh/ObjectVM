@@ -125,7 +125,10 @@ class InstructionParser:
             raise ValueError('Static function reference lacks class name or function name')
 
         if not self.__match_lexeme(LexemeType.QUOTE_BLOCK):
-            return FuncRef(first_name.parsed_value)
+            func_ref = FuncRef(first_name.parsed_value)
+            self.args.append(func_ref)
+
+            return
 
         func_name = self.__match_lexeme(LexemeType.WORD)
         if not func_name:
