@@ -1,7 +1,7 @@
 from assembler.char import Char
-from assembler.chars import Chars
-from assembler.lexeme import Lexeme, LexemeType
-from assembler.lexemeassembler import LexemeAssembler
+from assembler.parsing.chars import Chars
+from assembler.parsing.token import Token, TokenType
+from assembler.parsing.lexemeassembler import LexemeAssembler
 
 
 class LineTokenizer:
@@ -27,11 +27,11 @@ class LineTokenizer:
             elif char == Chars.STRING.value:
                 self.__parse_string()
             elif char == Chars.META_PREFIX.value:
-                self.__push_single_char(char, LexemeType.META_START)
+                self.__push_single_char(char, TokenType.META_START)
             elif char == Chars.LEFT_PAREN.value:
-                self.__push_single_char(char, LexemeType.LEFT_PAREN)
+                self.__push_single_char(char, TokenType.LEFT_PAREN)
             elif char == Chars.RIGHT_PAREN.value:
-                self.__push_single_char(char, LexemeType.RIGHT_PAREN)
+                self.__push_single_char(char, TokenType.RIGHT_PAREN)
             elif char == Chars.COLON.value:
                 self.__parse_body_declaration()
             elif char == Chars.WHITESPACE.value:
@@ -43,8 +43,8 @@ class LineTokenizer:
 
         return self.tokens
 
-    def __push_single_char(self, char: chr, token_type: LexemeType):
-        token = Lexeme(token_type, char, char)
+    def __push_single_char(self, char: chr, token_type: TokenType):
+        token = Token(token_type, char, char)
         self.tokens.append(token)
 
     def __parse_body_declaration(self):
@@ -54,7 +54,7 @@ class LineTokenizer:
         self.__advance()  # Consume the second colon
 
         literal = self.__extract_literal()
-        token = Lexeme(LexemeType.QUOTE_BLOCK, literal, literal)
+        token = Token(TokenType.QUOTE_BLOCK, literal, literal)
         self.tokens.append(token)
 
     def __parse_numeric(self):
@@ -85,7 +85,7 @@ class LineTokenizer:
             self.__advance()
 
         literal = self.__extract_literal()
-        token = Lexeme(LexemeType.WORD, literal, literal)
+        token = Token(TokenType.WORD, literal, literal)
 
         self.tokens.append(token)
 
@@ -105,7 +105,7 @@ class LineTokenizer:
         self.__advance()  # Consume the quote at end of string
 
         literal = self.__extract_literal()
-        token = Lexeme(LexemeType.STRING, string, literal)
+        token = Token(TokenType.STRING, string, literal)
 
         self.tokens.append(token)
 

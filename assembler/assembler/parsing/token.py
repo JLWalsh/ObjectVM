@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class LexemeType(Enum):
+class TokenType(Enum):
     WORD = 0
     INT = 1
     FLOAT = 2
@@ -12,22 +12,22 @@ class LexemeType(Enum):
     RIGHT_PAREN = 7
 
 
-class Lexeme:
+class Token:
 
-    def __init__(self, lexeme_type: LexemeType, parsed_value, raw: str):
-        self.lexeme_type = lexeme_type
+    def __init__(self, token_type: TokenType, parsed_value, raw: str):
+        self.token_type = token_type
         self.raw = raw
         self.parsed_value = parsed_value
 
-    def is_type(self, lexeme_type: LexemeType):
-        return self.lexeme_type == lexeme_type
+    def is_type(self, lexeme_type: TokenType):
+        return self.token_type == lexeme_type
 
     def __str__(self):
-        return f"[{self.lexeme_type}]: {self.parsed_value}"
+        return f"[{self.token_type}]: {self.parsed_value}"
 
     def __eq__(self, other):
-        if isinstance(other, Lexeme):
-            return other.is_type(self.lexeme_type) \
+        if isinstance(other, Token):
+            return other.is_type(self.token_type) \
                    and other.raw == self.raw \
                    and other.parsed_value == self.parsed_value
         return False

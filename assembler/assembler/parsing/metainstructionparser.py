@@ -1,8 +1,8 @@
 from typing import List, Dict, Optional
 
-from assembler.lexeme import Lexeme, LexemeType
-from assembler.metainstruction import FunctionDeclaration, FunctionDeclarationSettings, ClassDeclaration
-from assembler.metakeyword import MetaKeyword
+from assembler.parsing.token import Token, TokenType
+from assembler.parsing.metainstruction import FunctionDeclaration, FunctionDeclarationSettings, ClassDeclaration
+from assembler.parsing.metakeyword import MetaKeyword
 
 
 class KeywordParser:
@@ -10,9 +10,9 @@ class KeywordParser:
     def __init__(self, keywords: Dict[str, MetaKeyword]):
         self.keywords = keywords
 
-    def parse(self, lexeme: Lexeme) -> Optional[MetaKeyword]:
+    def parse(self, lexeme: Token) -> Optional[MetaKeyword]:
         if lexeme.parsed_value not in self.keywords:
-            if lexeme.is_type(LexemeType.WORD):
+            if lexeme.is_type(TokenType.WORD):
                 return MetaKeyword.WORD
             else:
                 return None
@@ -32,13 +32,13 @@ class KeywordParser:
 
 class MetaInstructionParser:
 
-    def __init__(self, lexemes: List[Lexeme], keyword_parser=KeywordParser.default()):
+    def __init__(self, lexemes: List[Token], keyword_parser=KeywordParser.default()):
         self.lexemes = lexemes
         self.keyword_parser = keyword_parser
         self.position = 0
 
     def parse(self) -> FunctionDeclaration or ClassDeclaration:
-        if not self.__match_lexeme(LexemeType.META_START):
+        if not self.__match_lexeme(TokenType.META_START):
             raise ValueError("Instruction should begin with #")
 
         if self.__match_keyword(MetaKeyword.CLASS):
@@ -56,8 +56,8 @@ class MetaInstructionParser:
 
         class_declaration.with_name(self.lexemes[2].parsed_value)
 
-        if self.__match_lexeme(LexemeType.QUOTE_BLOCK):
-            if not self.__match_lexeme(LexemeType.LEFT_PAREN):
+        if self.__match_lexeme(TokenType.QUOTE_BLOCK):
+            if not self.__match_lexeme(TokenType.LEFT_PAREN):
                 raise ValueError("Class declaration should be followed by implementations")
 
             implementations = self.__parse_class_implementations()
@@ -70,7 +70,7 @@ class MetaInstructionParser:
 
     def __parse_class_implementations(self) -> List[str]:
         implementations = []
-        while not self.__is_at_end() and not self.__peek().is_type(LexemeType.RIGHT_PAREN):
+        while not self.__is_at_end() and not self.__peek().is_type(TokenType.RIGHT_PAREN):
             class_name = self.__match_keyword(MetaKeyword.WORD)
 
             if not class_name:
@@ -78,13 +78,13 @@ class MetaInstructionParser:
 
             implementations.append(class_name.parsed_value)
 
-        if not self.__match_lexeme(LexemeType.RIGHT_PAREN):
+        if not self.__match_lexeme(TokenType.RIGHT_PAREN):
             raise ValueError(f"Class implementations must be followed by )")
 
         return implementations
 
     def __parse_func_declaration(self) -> FunctionDeclaration:
-        self.__match_lexeme(LexemeType.QUOTE_BLOCK)
+        self.__match_lexeme(TokenType.QUOTE_BLOCK)
 
         if self.__match_keyword(MetaKeyword.WORD):
             return self.__parse_class_func_declaration()
@@ -95,7 +95,7 @@ class MetaInstructionParser:
         func_declaration = FunctionDeclaration()
         func_declaration.with_name(self.lexemes[1].parsed_value)  # If is static classless (Method::)
 
-        if self.__match_lexeme(LexemeType.LEFT_PAREN):
+        if self.__match_lexeme(TokenType.LEFT_PAREN):
             settings = self.__parse_func_settings()
             func_declaration.with_settings(settings)
 
@@ -109,8 +109,8 @@ class MetaInstructionParser:
         func_declaration.with_name(self.lexemes[3].parsed_value)  # If is class func (Class::Method::)
         func_declaration.with_class_name(self.lexemes[1].parsed_value)
 
-        if self.__match_lexeme(LexemeType.QUOTE_BLOCK):
-            if not self.__match_lexeme(LexemeType.LEFT_PAREN):
+        if self.__match_lexeme(TokenType.QUOTE_BLOCK):
+            if not self.__match_lexeme(TokenType.LEFT_PAREN):
                 raise ValueError("Function declaration should be followed by settings")
 
             settings = self.__parse_func_settings()
@@ -124,7 +124,7 @@ class MetaInstructionParser:
     def __parse_func_settings(self) -> FunctionDeclarationSettings:
         settings = FunctionDeclarationSettings()
 
-        num_args_lexeme = self.__match_lexeme(LexemeType.INT)
+        num_args_lexeme = self.__match_lexeme(TokenType.INT)
         if num_args_lexeme:
             settings.with_num_args(num_args_lexeme.parsed_value)
 
@@ -135,7 +135,7 @@ class MetaInstructionParser:
         if self.__match_keyword(MetaKeyword.VIRTUAL):
             settings.make_virtual()
 
-        if not self.__match_lexeme(LexemeType.RIGHT_PAREN):
+        if not self.__match_lexeme(TokenType.RIGHT_PAREN):
             raise ValueError("Function settings have not been terminated with char )")
 
         return settings
@@ -152,7 +152,7 @@ class MetaInstructionParser:
 
         return False
 
-    def __match_lexeme(self, wanted_lexeme: LexemeType):
+    def __match_lexeme(self, wanted_lexeme: TokenType):
         lexeme = self.__peek()
         if lexeme is None:
             return False
@@ -162,7 +162,7 @@ class MetaInstructionParser:
 
         return False
 
-    def __peek(self) -> Optional[Lexeme]:
+    def __peek(self) -> Optional[Token]:
         if self.__is_at_end():
             return None
 

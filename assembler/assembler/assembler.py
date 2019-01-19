@@ -1,6 +1,6 @@
 import sys
 
-from assembler.parser import Parser
+from assembler.parsing.parser import Parser
 
 
 def main():

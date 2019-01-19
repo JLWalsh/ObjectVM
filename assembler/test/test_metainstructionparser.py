@@ -1,15 +1,15 @@
 import pytest
 
-from assembler.lexeme import Lexeme, LexemeType
-from assembler.metainstruction import ClassDeclaration
-from assembler.metainstructionparser import MetaInstructionParser
+from assembler.parsing.token import Token, TokenType
+from assembler.parsing.metainstruction import ClassDeclaration
+from assembler.parsing.metainstructionparser import MetaInstructionParser
 from test.expect import expect
 
-META_START = Lexeme(LexemeType.META_START, "#", "#")
-QUOTE_BLOCK = Lexeme(LexemeType.QUOTE_BLOCK, "::", "::")
-LEFT_PAREN = Lexeme(LexemeType.LEFT_PAREN, "(", "(")
-RIGHT_PAREN = Lexeme(LexemeType.RIGHT_PAREN, ")", ")")
-CLASS = Lexeme(LexemeType.WORD, "class", "class")
+META_START = Token(TokenType.META_START, "#", "#")
+QUOTE_BLOCK = Token(TokenType.QUOTE_BLOCK, "::", "::")
+LEFT_PAREN = Token(TokenType.LEFT_PAREN, "(", "(")
+RIGHT_PAREN = Token(TokenType.RIGHT_PAREN, ")", ")")
+CLASS = Token(TokenType.WORD, "class", "class")
 
 
 def test_given_no_meta_lexeme_at_start_should_throw():
@@ -23,7 +23,7 @@ def test_given_no_meta_lexeme_at_start_should_throw():
 
 
 def test_should_parse_class_declaration():
-    class_name = Lexeme(LexemeType.WORD, "Engine", "Engine")
+    class_name = Token(TokenType.WORD, "Engine", "Engine")
     lexemes = [META_START, CLASS, class_name]
 
     class_declaration = MetaInstructionParser(lexemes).parse()
@@ -33,9 +33,9 @@ def test_should_parse_class_declaration():
 
 
 def test_should_parse_class_declaration_with_implementations():
-    class_name = Lexeme(LexemeType.WORD, "Engine", "Engine")
-    first_implementation = Lexeme(LexemeType.WORD, "Interface1", "Interface1")
-    second_implementation = Lexeme(LexemeType.WORD, "Interface2", "Interface2")
+    class_name = Token(TokenType.WORD, "Engine", "Engine")
+    first_implementation = Token(TokenType.WORD, "Interface1", "Interface1")
+    second_implementation = Token(TokenType.WORD, "Interface2", "Interface2")
     lexemes = [META_START, CLASS, class_name, QUOTE_BLOCK, LEFT_PAREN, first_implementation, second_implementation,
                RIGHT_PAREN]
 
@@ -48,7 +48,7 @@ def test_should_parse_class_declaration_with_implementations():
 
 
 def test_given_excess_lexemes_for_class_declaration_should_throw():
-    class_name = Lexeme(LexemeType.WORD, "Engine", "Engine")
+    class_name = Token(TokenType.WORD, "Engine", "Engine")
     lexemes = [META_START, CLASS, class_name, QUOTE_BLOCK, LEFT_PAREN, RIGHT_PAREN, class_name]
 
     with pytest.raises(Exception) as error:
@@ -59,7 +59,7 @@ def test_given_excess_lexemes_for_class_declaration_should_throw():
 
 
 def test_should_parse_classless_func_declaration():
-    func_name = Lexeme(LexemeType.WORD, "ClasslessFunc", "ClasslessFunc")
+    func_name = Token(TokenType.WORD, "ClasslessFunc", "ClasslessFunc")
     lexemes = [META_START, func_name]
 
     func_declaration = MetaInstructionParser(lexemes).parse()
@@ -69,8 +69,8 @@ def test_should_parse_classless_func_declaration():
 
 
 def test_should_parse_classless_func_declaration_settings():
-    func_name = Lexeme(LexemeType.WORD, "ClasslessFunc", "ClasslessFunc")
-    num_args = Lexeme(LexemeType.INT, 2, "2")
+    func_name = Token(TokenType.WORD, "ClasslessFunc", "ClasslessFunc")
+    num_args = Token(TokenType.INT, 2, "2")
     lexemes = [META_START, func_name, QUOTE_BLOCK, LEFT_PAREN, num_args, RIGHT_PAREN]
 
     func_declaration_settings = MetaInstructionParser(lexemes).parse().settings
@@ -79,8 +79,8 @@ def test_should_parse_classless_func_declaration_settings():
 
 
 def test_should_parse_class_func_declaration():
-    class_name = Lexeme(LexemeType.WORD, "ClassName", "ClassName")
-    func_name = Lexeme(LexemeType.WORD, "FuncName", "FuncName")
+    class_name = Token(TokenType.WORD, "ClassName", "ClassName")
+    func_name = Token(TokenType.WORD, "FuncName", "FuncName")
     lexemes = [META_START, class_name, QUOTE_BLOCK, func_name]
 
     func_declaration = MetaInstructionParser(lexemes).parse()
@@ -90,10 +90,10 @@ def test_should_parse_class_func_declaration():
 
 
 def test_should_parse_all_func_settings():
-    func_name = Lexeme(LexemeType.WORD, "ClasslessFunc", "ClasslessFunc")
-    num_args = Lexeme(LexemeType.INT, 2, "2")
-    static = Lexeme(LexemeType.WORD, "static", "static")
-    virtual = Lexeme(LexemeType.WORD, "virtual", "virtual")
+    func_name = Token(TokenType.WORD, "ClasslessFunc", "ClasslessFunc")
+    num_args = Token(TokenType.INT, 2, "2")
+    static = Token(TokenType.WORD, "static", "static")
+    virtual = Token(TokenType.WORD, "virtual", "virtual")
     lexemes = [META_START, func_name, QUOTE_BLOCK, LEFT_PAREN, num_args, static, virtual, RIGHT_PAREN]
 
     func_declaration_settings = MetaInstructionParser(lexemes).parse().settings
@@ -104,7 +104,7 @@ def test_should_parse_all_func_settings():
 
 
 def test_given_func_settings_missing_closing_paren_should_throw():
-    func_name = Lexeme(LexemeType.WORD, "ClasslessFunc", "ClasslessFunc")
+    func_name = Token(TokenType.WORD, "ClasslessFunc", "ClasslessFunc")
     lexemes = [META_START, func_name, QUOTE_BLOCK, LEFT_PAREN]
 
     with pytest.raises(Exception) as error:

@@ -1,10 +1,10 @@
-from assembler.lexeme import Lexeme, LexemeType
-from assembler.linetokenizer import LineTokenizer
+from assembler.parsing.token import Token, TokenType
+from assembler.parsing.linetokenizer import LineTokenizer
 
 
 def test_should_parse_one_word():
     line = 'SOME_RANDOM_OPERATION'
-    expected = Lexeme(LexemeType.WORD, line, line)
+    expected = Token(TokenType.WORD, line, line)
 
     tokens = LineTokenizer(line).tokenize()
 
@@ -14,7 +14,7 @@ def test_should_parse_one_word():
 
 def test_should_parse_int():
     line = '1234567'
-    expected = Lexeme(LexemeType.INT, 1234567, line)
+    expected = Token(TokenType.INT, 1234567, line)
 
     tokens = LineTokenizer(line).tokenize()
 
@@ -24,7 +24,7 @@ def test_should_parse_int():
 
 def test_should_parse_negated_int():
     line = '-8381'
-    expected = Lexeme(LexemeType.INT, -8381, line)
+    expected = Token(TokenType.INT, -8381, line)
 
     tokens = LineTokenizer(line).tokenize()
     print(f"got {tokens[0].parsed_value}")
@@ -34,7 +34,7 @@ def test_should_parse_negated_int():
 
 def test_should_parse_float():
     line = '996.27'
-    expected = Lexeme(LexemeType.FLOAT, 996.27, line)
+    expected = Token(TokenType.FLOAT, 996.27, line)
 
     tokens = LineTokenizer(line).tokenize()
 
@@ -44,7 +44,7 @@ def test_should_parse_float():
 
 def test_should_parse_negated_float():
     line = '-1931.27'
-    expected = Lexeme(LexemeType.FLOAT, -1931.27, line)
+    expected = Token(TokenType.FLOAT, -1931.27, line)
 
     tokens = LineTokenizer(line).tokenize()
 
@@ -54,7 +54,7 @@ def test_should_parse_negated_float():
 
 def test_should_parse_string():
     line = '"Hello, world!"'
-    expected = Lexeme(LexemeType.STRING, "Hello, world!", line)
+    expected = Token(TokenType.STRING, "Hello, world!", line)
 
     tokens = LineTokenizer(line).tokenize()
 
@@ -64,7 +64,7 @@ def test_should_parse_string():
 
 def test_should_parse_escaped_string():
     line = '"Hello, \\" world!"'
-    expected = Lexeme(LexemeType.STRING, 'Hello, " world!', line)
+    expected = Token(TokenType.STRING, 'Hello, " world!', line)
 
     tokens = LineTokenizer(line).tokenize()
 
@@ -82,12 +82,12 @@ def test_should_skip_comment():
 
 def test_should_parse_all_tokens():
     line = 'OP_HELLO 45 274.183 -28.1 -391 "Hello, \\"world!" // This is a comment'
-    word = Lexeme(LexemeType.WORD, 'OP_HELLO', 'OP_HELLO')
-    integer = Lexeme(LexemeType.INT, 45, '45')
-    float = Lexeme(LexemeType.FLOAT, 274.183, '274.183')
-    negated_float = Lexeme(LexemeType.FLOAT, -28.1, '-28.1')
-    negated_int = Lexeme(LexemeType.INT, -391, '-391')
-    string = Lexeme(LexemeType.STRING, 'Hello, "world!', '"Hello, \\"world!"')
+    word = Token(TokenType.WORD, 'OP_HELLO', 'OP_HELLO')
+    integer = Token(TokenType.INT, 45, '45')
+    float = Token(TokenType.FLOAT, 274.183, '274.183')
+    negated_float = Token(TokenType.FLOAT, -28.1, '-28.1')
+    negated_int = Token(TokenType.INT, -391, '-391')
+    string = Token(TokenType.STRING, 'Hello, "world!', '"Hello, \\"world!"')
 
     tokens = LineTokenizer(line).tokenize()
 

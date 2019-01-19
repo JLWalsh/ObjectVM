@@ -1,10 +1,10 @@
 from typing import List
 
-from assembler.chars import Chars
-from assembler.instructionparser import InstructionParser
-from assembler.lexeme import Lexeme, LexemeType
-from assembler.linetokenizer import LineTokenizer
-from assembler.metainstructionparser import MetaInstructionParser
+from assembler.parsing.chars import Chars
+from assembler.parsing.instructionparser import InstructionParser
+from assembler.parsing.token import Token, TokenType
+from assembler.parsing.linetokenizer import LineTokenizer
+from assembler.parsing.metainstructionparser import MetaInstructionParser
 
 
 class ParseError:
@@ -50,7 +50,7 @@ class Parser:
 
         return parsed_lines
 
-    def __parse_line(self, lexemes: List[Lexeme]):
+    def __parse_line(self, lexemes: List[Token]):
         if len(lexemes) == 0:
             return None
 
@@ -66,8 +66,8 @@ class Parser:
         parse_error = ParseError(error, self.line + 1)
         self.errors.append(parse_error)
 
-    def __is_line_meta(self, lexemes: List[Lexeme]):
+    def __is_line_meta(self, lexemes: List[Token]):
         if len(lexemes) == 0:
             return False
 
-        return lexemes[0].is_type(LexemeType.META_START)
+        return lexemes[0].is_type(TokenType.META_START)

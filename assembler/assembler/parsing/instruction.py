@@ -1,6 +1,6 @@
 from typing import List
 
-from assembler.instructionargument import InstructionArgument
+from assembler.parsing.instructionargument import InstructionArgument
 from assembler.opcode import Opcode
 
 

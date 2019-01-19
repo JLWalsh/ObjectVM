@@ -2,10 +2,10 @@ from typing import List, Optional
 
 from assembler.float import Float
 from assembler.funcref import FuncRef
-from assembler.instruction import Instruction, ParsedInstruction
-from assembler.instructionargument import InstructionArgument
+from assembler.parsing.instruction import Instruction, ParsedInstruction
+from assembler.parsing.instructionargument import InstructionArgument
 from assembler.int import UInt, Int
-from assembler.lexeme import Lexeme, LexemeType
+from assembler.parsing.token import Token, TokenType
 from assembler.opcode import Opcode
 
 
@@ -22,14 +22,14 @@ class OpcodeParser:
 
 class InstructionParser:
 
-    def __init__(self, instructions: List[Instruction], lexemes: List[Lexeme]):
+    def __init__(self, instructions: List[Instruction], lexemes: List[Token]):
         self.instructions = instructions
         self.lexemes = lexemes
         self.position = 0
         self.args = []
 
     def parse(self) -> ParsedInstruction:
-        opcode = self.__match_lexeme(LexemeType.WORD)
+        opcode = self.__match_lexeme(TokenType.WORD)
         if not opcode:
             raise ValueError('First keyword must be an opcode (word)')
 
@@ -61,21 +61,21 @@ class InstructionParser:
         return ParsedInstruction(instruction.opcode, self.args)
 
     def __parse_class_ref(self):
-        class_name = self.__match_lexeme(LexemeType.WORD)
+        class_name = self.__match_lexeme(TokenType.WORD)
         if not class_name:
             raise ValueError('Expected class name')
 
         self.args.append(class_name.parsed_value)
 
     def __parse_str(self):
-        str = self.__match_lexeme(LexemeType.STRING)
+        str = self.__match_lexeme(TokenType.STRING)
         if not str:
             raise ValueError('Expected string')
 
         self.args.append(str.parsed_value)
 
     def __parse_int(self):
-        int = self.__match_lexeme(LexemeType.INT)
+        int = self.__match_lexeme(TokenType.INT)
         if not int:
             raise ValueError('Expected numeric value (int)')
 
@@ -85,7 +85,7 @@ class InstructionParser:
         self.args.append(int.parsed_value)
 
     def __parse_uint(self):
-        uint = self.__match_lexeme(LexemeType.INT)
+        uint = self.__match_lexeme(TokenType.INT)
         if not uint:
             raise ValueError('Expected unsigned numeric value (uint)')
 
@@ -95,7 +95,7 @@ class InstructionParser:
         self.args.append(uint.parsed_value)
 
     def __parse_float(self):
-        flt = self.__match_lexeme(LexemeType.FLOAT)
+        flt = self.__match_lexeme(TokenType.FLOAT)
         if not flt:
             raise ValueError('Expected float value')
 
@@ -105,14 +105,14 @@ class InstructionParser:
         self.args.append(flt.parsed_value)
 
     def __parse_func_ref(self):
-        class_name = self.__match_lexeme(LexemeType.WORD)
+        class_name = self.__match_lexeme(TokenType.WORD)
         if not class_name:
             raise ValueError('Function reference lacks class name')
 
-        if not self.__match_lexeme(LexemeType.QUOTE_BLOCK):
+        if not self.__match_lexeme(TokenType.QUOTE_BLOCK):
             raise ValueError('Function reference lacks ::')
 
-        func_name = self.__match_lexeme(LexemeType.WORD)
+        func_name = self.__match_lexeme(TokenType.WORD)
         if not func_name:
             raise ValueError('Function lacks name')
 
@@ -120,17 +120,17 @@ class InstructionParser:
         self.args.append(func_ref)
 
     def __parse_static_func_ref(self):
-        first_name = self.__match_lexeme(LexemeType.WORD)
+        first_name = self.__match_lexeme(TokenType.WORD)
         if not first_name:
             raise ValueError('Static function reference lacks class name or function name')
 
-        if not self.__match_lexeme(LexemeType.QUOTE_BLOCK):
+        if not self.__match_lexeme(TokenType.QUOTE_BLOCK):
             func_ref = FuncRef(first_name.parsed_value)
             self.args.append(func_ref)
 
             return
 
-        func_name = self.__match_lexeme(LexemeType.WORD)
+        func_name = self.__match_lexeme(TokenType.WORD)
         if not func_name:
             raise ValueError('Function lacks name')
 
@@ -145,13 +145,13 @@ class InstructionParser:
 
         return None
 
-    def __peek(self) -> Optional[Lexeme]:
+    def __peek(self) -> Optional[Token]:
         if self.__is_at_end():
             return None
 
         return self.lexemes[self.position]
 
-    def __match_lexeme(self, type: LexemeType):
+    def __match_lexeme(self, type: TokenType):
         value = self.__peek()
         if not value:
             return False
@@ -166,7 +166,7 @@ class InstructionParser:
         return self.position >= len(self.lexemes)
 
     @staticmethod
-    def with_default_instructions(lexemes: List[Lexeme]):
+    def with_default_instructions(lexemes: List[Token]):
         instructions = [
             Instruction(Opcode.HALT),
             Instruction(Opcode.NEW, [InstructionArgument.CLASS_SIGNATURE]),
