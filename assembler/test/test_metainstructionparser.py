@@ -1,8 +1,8 @@
 import pytest
 
-from assembler.parsing.token import Token, TokenType
 from assembler.parsing.metainstruction import ClassDeclaration
 from assembler.parsing.metainstructionparser import MetaInstructionParser
+from assembler.parsing.token import Token, TokenType
 from test.expect import expect
 
 META_START = Token(TokenType.META_START, "#", "#")
@@ -10,6 +10,7 @@ QUOTE_BLOCK = Token(TokenType.QUOTE_BLOCK, "::", "::")
 LEFT_PAREN = Token(TokenType.LEFT_PAREN, "(", "(")
 RIGHT_PAREN = Token(TokenType.RIGHT_PAREN, ")", ")")
 CLASS = Token(TokenType.WORD, "class", "class")
+IMPLEMENTATION = Token(TokenType.IMPLEMENTATION, "->", "->")
 
 
 def test_given_no_meta_lexeme_at_start_should_throw():
@@ -111,4 +112,36 @@ def test_given_func_settings_missing_closing_paren_should_throw():
         MetaInstructionParser(lexemes).parse()
 
     expected_error = ValueError("Function settings have not been terminated with char )")
+    assert expect(error).is_error(expected_error)
+
+
+def test_should_parse_overriding_function():
+    class_name = Token(TokenType.WORD, "ClassName", "ClassName")
+    func_name = Token(TokenType.WORD, "FuncName", "FuncName")
+    overriden_class_name = Token(TokenType.WORD, "Overriden", "Overriden")
+    overriden_function_name = Token(TokenType.WORD, "Function", "Function")
+    lexemes = [META_START, class_name, QUOTE_BLOCK, func_name, IMPLEMENTATION, overriden_class_name, QUOTE_BLOCK,
+               overriden_function_name]
+
+    func_declaration = MetaInstructionParser(lexemes).parse()
+
+    assert func_declaration.func_name == "FuncName"
+    assert func_declaration.class_name == "ClassName"
+    assert func_declaration.function_overrides.func_name == "Function"
+    assert func_declaration.function_overrides.class_name == "Overriden"
+
+
+def test_given_overriding_function_with_settings_should_throw():
+    class_name = Token(TokenType.WORD, "ClassName", "ClassName")
+    func_name = Token(TokenType.WORD, "FuncName", "FuncName")
+    overriden_class_name = Token(TokenType.WORD, "Overriden", "Overriden")
+    overriden_function_name = Token(TokenType.WORD, "Function", "Function")
+    lexemes = [META_START, class_name, QUOTE_BLOCK, func_name, QUOTE_BLOCK, LEFT_PAREN, RIGHT_PAREN, IMPLEMENTATION,
+               overriden_class_name, QUOTE_BLOCK,
+               overriden_function_name]
+
+    with pytest.raises(Exception) as error:
+        MetaInstructionParser(lexemes).parse()
+
+    expected_error = ValueError("Function that overrides another may not have settings as they will be inherited")
     assert expect(error).is_error(expected_error)

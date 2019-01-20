@@ -26,10 +26,7 @@ class LineTokenizer:
                 self.__parse_word()
             elif char == Chars.DASH.value:
                 if self.__peek() == Chars.RIGHT_ARROW.value:
-                    self.__advance()
-                    literal = self.__extract_literal()
-                    token = Token(TokenType.IMPLEMENTATION, literal, literal)
-                    self.tokens.append(token)
+                    self.__parse_implementation()
                 else:
                     self.__parse_numeric()
             elif char == Chars.STRING.value:
@@ -115,6 +112,12 @@ class LineTokenizer:
         literal = self.__extract_literal()
         token = Token(TokenType.STRING, string, literal)
 
+        self.tokens.append(token)
+
+    def __parse_implementation(self):
+        self.__advance()  # Consume the right arrow
+        literal = self.__extract_literal()
+        token = Token(TokenType.IMPLEMENTATION, literal, literal)
         self.tokens.append(token)
 
     def __peek(self) -> Optional[chr]:

@@ -10,7 +10,6 @@
     #Engine::GetTorque::(1 virtual)
 
 #class GasEngine::(Engine)
-#memsize GasEngine::(uint)
 
     #GasEngine::New::(1)
         LOCAL_LOAD 1

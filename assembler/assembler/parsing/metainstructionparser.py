@@ -111,12 +111,20 @@ class MetaInstructionParser:
         func_declaration.with_name(self.lexemes[3].parsed_value)  # If is class func (Class::Method::)
         func_declaration.with_class_name(self.lexemes[1].parsed_value)
 
-        if self.__match_lexeme(TokenType.QUOTE_BLOCK):
+        has_settings = self.__match_lexeme(TokenType.QUOTE_BLOCK)
+        if has_settings:
             if not self.__match_lexeme(TokenType.LEFT_PAREN):
                 raise ValueError("Function declaration should be followed by settings")
 
             settings = self.__parse_func_settings()
             func_declaration.with_settings(settings)
+
+        if self.__match_lexeme(TokenType.IMPLEMENTATION):
+            if has_settings:
+                raise ValueError("Function that overrides another may not have settings as they will be inherited")
+
+            overrided_function = self.__parse_func_implementation()
+            func_declaration.will_override(overrided_function)
 
         if not self.__is_at_end():
             raise ValueError("Function declaration has excess parameters")
@@ -144,6 +152,24 @@ class MetaInstructionParser:
             raise ValueError("Function settings have not been terminated with char )")
 
         return settings
+
+    def __parse_func_implementation(self) -> FunctionDeclaration:
+        class_name = self.__match_lexeme(TokenType.WORD)
+        if not class_name:
+            raise ValueError("Must specify which class to override")
+
+        if not self.__match_lexeme(TokenType.QUOTE_BLOCK):
+            raise ValueError("Missing :: after class name")
+
+        function_name = self.__match_lexeme(TokenType.WORD)
+        if not function_name:
+            raise ValueError("Must specify which function to override")
+
+        function = FunctionDeclaration() \
+            .with_name(function_name.parsed_value) \
+            .with_class_name(class_name.parsed_value)
+
+        return function
 
     def __match_keyword(self, wanted_keyword: MetaKeyword):
         next = self.__peek()

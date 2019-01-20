@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from assembler.funcsettings import FunctionSettings
 
@@ -9,15 +9,23 @@ class FunctionDeclaration:
         self.func_name = None
         self.settings = FunctionSettings()
         self.class_name = None
+        self.override_of: Optional['FunctionDeclaration'] = None
 
     def with_name(self, name: str):
         self.func_name = name
+        return self
 
     def with_class_name(self, name: str):
         self.class_name = name
+        return self
 
     def with_settings(self, settings: FunctionSettings):
         self.settings = settings
+        return self
+
+    def will_override(self, override_of: 'FunctionDeclaration'):
+        self.override_of = override_of
+        return self
 
     def __str__(self):
         str_val = f'{self.class_name}::{self.func_name}'
