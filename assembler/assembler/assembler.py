@@ -1,5 +1,6 @@
 import sys
 
+from assembler.analysis.programcontext import ProgramContext
 from assembler.parsing.parser import Parser
 
 
@@ -12,14 +13,19 @@ def main():
     source = read_source(file_name)
 
     parser = Parser(source)
-    tokens = parser.parse()
+    program = parser.parse()
 
-    for token in tokens:
-        print(token)
+    if len(parser.get_errors()) == 0:
+        context = ProgramContext()
+        context.generate(program)
 
-    errors = parser.get_errors()
-    for error in errors:
-        print(error)
+        for c in context.classes:
+            print(c)
+        print(context.classes)
+    else:
+        print("Got errorz")
+        for error in parser.get_errors():
+            print(error)
 
 
 def read_source(file_name):

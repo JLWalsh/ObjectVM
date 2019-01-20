@@ -1,7 +1,9 @@
+from typing import Optional
+
 from assembler.char import Char
 from assembler.parsing.chars import Chars
-from assembler.parsing.token import Token, TokenType
 from assembler.parsing.lexemeassembler import LexemeAssembler
+from assembler.parsing.token import Token, TokenType
 
 
 class LineTokenizer:
@@ -22,8 +24,14 @@ class LineTokenizer:
                 self.__parse_numeric()
             elif Char.is_alpha(char):
                 self.__parse_word()
-            elif char == Chars.NEGATE.value:
-                self.__parse_numeric()
+            elif char == Chars.DASH.value:
+                if self.__peek() == Chars.RIGHT_ARROW.value:
+                    self.__advance()
+                    literal = self.__extract_literal()
+                    token = Token(TokenType.IMPLEMENTATION, literal, literal)
+                    self.tokens.append(token)
+                else:
+                    self.__parse_numeric()
             elif char == Chars.STRING.value:
                 self.__parse_string()
             elif char == Chars.META_PREFIX.value:
@@ -109,7 +117,7 @@ class LineTokenizer:
 
         self.tokens.append(token)
 
-    def __peek(self):
+    def __peek(self) -> Optional[chr]:
         if self.__is_at_end():
             return None
 

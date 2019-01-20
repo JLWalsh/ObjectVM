@@ -1,5 +1,5 @@
-from assembler.parsing.token import Token, TokenType
 from assembler.parsing.linetokenizer import LineTokenizer
+from assembler.parsing.token import Token, TokenType
 
 
 def test_should_parse_one_word():
@@ -80,14 +80,24 @@ def test_should_skip_comment():
     assert 0 == len(tokens)
 
 
+def test_should_parse_implementation():
+    line = '->'
+    expected = Token(TokenType.IMPLEMENTATION, '->', '->')
+
+    tokens = LineTokenizer(line).tokenize()
+
+    assert expected == tokens[0]
+
+
 def test_should_parse_all_tokens():
-    line = 'OP_HELLO 45 274.183 -28.1 -391 "Hello, \\"world!" // This is a comment'
+    line = 'OP_HELLO 45 274.183 -28.1 -391 "Hello, \\"world!" -> // This is a comment'
     word = Token(TokenType.WORD, 'OP_HELLO', 'OP_HELLO')
     integer = Token(TokenType.INT, 45, '45')
     float = Token(TokenType.FLOAT, 274.183, '274.183')
     negated_float = Token(TokenType.FLOAT, -28.1, '-28.1')
     negated_int = Token(TokenType.INT, -391, '-391')
     string = Token(TokenType.STRING, 'Hello, "world!', '"Hello, \\"world!"')
+    implementation = Token(TokenType.IMPLEMENTATION, '->', '->')
 
     tokens = LineTokenizer(line).tokenize()
 
@@ -97,4 +107,5 @@ def test_should_parse_all_tokens():
     assert negated_float == tokens[3]
     assert negated_int == tokens[4]
     assert string == tokens[5]
-    assert 6 == len(tokens)
+    assert implementation == tokens[6]
+    assert 7 == len(tokens)

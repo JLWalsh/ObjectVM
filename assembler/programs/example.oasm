@@ -7,21 +7,22 @@
         UI_PRINT
         RETURN_VOID
 
-    #Engine::GetTorque::(virtual)
+    #Engine::GetTorque::(1 virtual)
 
 #class GasEngine::(Engine)
+#memsize GasEngine::(uint)
 
     #GasEngine::New::(1)
         LOCAL_LOAD 1
         UI_GLOBAL_STORE 0
         RETURN_VOID
 
-    #GasEngine::PrintSerialCode
+    #GasEngine::PrintSerialCode -> Engine::PrintSerialCode // Overwrites lookup table for gas engine -> engine -> print serial code
         UI_PUSH 5
         UI_PRINT
         RETURN_VOID
 
-    #Engine::GetTorque::(static)
+    #GasEngine::GetTorque -> Engine::GetTorque // Defines function id for engine -> get torque
         UI_GLOBAL_LOAD 0
         RETURN
 
@@ -30,10 +31,7 @@
     INVOKE_VIRTUAL Engine::GetTorque
     UI_PRINT
     INVOKE_VIRTUAL Engine::PrintSerialCode
-
-#NopStatic
-    LOCAL_LOAD 0
-    UI_PRINT
+    RETURN_VOID
 
 #Main::(static)
     NEW GasEngine

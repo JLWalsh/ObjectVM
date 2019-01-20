@@ -1,8 +1,9 @@
 from typing import List, Dict, Optional
 
-from assembler.parsing.token import Token, TokenType
-from assembler.parsing.metainstruction import FunctionDeclaration, FunctionDeclarationSettings, ClassDeclaration
+from assembler.funcsettings import FunctionSettings
+from assembler.parsing.metainstruction import FunctionDeclaration, ClassDeclaration
 from assembler.parsing.metakeyword import MetaKeyword
+from assembler.parsing.token import Token, TokenType
 
 
 class KeywordParser:
@@ -24,7 +25,8 @@ class KeywordParser:
         keywords = {
             'static': MetaKeyword.STATIC,
             'class': MetaKeyword.CLASS,
-            'virtual': MetaKeyword.VIRTUAL
+            'virtual': MetaKeyword.VIRTUAL,
+            'override': MetaKeyword.OVERRIDE,
         }
 
         return KeywordParser(keywords)
@@ -121,8 +123,8 @@ class MetaInstructionParser:
 
         return func_declaration
 
-    def __parse_func_settings(self) -> FunctionDeclarationSettings:
-        settings = FunctionDeclarationSettings()
+    def __parse_func_settings(self) -> FunctionSettings:
+        settings = FunctionSettings()
 
         num_args_lexeme = self.__match_lexeme(TokenType.INT)
         if num_args_lexeme:
@@ -134,6 +136,9 @@ class MetaInstructionParser:
 
         if self.__match_keyword(MetaKeyword.VIRTUAL):
             settings.make_virtual()
+
+        if self.__match_keyword(MetaKeyword.OVERRIDE):
+            settings.make_override()
 
         if not self.__match_lexeme(TokenType.RIGHT_PAREN):
             raise ValueError("Function settings have not been terminated with char )")

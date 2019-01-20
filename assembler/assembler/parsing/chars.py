@@ -12,4 +12,5 @@ class Chars(Enum):
     LEFT_PAREN = '('
     RIGHT_PAREN = ')'
     COLON = ':'
-    NEGATE = '-'
+    DASH = '-'
+    RIGHT_ARROW = '>'

@@ -6,3 +6,4 @@ class MetaKeyword(Enum):
     STATIC = 3
     WORD = 5
     VIRTUAL = 6
+    OVERRIDE = 7

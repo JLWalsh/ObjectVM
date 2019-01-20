@@ -10,6 +10,7 @@ class TokenType(Enum):
     QUOTE_BLOCK = 5
     LEFT_PAREN = 6
     RIGHT_PAREN = 7
+    IMPLEMENTATION = 8
 
 
 class Token:
