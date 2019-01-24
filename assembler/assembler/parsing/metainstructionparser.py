@@ -26,7 +26,6 @@ class KeywordParser:
             'static': MetaKeyword.STATIC,
             'class': MetaKeyword.CLASS,
             'virtual': MetaKeyword.VIRTUAL,
-            'override': MetaKeyword.OVERRIDE,
         }
 
         return KeywordParser(keywords)
@@ -40,7 +39,7 @@ class MetaInstructionParser:
         self.position = 0
 
     def parse(self) -> FunctionDeclaration or ClassDeclaration:
-        if not self.__match_lexeme(TokenType.META_START):
+        if not self.__match_token(TokenType.META_START):
             raise ValueError("Instruction should begin with #")
 
         if self.__match_keyword(MetaKeyword.CLASS):
@@ -58,8 +57,8 @@ class MetaInstructionParser:
 
         class_declaration.with_name(self.lexemes[2].parsed_value)
 
-        if self.__match_lexeme(TokenType.QUOTE_BLOCK):
-            if not self.__match_lexeme(TokenType.LEFT_PAREN):
+        if self.__match_token(TokenType.QUOTE_BLOCK):
+            if not self.__match_token(TokenType.LEFT_PAREN):
                 raise ValueError("Class declaration should be followed by implementations")
 
             implementations = self.__parse_class_implementations()
@@ -80,13 +79,13 @@ class MetaInstructionParser:
 
             implementations.append(class_name.parsed_value)
 
-        if not self.__match_lexeme(TokenType.RIGHT_PAREN):
+        if not self.__match_token(TokenType.RIGHT_PAREN):
             raise ValueError(f"Class implementations must be followed by )")
 
         return implementations
 
     def __parse_func_declaration(self) -> FunctionDeclaration:
-        self.__match_lexeme(TokenType.QUOTE_BLOCK)
+        self.__match_token(TokenType.QUOTE_BLOCK)
 
         if self.__match_keyword(MetaKeyword.WORD):
             return self.__parse_class_func_declaration()
@@ -97,7 +96,7 @@ class MetaInstructionParser:
         func_declaration = FunctionDeclaration()
         func_declaration.with_name(self.lexemes[1].parsed_value)  # If is static classless (Method::)
 
-        if self.__match_lexeme(TokenType.LEFT_PAREN):
+        if self.__match_token(TokenType.LEFT_PAREN):
             settings = self.__parse_func_settings()
             func_declaration.with_settings(settings)
 
@@ -111,20 +110,21 @@ class MetaInstructionParser:
         func_declaration.with_name(self.lexemes[3].parsed_value)  # If is class func (Class::Method::)
         func_declaration.with_class_name(self.lexemes[1].parsed_value)
 
-        has_settings = self.__match_lexeme(TokenType.QUOTE_BLOCK)
+        has_settings = self.__match_token(TokenType.QUOTE_BLOCK)
         if has_settings:
-            if not self.__match_lexeme(TokenType.LEFT_PAREN):
+            if not self.__match_token(TokenType.LEFT_PAREN):
                 raise ValueError("Function declaration should be followed by settings")
 
             settings = self.__parse_func_settings()
             func_declaration.with_settings(settings)
 
-        if self.__match_lexeme(TokenType.IMPLEMENTATION):
+        if self.__match_token(TokenType.IMPLEMENTATION):
             if has_settings:
                 raise ValueError("Function that overrides another may not have settings as they will be inherited")
 
-            overrided_function = self.__parse_func_implementation()
-            func_declaration.will_override(overrided_function)
+            while self.__is_at_end() and self.__peek().is_type(TokenType.WORD):
+                overrided_function = self.__parse_func_implementation()
+                func_declaration.will_override(overrided_function)
 
         if not self.__is_at_end():
             raise ValueError("Function declaration has excess parameters")
@@ -134,7 +134,7 @@ class MetaInstructionParser:
     def __parse_func_settings(self) -> FunctionSettings:
         settings = FunctionSettings()
 
-        num_args_lexeme = self.__match_lexeme(TokenType.INT)
+        num_args_lexeme = self.__match_token(TokenType.INT)
         if num_args_lexeme:
             settings.with_num_args(num_args_lexeme.parsed_value)
 
@@ -145,23 +145,20 @@ class MetaInstructionParser:
         if self.__match_keyword(MetaKeyword.VIRTUAL):
             settings.make_virtual()
 
-        if self.__match_keyword(MetaKeyword.OVERRIDE):
-            settings.make_override()
-
-        if not self.__match_lexeme(TokenType.RIGHT_PAREN):
+        if not self.__match_token(TokenType.RIGHT_PAREN):
             raise ValueError("Function settings have not been terminated with char )")
 
         return settings
 
     def __parse_func_implementation(self) -> FunctionDeclaration:
-        class_name = self.__match_lexeme(TokenType.WORD)
+        class_name = self.__match_token(TokenType.WORD)
         if not class_name:
             raise ValueError("Must specify which class to override")
 
-        if not self.__match_lexeme(TokenType.QUOTE_BLOCK):
+        if not self.__match_token(TokenType.QUOTE_BLOCK):
             raise ValueError("Missing :: after class name")
 
-        function_name = self.__match_lexeme(TokenType.WORD)
+        function_name = self.__match_token(TokenType.WORD)
         if not function_name:
             raise ValueError("Must specify which function to override")
 
@@ -183,7 +180,7 @@ class MetaInstructionParser:
 
         return False
 
-    def __match_lexeme(self, wanted_lexeme: TokenType):
+    def __match_token(self, wanted_lexeme: TokenType):
         lexeme = self.__peek()
         if lexeme is None:
             return False

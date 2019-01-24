@@ -1,9 +1,8 @@
 class FunctionSettings:
 
-    def __init__(self, static: bool = False, virtual: bool = False, override=False, num_args: int = 0):
+    def __init__(self, static: bool = False, virtual: bool = False, num_args: int = 0):
         self.static = static
         self.virtual = virtual
-        self.override = override
         self.num_args = num_args
 
     def with_num_args(self, num_args: int):
@@ -14,9 +13,6 @@ class FunctionSettings:
 
     def make_static(self):
         self.static = True
-
-    def make_override(self):
-        self.override = True
 
     def __str__(self):
         str = f'Num args: {self.num_args}'

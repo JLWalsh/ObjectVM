@@ -1,6 +1,6 @@
 import sys
 
-from assembler.analysis.programcontext import ProgramContext
+from assembler.analysis.bytecoderesolver import BytecodeResolver
 from assembler.parsing.parser import Parser
 
 
@@ -16,8 +16,8 @@ def main():
     program = parser.parse()
 
     if len(parser.get_errors()) == 0:
-        context = ProgramContext()
-        context.generate(program)
+        context = BytecodeResolver()
+        context.resolve(program)
 
         for c in context.classes:
             print("class" + str(c))
