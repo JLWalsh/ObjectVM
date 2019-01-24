@@ -1,13 +1,16 @@
 from typing import List
 
-from assembler.parsing.instructionargument import InstructionArgument
 from assembler.opcode import Opcode
+from assembler.parsing.instructionargument import InstructionArgument
+from assembler.size import Size
+from assembler.sizes import Sizes
 
 
 class ParsedInstruction:
 
-    def __init__(self, opcode: Opcode, args: List[any]):
+    def __init__(self, opcode: Opcode, size: Size, args: List[any]):
         self.opcode = opcode
+        self.size = size
         self.args = args
 
     def __str__(self):
@@ -20,9 +23,20 @@ class ParsedInstruction:
 
 class Instruction:
 
-    def __init__(self, opcode: Opcode, arg_types: List[InstructionArgument] = None):
-        if arg_types is None:
-            arg_types = []
+    def __init__(self, opcode: Opcode, args: List[InstructionArgument] = None):
+        if args is None:
+            args = []
 
         self.opcode = opcode
-        self.args = arg_types
+        self.args = args
+        self.size = self.__calculate_bytecode_size(args)
+
+    def bytecode_size(self) -> Size:
+        return self.size
+
+    def __calculate_bytecode_size(self, args: List[InstructionArgument]) -> Size:
+        size = Sizes.OPCODE
+        for arg in args:
+            size += arg.size
+
+        return size

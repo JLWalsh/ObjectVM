@@ -20,8 +20,10 @@ def main():
         context.generate(program)
 
         for c in context.classes:
-            print(c)
-        print(context.classes)
+            print("class" + str(c))
+
+        print("GLOBAL CONTEXT:")
+        print(context.global_function_context)
     else:
         print("Got errorz")
         for error in parser.get_errors():

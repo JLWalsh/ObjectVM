@@ -2,11 +2,11 @@ from typing import List, Optional
 
 from assembler.float import Float
 from assembler.funcref import FuncRef
-from assembler.parsing.instruction import Instruction, ParsedInstruction
-from assembler.parsing.instructionargument import InstructionArgument
 from assembler.int import UInt, Int
-from assembler.parsing.token import Token, TokenType
 from assembler.opcode import Opcode
+from assembler.parsing.instruction import Instruction, ParsedInstruction
+from assembler.parsing.instructionargument import InstructionArgument, InstructionArgumentType
+from assembler.parsing.token import Token, TokenType
 
 
 class OpcodeParser:
@@ -38,19 +38,19 @@ class InstructionParser:
             raise ValueError(f'Unrecognized opcode: {opcode.parsed_value}')
 
         for arg in instruction.args:
-            if arg == InstructionArgument.FUNCTION_SIGNATURE:
+            if arg == InstructionArgumentType.FUNCTION_SIGNATURE:
                 self.__parse_func_ref()
-            elif arg == InstructionArgument.STATIC_FUNCTION_SIGNATURE:
+            elif arg == InstructionArgumentType.STATIC_FUNCTION_SIGNATURE:
                 self.__parse_static_func_ref()
-            elif arg == InstructionArgument.UINT:
+            elif arg == InstructionArgumentType.UINT:
                 self.__parse_uint()
-            elif arg == InstructionArgument.INT:
+            elif arg == InstructionArgumentType.INT:
                 self.__parse_int()
-            elif arg == InstructionArgument.STRING:
+            elif arg == InstructionArgumentType.STRING:
                 self.__parse_str()
-            elif arg == InstructionArgument.FLOAT:
+            elif arg == InstructionArgumentType.FLOAT:
                 self.__parse_float()
-            elif arg == InstructionArgument.CLASS_SIGNATURE:
+            elif arg == InstructionArgumentType.CLASS_SIGNATURE:
                 self.__parse_class_ref()
             else:
                 raise NotImplementedError(f'Argument type {arg.value} has no parser')
@@ -58,7 +58,7 @@ class InstructionParser:
         if not self.__is_at_end():
             raise ValueError(f'Too many arguments supplied for opcode {instruction.opcode.value}')
 
-        return ParsedInstruction(instruction.opcode, self.args)
+        return ParsedInstruction(instruction.opcode, instruction.bytecode_size(), self.args)
 
     def __parse_class_ref(self):
         class_name = self.__match_lexeme(TokenType.WORD)
@@ -169,17 +169,16 @@ class InstructionParser:
     def with_default_instructions(lexemes: List[Token]):
         instructions = [
             Instruction(Opcode.HALT),
-            Instruction(Opcode.NEW, [InstructionArgument.CLASS_SIGNATURE]),
-            Instruction(Opcode.INVOKE_STATIC, [InstructionArgument.STATIC_FUNCTION_SIGNATURE]),
-            Instruction(Opcode.INVOKE_VIRTUAL,
-                        [InstructionArgument.FUNCTION_SIGNATURE]),
+            Instruction(Opcode.NEW, [InstructionArgument.class_signature()]),
+            Instruction(Opcode.INVOKE_STATIC, [InstructionArgument.static_function_signature()]),
+            Instruction(Opcode.INVOKE_VIRTUAL, [InstructionArgument.function_signature()]),
             Instruction(Opcode.RETURN_VOID),
             Instruction(Opcode.RETURN),
-            Instruction(Opcode.UI_PUSH, [InstructionArgument.UINT]),
+            Instruction(Opcode.UI_PUSH, [InstructionArgument.uint()]),
             Instruction(Opcode.UI_PRINT),
-            Instruction(Opcode.UI_GLOBAL_STORE, [InstructionArgument.UINT]),
-            Instruction(Opcode.UI_GLOBAL_LOAD, [InstructionArgument.UINT]),
-            Instruction(Opcode.LOCAL_LOAD, [InstructionArgument.UINT]),
+            Instruction(Opcode.UI_GLOBAL_STORE, [InstructionArgument.uint()]),
+            Instruction(Opcode.UI_GLOBAL_LOAD, [InstructionArgument.uint()]),
+            Instruction(Opcode.LOCAL_LOAD, [InstructionArgument.uint()]),
             Instruction(Opcode.DUP)
         ]
 

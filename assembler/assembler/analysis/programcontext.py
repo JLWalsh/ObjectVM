@@ -42,7 +42,7 @@ class FunctionContext:
         str = f'{self.context_name}:'
 
         for function in self.functions:
-            str += '\n' + function.name
+            str += '\n' + function.name + ' @ ' + function.first_instruction_pos.__str__()
 
         return str
 
@@ -52,7 +52,7 @@ class FunctionContext:
 
     @staticmethod
     def global_context():
-        return FunctionContext("GLOBAL")
+        return FunctionContext(None)
 
 
 class ProgramContext:
@@ -60,7 +60,7 @@ class ProgramContext:
     def __init__(self):
         self.classes: List[FunctionContext] = []
         self.global_function_context: FunctionContext = FunctionContext.global_context()
-        self.instruction_pos = -1
+        self.bytecode_pos = 0
 
     def generate(self, parsed_program: List[ClassDeclaration or FunctionDeclaration or ParsedInstruction]):
         for item in parsed_program:
@@ -71,7 +71,7 @@ class ProgramContext:
             if isinstance(item, FunctionDeclaration):
                 self.__generate_function_context(item)
             elif isinstance(item, ParsedInstruction):
-                self.instruction_pos += 1
+                self.bytecode_pos += item.size.as_bytes()
 
     def __generate_class_context(self, class_declaration: ClassDeclaration):
         if self.__find_class_named(class_declaration.class_name) is not None:
@@ -82,7 +82,7 @@ class ProgramContext:
 
     def __generate_function_context(self, function_declaration: FunctionDeclaration):
         class_concerned = self.__find_class_named(function_declaration.class_name)
-        function = Function.from_declaration(function_declaration, self.instruction_pos)
+        function = Function.from_declaration(function_declaration, self.bytecode_pos)
 
         if class_concerned is not None:
             class_concerned.define_function(function)
