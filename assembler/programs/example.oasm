@@ -16,6 +16,8 @@
         UI_GLOBAL_STORE 0
         RETURN_VOID
 
+    #Engine::DoStuff::(virtual)
+
     #GasEngine::PrintSerialCode -> Engine::PrintSerialCode // Overwrites lookup table for gas engine -> engine -> print serial code
         UI_PUSH 5
         UI_PRINT
