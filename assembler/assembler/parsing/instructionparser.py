@@ -38,22 +38,23 @@ class InstructionParser:
             raise ValueError(f'Unrecognized opcode: {opcode.parsed_value}')
 
         for arg in instruction.args:
-            if arg == InstructionArgumentType.FUNCTION_SIGNATURE:
+            type = arg.type
+            if type == InstructionArgumentType.FUNCTION_SIGNATURE:
                 self.__parse_func_ref()
-            elif arg == InstructionArgumentType.STATIC_FUNCTION_SIGNATURE:
+            elif type == InstructionArgumentType.STATIC_FUNCTION_SIGNATURE:
                 self.__parse_static_func_ref()
-            elif arg == InstructionArgumentType.UINT:
+            elif type == InstructionArgumentType.UINT:
                 self.__parse_uint()
-            elif arg == InstructionArgumentType.INT:
+            elif type == InstructionArgumentType.INT:
                 self.__parse_int()
-            elif arg == InstructionArgumentType.STRING:
+            elif type == InstructionArgumentType.STRING:
                 self.__parse_str()
-            elif arg == InstructionArgumentType.FLOAT:
+            elif type == InstructionArgumentType.FLOAT:
                 self.__parse_float()
-            elif arg == InstructionArgumentType.CLASS_SIGNATURE:
+            elif type == InstructionArgumentType.CLASS_SIGNATURE:
                 self.__parse_class_ref()
             else:
-                raise NotImplementedError(f'Argument type {arg.value} has no parser')
+                raise NotImplementedError(f'Argument type {type.name} has no parser')
 
         if not self.__is_at_end():
             raise ValueError(f'Too many arguments supplied for opcode {instruction.opcode.value}')
@@ -139,7 +140,7 @@ class InstructionParser:
 
     def __find_matching_instruction_for(self, opcode_str: str) -> Optional[Instruction]:
         for instruction in self.instructions:
-            # <rant salty class="toFix">Apparently python can't compare strings for shit</rant>
+            # <rant class="toFix">Apparently python can't compare strings for shit</rant>
             if opcode_str.__eq__(instruction.opcode.name):
                 return instruction
 
