@@ -1,0 +1,27 @@
+{
+  "devDependencies": {
+    "@types/jest": "^23.3.13",
+    "global": "^4.3.2",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.12.1",
+    "typescript": "^3.2.4"
+  },
+  "scripts": {
+    "lint": "tslint -c tslint.json 'src/**/*.{ts}'",
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts"
+    ],
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "\\.(ts)$": "ts-jest"
+    },
+    "testRegex": "/__tests__/.*\\.(ts)$"
+  }
+}
