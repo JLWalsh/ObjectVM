@@ -1,4 +1,4 @@
-import Char from "../Char";
+import { Char } from "../Char";
 
 describe("Char", () => {
   describe("is alpha", () => {

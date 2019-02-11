@@ -1,4 +1,4 @@
-class Char {
+export class Char {
 
   public static isAlpha(char: string): boolean {
     return ("a" <= char && char <= "z") || ("A" <= char && char <= "Z");
@@ -8,5 +8,3 @@ class Char {
     return ("0" <= char && char <= "9");
   }
 }
-
-export default Char;
