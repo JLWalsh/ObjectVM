@@ -1,73 +1,120 @@
 import { Coordinate } from "../Coordinate";
 import { Program } from "../Program";
 import { Char } from "./Char";
-import { Lexeme, LexemeType } from "./Lexeme";
 import { LineReader } from "./LineReader";
-import { Token } from "./Token";
+import { ParsedToken, TokenType } from "./ParsedToken";
+import { ParseError } from "./ParseError";
+import { Chars } from "./Token";
 import { TokenizedLine } from "./TokenizedLine";
-
-type Char = string;
 
 export class Tokenizer {
 
-  private lexemes: Lexeme[] = [];
+  private lexemes: ParsedToken[] = [];
+  private errors: ParseError[] = [];
   private lineReader?: LineReader;
   private currentLine: number = 0;
 
   public tokenize(program: Program): TokenizedLine[] {
     const lines = program.getAllLines();
 
-    return lines.map(this.tokenizeLine);
+    return lines.map((line) => this.tokenizeLine(line));
   }
 
   private tokenizeLine(line: string): TokenizedLine {
     this.lineReader = LineReader.from(line);
+    this.lexemes = [];
+    this.errors = [];
 
-    while (this.lineReader.isAtEnd()) {
-      const currentChar = this.lineReader.advance();
-
-      if (this.matchTokens(Token.SLASH, Token.SLASH)) {
+    while (!this.lineReader.isAtEnd()) {
+      if (this.lineReader.matchSequence(Chars.SLASH, Chars.SLASH)) {
         break;
-      } else if (this.matchTokens(Token.HASH)) {
-        this.addLexeme(LexemeType.META_START);
-      } else if (this.matchTokens(Token.COLON, Token.COLON)) {
-        this.addLexeme(LexemeType.BODY_DECLARATION);
-      } else if (this.matchTokens(Token.LEFT_PAREN)) {
-        this.addLexeme(LexemeType.LEFT_PAREN);
-      } else if (this.matchTokens(Token.RIGHT_PAREN)) {
-        this.addLexeme(LexemeType.RIGHT_PAREN);
-      } else if (this.matchTokens(Token.DASH, Token.GREATER_THAN)) {
-        this.addLexeme(LexemeType.IMPLEMENTATION);
-      } else if (Char.isAlpha(currentChar)) {
-
-      } else if (Char.isNumeric(currentChar)) {
-
+      } else if (this.lineReader.matchSequence(Chars.HASH)) {
+        this.addLexeme(TokenType.META_START);
+      } else if (this.lineReader.matchSequence(Chars.COLON, Chars.COLON)) {
+        this.addLexeme(TokenType.BODY_DECLARATION);
+      } else if (this.lineReader.matchSequence(Chars.LEFT_PAREN)) {
+        this.addLexeme(TokenType.LEFT_PAREN);
+      } else if (this.lineReader.matchSequence(Chars.RIGHT_PAREN)) {
+        this.addLexeme(TokenType.RIGHT_PAREN);
+      } else if (this.lineReader.matchSequence(Chars.DASH, Chars.GREATER_THAN)) {
+        this.addLexeme(TokenType.IMPLEMENTATION);
+      } else if (this.lineReader.matchSequence(Chars.QUOTE)) {
+        this.parseString();
+      } else if (this.lineReader.matchFunc(Char.isAlpha)) {
+        this.parseWord();
+      } else if (this.lineReader.matchFunc(Char.isNumeric)) {
+        this.parseNumber();
       } else {
-
+        const unrecognizedChar = this.lineReader.advance();
+        this.addError(`Unrecognized character: ${unrecognizedChar}`);
       }
     }
 
-    return new TokenizedLine("", [], 0);
+    return new TokenizedLine(line, this.lexemes, this.currentLine, this.errors);
   }
 
-  private matchTokens(...tokensToMatch: Token[]): boolean {
-    if (!this.lineReader) {
-      return false;
+  private parseWord() {
+    while (!this.lineReader!.isAtEnd() && Char.isAlpha(this.lineReader!.peek())) {
+      this.lineReader!.advance();
     }
 
-    return tokensToMatch.every((t) => this.lineReader!.match(t));
+    const word = this.lineReader!.extract();
+    const lexeme = new ParsedToken(word, word, TokenType.WORD, this.getCurrentCoordinates());
+    this.lexemes.push(lexeme);
   }
 
-  private addLexeme(lexemeType: LexemeType) {
+  private parseString() {
+    let parsedString = "";
+
+    while (!this.lineReader!.isAtEnd() && this.lineReader!.peek() !== Chars.QUOTE) {
+      parsedString += this.lineReader!.advance();
+
+      if (this.lineReader!.match(Chars.ESCAPE_NEXT_CHAR)) {
+        this.lineReader!.advance();
+        parsedString += this.lineReader!.advance();
+      }
+    }
+
+    if (!this.lineReader!.match(Chars.QUOTE)) {
+      this.addError("Unterminated string.");
+    }
+
+    const stringLiteral = this.lineReader!.extract();
+    const lexeme = new ParsedToken(stringLiteral, parsedString, TokenType.STRING, this.getCurrentCoordinates());
+    this.lexemes.push(lexeme);
+  }
+
+  private parseNumber() {
+    while (!this.lineReader!.isAtEnd() && Char.isPartOfNumber(this.lineReader!.peek())) {
+      this.lineReader!.advance();
+    }
+
+    const numberLiteral = this.lineReader!.extract();
+    const parsedNumber = Number(numberLiteral);
+
+    if (isNaN(parsedNumber)) {
+      this.addError(`Failed to parse number: ${parsedNumber}.`);
+    }
+
+    const lexeme = new ParsedToken(numberLiteral, parsedNumber, TokenType.NUMBER, this.getCurrentCoordinates());
+    this.lexemes.push(lexeme);
+  }
+
+  private addLexeme(lexemeType: TokenType) {
     if (!this.lineReader) {
       throw new Error("Illegal state: line reader is undefined");
     }
 
     const coordinate = this.getCurrentCoordinates();
     const rawValue = this.lineReader.extract();
-    const parsedToken = new Lexeme(rawValue, lexemeType, coordinate);
+    const parsedToken = new ParsedToken(rawValue, rawValue, lexemeType, coordinate);
 
     this.lexemes.push(parsedToken);
+  }
+
+  private addError(message: string) {
+    const error = new ParseError(message, this.getCurrentCoordinates());
+    this.errors.push(error);
   }
 
   private getCurrentCoordinates(): Coordinate {

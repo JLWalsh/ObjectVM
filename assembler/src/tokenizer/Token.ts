@@ -1,5 +1,5 @@
 
-export enum Token {
+export enum Chars {
   SLASH = "/",
   HASH = "#",
   COLON = ":",
@@ -7,4 +7,7 @@ export enum Token {
   RIGHT_PAREN = ")",
   DASH = "-",
   GREATER_THAN = ">",
+  QUOTE = '"',
+  ESCAPE_NEXT_CHAR = "\\",
+  DOT = ".",
 }

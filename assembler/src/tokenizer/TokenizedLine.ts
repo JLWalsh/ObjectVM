@@ -1,20 +1,18 @@
-import { Lexeme } from "./Lexeme";
-import { Token } from "./Token";
+import { ParsedToken } from "./ParsedToken";
+import { ParseError } from "./ParseError";
+import { Chars } from "./Token";
 
 export class TokenizedLine {
 
-  public static of(rawLine: string, lexemes: Lexeme[], lineNumber: number): TokenizedLine {
-    return new TokenizedLine(rawLine, lexemes, lineNumber);
-  }
-
-  public static withError(rawLine: string, lexemesParsedSoFar: Lexeme[], lineNumber: number, error: Error) {
-    return new TokenizedLine(rawLine, lexemesParsedSoFar, lineNumber, error);
-  }
-
-  private constructor(
+  public constructor(
     private readonly rawLine: string,
-    private readonly lexemes: Lexeme[],
+    private readonly tokens: ParsedToken[],
     private readonly lineNumber: number,
-    private readonly error?: Error,
+    private readonly errors: ParseError[] = [],
   ) {}
+
+  public toString() {
+    return this.tokens.map((t) => t.toString())
+                      .join(",");
+  }
 }

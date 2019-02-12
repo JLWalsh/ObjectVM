@@ -1,7 +1,7 @@
 import { Coordinate } from "../Coordinate";
-import { Token } from "./Token";
+import { Chars } from "./Token";
 
-export enum LexemeType {
+export enum TokenType {
   // Values are irrelevant, only to help understand
   // which lexeme represents what
 
@@ -13,13 +13,19 @@ export enum LexemeType {
 
   WORD = "WORD",
   NUMBER = "NUMBER",
+  STRING = "STRING",
 }
 
-export class Lexeme {
+export class ParsedToken {
 
   constructor(
     private readonly rawValue: string,
-    private readonly type: LexemeType,
+    private readonly parsedValue: string | number,
+    private readonly type: TokenType,
     private readonly coordinate: Coordinate,
   ) {}
+
+  public toString() {
+    return `[${this.type.toString()}: ${this.parsedValue}]`;
+  }
 }

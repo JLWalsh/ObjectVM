@@ -26,11 +26,26 @@ export class LineReader {
     return true;
   }
 
-  public peek(): Char | void {
-    return this.line[this.charPosition];
+  public matchFunc(matcher: (char: Char) => boolean) {
+    const next = this.peek();
+
+    return matcher(next);
   }
 
-  public advance(): Char | void {
+  public matchSequence(...chars: Char[]): boolean {
+    const allMatch = chars.every((char, offset) => this.peek(offset) === char);
+    if (allMatch) {
+      this.charPosition += chars.length;
+    }
+
+    return allMatch;
+  }
+
+  public peek(offset: number = 0): Char {
+    return this.line[this.charPosition + offset];
+  }
+
+  public advance(): Char {
     const char = this.peek();
     this.charPosition++;
 
