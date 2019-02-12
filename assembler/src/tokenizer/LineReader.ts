@@ -26,10 +26,15 @@ export class LineReader {
     return true;
   }
 
-  public matchFunc(matcher: (char: Char) => boolean) {
+  public matchFunc(matcher: (char: Char) => boolean): boolean {
     const next = this.peek();
 
-    return matcher(next);
+    if (!matcher(next)) {
+      return false;
+    }
+
+    this.advance();
+    return true;
   }
 
   public matchSequence(...chars: Char[]): boolean {
