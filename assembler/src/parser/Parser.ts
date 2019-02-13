@@ -1,10 +1,12 @@
 import { Argument } from "../language/Argument";
 import { Instruction } from "../language/Instruction";
+import { MetaInstructionType } from "../language/MetaInstruction";
 import { Opcode } from "../language/Opcode";
 import { TokenizedLine, TokenizedLineType } from "../tokenizer/TokenizedLine";
 import { TokenizedProgram } from "../tokenizer/TokenizedProgram";
-import { FromEnumOpcodeParser } from "./FromEnumOpcodeParser";
 import { IKeywordParser } from "./IKeywordParser";
+import { FromEnumMetaInstructionTypeParser } from "./parsers/FromEnumMetaInstructionTypeParser";
+import { FromEnumOpcodeParser } from "./parsers/FromEnumOpcodeParser";
 
 export class Parser {
 
@@ -24,11 +26,16 @@ export class Parser {
       Instruction.for(Opcode.HALT),
     ];
 
-    return new Parser(new FromEnumOpcodeParser(), instructions);
+    return new Parser(
+      new FromEnumOpcodeParser(),
+      new FromEnumMetaInstructionTypeParser(),
+      instructions,
+    );
   }
 
   constructor(
     private readonly opcodeParser: IKeywordParser<Opcode>,
+    private readonly metaInstructionTypeParser: IKeywordParser<MetaInstructionType>,
     private readonly instructions: Instruction[],
   ) {}
 

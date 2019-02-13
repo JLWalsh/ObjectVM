@@ -1,5 +1,5 @@
-import { Opcode } from "../language/Opcode";
-import { IKeywordParser } from "./IKeywordParser";
+import { Opcode } from "../../language/Opcode";
+import { IKeywordParser } from "../IKeywordParser";
 
 export class FromEnumOpcodeParser implements IKeywordParser<Opcode> {
 
