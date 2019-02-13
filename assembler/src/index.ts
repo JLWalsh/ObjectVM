@@ -1,4 +1,5 @@
 import { readFileSync } from "fs";
+import { Parser } from "./parser/Parser";
 import { Program } from "./Program";
 import { Tokenizer } from "./tokenizer/Tokenizer";
 
@@ -7,7 +8,8 @@ const programSource = readFileSync("./programs/example.oasm", {
 });
 const program = Program.fromString(programSource);
 
-const tokenizedLines = new Tokenizer().tokenize(program);
+const tokenizedProgram = new Tokenizer().tokenize(program);
 
-const txt = tokenizedLines.map((t) => t.toString()).join("\n");
-console.warn(txt);
+const parsedProgram = new Parser().parse(tokenizedProgram);
+
+console.warn(parsedProgram);

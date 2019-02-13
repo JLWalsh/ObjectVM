@@ -6,6 +6,7 @@ import { ParsedToken, TokenType } from "./ParsedToken";
 import { ParseError } from "./ParseError";
 import { Chars } from "./Token";
 import { TokenizedLine } from "./TokenizedLine";
+import { TokenizedProgram } from "./TokenizedProgram";
 
 export class Tokenizer {
 
@@ -14,10 +15,12 @@ export class Tokenizer {
   private lineReader?: LineReader;
   private currentLine: number = 0;
 
-  public tokenize(program: Program): TokenizedLine[] {
+  public tokenize(program: Program): TokenizedProgram {
     const lines = program.getAllLines();
 
-    return lines.map((line) => this.tokenizeLine(line));
+    const tokenizedLines = lines.map((line) => this.tokenizeLine(line));
+
+    return new TokenizedProgram(tokenizedLines);
   }
 
   private tokenizeLine(line: string): TokenizedLine {

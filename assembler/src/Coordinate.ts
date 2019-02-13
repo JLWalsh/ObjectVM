@@ -5,6 +5,10 @@ export class Coordinate {
     return new Coordinate(line, column);
   }
 
+  public static zero(): Coordinate {
+    return Coordinate.at({ line: 0, column: 0 });
+  }
+
   private constructor(
     private readonly line: number,
     private readonly column?: number,

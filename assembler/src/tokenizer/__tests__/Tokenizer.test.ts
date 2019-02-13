@@ -8,7 +8,7 @@ describe("Tokenizer", () => {
   it("should parse multiple tokens", () => {
     const program = createProgram('OP_HELLO 45 274.183 -28.1 "Hello, \\"world!" -> :: // This is a comment');
 
-    const tokens = tokenizer.tokenize(program)[0].getTokens();
+    const tokens = tokenizer.tokenize(program).getLine(0).getTokens();
 
     expect(tokens[0].is(TokenType.WORD)).toBeTruthy();
     expect(tokens[0].getParsedValue()).toEqual("OP_HELLO");
@@ -27,7 +27,7 @@ describe("Tokenizer", () => {
   it("should not parse comment", () => {
     const program = createProgram("// this is a comment");
 
-    const parsedLine = tokenizer.tokenize(program)[0];
+    const parsedLine = tokenizer.tokenize(program).getLine(0);
 
     expect(parsedLine.getTokens()).toEqual([]);
   });
@@ -127,7 +127,7 @@ describe("Tokenizer", () => {
   });
 
   function parseSingleToken(program: Program): ParsedToken {
-    return tokenizer.tokenize(program)[0].getTokens()[0];
+    return tokenizer.tokenize(program).getLine(0).getTokens()[0];
   }
 
   function createProgram(source: string): Program {
