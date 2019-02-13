@@ -11,6 +11,10 @@ export class TokenizedLine {
     private readonly errors: ParseError[] = [],
   ) {}
 
+  public getTokens(): ParsedToken[] {
+    return this.tokens;
+  }
+
   public toString() {
     return this.tokens.map((t) => t.toString())
                       .join(",");

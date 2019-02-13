@@ -25,6 +25,14 @@ export class ParsedToken {
     private readonly coordinate: Coordinate,
   ) {}
 
+  public is(type: TokenType): boolean {
+    return this.type === type;
+  }
+
+  public getParsedValue() {
+    return this.parsedValue;
+  }
+
   public toString() {
     return `[${this.type.toString()}: ${this.parsedValue}]`;
   }

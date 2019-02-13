@@ -138,7 +138,7 @@ describe("LineReader", () => {
 
   describe("given line reader at a certain position", () => {
     const POSITION = 3;
-    const LINE = "bla123";
+    const LINE = "bla1234";
 
     beforeEach(() => {
       lineReader = LineReader.from(LINE);

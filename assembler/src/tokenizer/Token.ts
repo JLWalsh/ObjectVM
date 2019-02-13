@@ -10,4 +10,5 @@ export enum Chars {
   QUOTE = '"',
   ESCAPE_NEXT_CHAR = "\\",
   DOT = ".",
+  WHITESPACE = " ",
 }

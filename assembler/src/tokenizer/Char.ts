@@ -1,7 +1,7 @@
 export class Char {
 
   public static isAlpha(char: string): boolean {
-    return ("a" <= char && char <= "z") || ("A" <= char && char <= "Z");
+    return ("a" <= char && char <= "z") || ("A" <= char && char <= "Z") || char === "_";
   }
 
   public static isNumeric(char: string): boolean {

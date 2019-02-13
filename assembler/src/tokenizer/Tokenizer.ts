@@ -28,7 +28,13 @@ export class Tokenizer {
     while (!this.lineReader.isAtEnd()) {
       if (this.lineReader.matchSequence(Chars.SLASH, Chars.SLASH)) {
         break;
-      } else if (this.lineReader.matchSequence(Chars.HASH)) {
+      }
+
+      if (this.lineReader.matchSequence(Chars.WHITESPACE)) {
+        continue;
+      }
+
+      if (this.lineReader.matchSequence(Chars.HASH)) {
         this.addLexeme(TokenType.META_START);
       } else if (this.lineReader.matchSequence(Chars.COLON, Chars.COLON)) {
         this.addLexeme(TokenType.BODY_DECLARATION);
@@ -36,8 +42,12 @@ export class Tokenizer {
         this.addLexeme(TokenType.LEFT_PAREN);
       } else if (this.lineReader.matchSequence(Chars.RIGHT_PAREN)) {
         this.addLexeme(TokenType.RIGHT_PAREN);
-      } else if (this.lineReader.matchSequence(Chars.DASH, Chars.GREATER_THAN)) {
-        this.addLexeme(TokenType.IMPLEMENTATION);
+      } else if (this.lineReader.matchSequence(Chars.DASH)) {
+        if (this.lineReader.matchSequence(Chars.GREATER_THAN)) {
+          this.addLexeme(TokenType.IMPLEMENTATION);
+        } else {
+          this.parseNumber();
+        }
       } else if (this.lineReader.matchSequence(Chars.QUOTE)) {
         this.parseString();
       } else if (this.lineReader.matchFunc(Char.isAlpha)) {
@@ -70,7 +80,6 @@ export class Tokenizer {
       parsedString += this.lineReader!.advance();
 
       if (this.lineReader!.match(Chars.ESCAPE_NEXT_CHAR)) {
-        this.lineReader!.advance();
         parsedString += this.lineReader!.advance();
       }
     }
@@ -85,8 +94,8 @@ export class Tokenizer {
   }
 
   private parseNumber() {
-    while (!this.lineReader!.isAtEnd() && Char.isPartOfNumber(this.lineReader!.peek())) {
-      this.lineReader!.advance();
+    while (!this.lineReader!.isAtEnd() && this.lineReader!.matchFunc(Char.isPartOfNumber)) {
+      // do nothing
     }
 
     const numberLiteral = this.lineReader!.extract();

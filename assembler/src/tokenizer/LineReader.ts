@@ -62,7 +62,7 @@ export class LineReader {
   }
 
   public extract() {
-    const extracted = this.line.substr(this.lastExtractCharPosition, this.charPosition);
+    const extracted = this.line.substring(this.lastExtractCharPosition, this.charPosition);
     this.lastExtractCharPosition = this.charPosition;
 
     return extracted;
