@@ -1,6 +1,6 @@
-import { ParsedToken, TokenType } from "./ParsedToken";
+import { Chars } from "./Chars";
+import { Token, TokenType } from "./ParsedToken";
 import { ParseError } from "./ParseError";
-import { Chars } from "./Token";
 
 export enum TokenizedLineType {
   INSTRUCTION,
@@ -12,7 +12,7 @@ export class TokenizedLine {
 
   public constructor(
     private readonly rawLine: string,
-    private readonly tokens: ParsedToken[],
+    private readonly tokens: Token[],
     private readonly lineNumber: number,
     private readonly errors: ParseError[] = [],
   ) {}
@@ -25,7 +25,7 @@ export class TokenizedLine {
     return this.getType() === type;
   }
 
-  public getTokens(): ParsedToken[] {
+  public getTokens(): Token[] {
     return this.tokens;
   }
 

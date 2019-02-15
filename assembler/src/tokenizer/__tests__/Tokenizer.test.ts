@@ -1,5 +1,5 @@
-import { Program } from "../../Program";
-import { ParsedToken, TokenType } from "../ParsedToken";
+import { Program } from "../../language/Program";
+import { Token, TokenType } from "../ParsedToken";
 import { Tokenizer } from "../Tokenizer";
 
 describe("Tokenizer", () => {
@@ -126,7 +126,7 @@ describe("Tokenizer", () => {
     expect(parsedToken.is(TokenType.RIGHT_PAREN)).toBeTruthy();
   });
 
-  function parseSingleToken(program: Program): ParsedToken {
+  function parseSingleToken(program: Program): Token {
     return tokenizer.tokenize(program).getLine(0).getTokens()[0];
   }
 

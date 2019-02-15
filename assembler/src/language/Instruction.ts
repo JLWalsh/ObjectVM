@@ -1,4 +1,5 @@
-import { Argument } from "./Argument";
+import { Token } from "../tokenizer/ParsedToken";
+import { Argument, ArgumentType } from "./Argument";
 import { Opcode } from "./Opcode";
 
 export class Instruction {
@@ -9,10 +10,18 @@ export class Instruction {
 
   private constructor(
     private readonly opcode: Opcode,
-    private readonly args: Argument[],
+    private readonly args: ArgumentType[],
   ) {}
 
-  public withArg(arg: Argument) {
+  public isFor(opcode: Opcode): boolean {
+    return this.opcode === opcode;
+  }
+
+  public getArgs(): ArgumentType[] {
+    return this.args;
+  }
+
+  public withArg(arg: ArgumentType) {
     this.args.push(arg);
 
     return this;

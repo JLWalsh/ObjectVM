@@ -1,16 +1,16 @@
 import { Coordinate } from "../Coordinate";
-import { Program } from "../Program";
+import { Program } from "../language/Program";
 import { Char } from "./Char";
+import { Chars } from "./Chars";
 import { LineReader } from "./LineReader";
-import { ParsedToken, TokenType } from "./ParsedToken";
+import { Token, TokenType } from "./ParsedToken";
 import { ParseError } from "./ParseError";
-import { Chars } from "./Token";
 import { TokenizedLine } from "./TokenizedLine";
 import { TokenizedProgram } from "./TokenizedProgram";
 
 export class Tokenizer {
 
-  private lexemes: ParsedToken[] = [];
+  private lexemes: Token[] = [];
   private errors: ParseError[] = [];
   private lineReader?: LineReader;
   private currentLine: number = 0;
@@ -72,7 +72,7 @@ export class Tokenizer {
     }
 
     const word = this.lineReader!.extract();
-    const lexeme = new ParsedToken(word, word, TokenType.WORD, this.getCurrentCoordinates());
+    const lexeme = new Token(word, word, TokenType.WORD, this.getCurrentCoordinates());
     this.lexemes.push(lexeme);
   }
 
@@ -92,7 +92,7 @@ export class Tokenizer {
     }
 
     const stringLiteral = this.lineReader!.extract();
-    const lexeme = new ParsedToken(stringLiteral, parsedString, TokenType.STRING, this.getCurrentCoordinates());
+    const lexeme = new Token(stringLiteral, parsedString, TokenType.STRING, this.getCurrentCoordinates());
     this.lexemes.push(lexeme);
   }
 
@@ -108,7 +108,7 @@ export class Tokenizer {
       this.addError(`Failed to parse number: ${parsedNumber}.`);
     }
 
-    const lexeme = new ParsedToken(numberLiteral, parsedNumber, TokenType.NUMBER, this.getCurrentCoordinates());
+    const lexeme = new Token(numberLiteral, parsedNumber, TokenType.NUMBER, this.getCurrentCoordinates());
     this.lexemes.push(lexeme);
   }
 
@@ -119,7 +119,7 @@ export class Tokenizer {
 
     const coordinate = this.getCurrentCoordinates();
     const rawValue = this.lineReader.extract();
-    const parsedToken = new ParsedToken(rawValue, rawValue, lexemeType, coordinate);
+    const parsedToken = new Token(rawValue, rawValue, lexemeType, coordinate);
 
     this.lexemes.push(parsedToken);
   }

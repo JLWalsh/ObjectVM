@@ -1,5 +1,5 @@
 import { Coordinate } from "../Coordinate";
-import { Chars } from "./Token";
+import { Chars } from "./Chars";
 
 export enum TokenType {
   // Values are irrelevant, only to help understand
@@ -16,7 +16,7 @@ export enum TokenType {
   STRING = "STRING",
 }
 
-export class ParsedToken {
+export class Token {
 
   constructor(
     private readonly rawValue: string,
