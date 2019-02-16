@@ -9,14 +9,14 @@ export enum ArgumentType {
   STATIC_FUNC_REF,
 }
 
-export class Argument {
-
-  constructor(
-    private readonly type: ArgumentType,
-    private readonly value: any,
+export abstract class Argument {
+  protected constructor(
+      private readonly type: ArgumentType,
   ) {}
 
-  public getValue(): any {
-    return this.value;
+  public getType(): ArgumentType {
+    return this.type;
   }
+
+  public abstract getValue(): any;
 }

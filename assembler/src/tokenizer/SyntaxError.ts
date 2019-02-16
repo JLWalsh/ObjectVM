@@ -1,7 +1,6 @@
-import { Coordinate } from "../Coordinate";
+import {Coordinate} from '../Coordinate';
 
-export class ParseError extends Error {
-
+export class SyntaxError extends Error {
   private readonly coordinate: Coordinate;
 
   constructor(message: string, coordinate: Coordinate) {

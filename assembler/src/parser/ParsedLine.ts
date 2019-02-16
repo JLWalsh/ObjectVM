@@ -1,8 +1,7 @@
-import { ParseError } from "../tokenizer/ParseError";
+import {SyntaxError} from '../tokenizer/SyntaxError';
 
 export class ParsedLine {
-
   constructor(
-    private readonly errors: ParseError[],
+      private readonly errors: SyntaxError[],
   ) {}
 }
