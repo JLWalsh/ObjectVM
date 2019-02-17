@@ -1,14 +1,14 @@
-import {Argument, ArgumentType} from '../language/Argument';
+import {Argument, ArgumentType} from '../language/domain/Argument';
 import {Instruction} from '../language/domain/Instruction';
-import {InstructionPrototype} from '../language/InstructionPrototype';
-import {Line, LineType} from '../language/Line';
-import {MetaInstructionType} from '../language/MetaInstruction';
-import {Opcode} from '../language/Opcode';
+import {InstructionPrototype} from '../language/domain/InstructionPrototype';
+import {MetaInstructionType} from '../language/domain/MetaInstruction';
+import {Opcode} from '../language/domain/Opcode';
 import {TokenizedLine, TokenizedLineType} from '../tokenizer/TokenizedLine';
 import {TokenizedProgram} from '../tokenizer/TokenizedProgram';
 
 import {ArgumentParser} from './ArgumentParser';
 import {IKeywordParser} from './IKeywordParser';
+import {Line, LineType} from './Line';
 import {ParsedProgram} from './ParsedProgram';
 import {ParseError} from './ParseError';
 import {FromEnumMetaInstructionTypeParser} from './parsers/FromEnumMetaInstructionTypeParser';

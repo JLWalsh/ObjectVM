@@ -1,4 +1,4 @@
-import {Line} from '../language/Line';
+import {Line} from './Line';
 
 export class ParsedProgram {
   constructor(

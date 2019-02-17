@@ -1,7 +1,7 @@
-import {ParseError} from '../parser/ParseError';
+import {Instruction} from '../language/domain/Instruction';
+import {MetaInstruction} from '../language/domain/MetaInstruction';
 
-import {Instruction} from './domain/Instruction';
-import {MetaInstruction} from './MetaInstruction';
+import {ParseError} from './ParseError';
 
 export enum LineType {
   META,

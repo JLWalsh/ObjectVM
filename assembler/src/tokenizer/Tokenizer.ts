@@ -1,9 +1,10 @@
 import {Coordinate} from '../Coordinate';
-import {Program} from '../language/ProgramSource';
+
 import {Char} from './Char';
 import {Chars} from './Chars';
 import {LineReader} from './LineReader';
 import {Token, TokenType} from './ParsedToken';
+import {Program} from './ProgramSource';
 import {SyntaxError} from './SyntaxError';
 import {TokenizedLine} from './TokenizedLine';
 import {TokenizedProgram} from './TokenizedProgram';

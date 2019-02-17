@@ -1,5 +1,5 @@
-import {Argument} from '../Argument';
-import {InstructionPrototype} from '../InstructionPrototype';
+import {Argument} from './Argument';
+import {InstructionPrototype} from './InstructionPrototype';
 
 export class Instruction {
   constructor(

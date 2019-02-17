@@ -1,5 +1,4 @@
-import {Token} from '../tokenizer/ParsedToken';
-import {Argument, ArgumentType} from './Argument';
+import {ArgumentType} from './Argument';
 import {Opcode} from './Opcode';
 
 export class InstructionPrototype {

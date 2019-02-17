@@ -1,7 +1,7 @@
 import {readFileSync} from 'fs';
 
-import {Program} from './language/ProgramSource';
 import {Parser} from './parser/Parser';
+import {Program} from './tokenizer/ProgramSource';
 import {Tokenizer} from './tokenizer/Tokenizer';
 
 const programSource = readFileSync('./programs/example.oasm', {

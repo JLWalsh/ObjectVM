@@ -1,5 +1,5 @@
-import {Program} from '../../language/ProgramSource';
 import {Token, TokenType} from '../ParsedToken';
+import {Program} from '../ProgramSource';
 import {Tokenizer} from '../Tokenizer';
 
 describe('Tokenizer', () => {

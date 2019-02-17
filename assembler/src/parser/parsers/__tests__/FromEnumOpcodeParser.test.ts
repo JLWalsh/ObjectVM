@@ -1,11 +1,10 @@
-import { Opcode } from "../../../language/Opcode";
-import { FromEnumOpcodeParser } from "../FromEnumOpcodeParser";
+import {Opcode} from '../../../language/domain/Opcode';
+import {FromEnumOpcodeParser} from '../FromEnumOpcodeParser';
 
-describe("FromEnumOpcodeParser", () => {
-
+describe('FromEnumOpcodeParser', () => {
   const parser = new FromEnumOpcodeParser();
 
-  it("should parse an existing opcode", () => {
+  it('should parse an existing opcode', () => {
     const opcodeToParse = Opcode.DUP;
 
     const parsedOpcode = parser.parse(opcodeToParse);
@@ -13,9 +12,9 @@ describe("FromEnumOpcodeParser", () => {
     expect(parsedOpcode).toEqual(Opcode.DUP);
   });
 
-  describe("when parsing non existant opcode", () => {
-    it("should return undefined", () => {
-      const opcodeToParse = "haha12345";
+  describe('when parsing non existant opcode', () => {
+    it('should return undefined', () => {
+      const opcodeToParse = 'haha12345';
 
       const parsedOpcode = parser.parse(opcodeToParse);
 
