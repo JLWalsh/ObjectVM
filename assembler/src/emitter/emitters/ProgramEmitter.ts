@@ -1,11 +1,11 @@
-import { ClassObject } from "./../language/domain/ClassObject";
-import { GlobalsContext } from "./../language/domain/GlobalFunctionContext";
-import { Program } from "./../language/domain/Program";
-import { ClassObjectEmitter } from "./emitters/ClassObjectEmitter";
-import { GlobalsEmitter } from "./emitters/GlobalsEmitter";
-import { IEmitter } from "./IEmitter";
-import { IWriter } from "./IWriter";
-import { BufferedWriter } from "./writers/BufferedWriter";
+import { ClassObject } from "../../language/domain/ClassObject";
+import { GlobalsContext } from "../../language/domain/GlobalFunctionContext";
+import { Program } from "../../language/domain/Program";
+import { IEmitter } from "../IEmitter";
+import { IWriter } from "../IWriter";
+import { BufferedWriter } from "../writers/BufferedWriter";
+import { ClassObjectEmitter } from "./ClassObjectEmitter";
+import { GlobalsEmitter } from "./GlobalsEmitter";
 
 export class ProgramEmitter implements IEmitter<Program> {
 

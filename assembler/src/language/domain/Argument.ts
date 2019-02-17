@@ -8,6 +8,10 @@ export enum ArgumentType {
   STATIC_FUNC_REF,
 }
 
+export interface IArgumentVisitor {
+  visitStuff(stuff: Argument): void;
+}
+
 export abstract class Argument {
   protected constructor(
       private readonly type: ArgumentType,
@@ -20,4 +24,6 @@ export abstract class Argument {
   public abstract getValue(): any;
 
   public abstract getSize(): number;
+
+  public abstract accept(visitor: IArgumentVisitor): void;
 }

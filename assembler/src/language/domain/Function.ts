@@ -18,6 +18,10 @@ export class StaticFunction {
   public getNumberOfArguments(): number {
     return this.numberOfArguments;
   }
+
+  public getInstructions(): Instruction[] {
+    return this.instructions;
+  }
 }
 
 export class ClassFunction extends StaticFunction {

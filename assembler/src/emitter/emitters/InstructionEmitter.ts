@@ -8,7 +8,7 @@ export class InstructionEmitter implements IEmitter<Instruction> {
 
   constructor(
     private readonly opcodeEmitter: IEmitter<Opcode>,
-    private readonly argumentEmitter: IEmitter<Argument>,
+    private readonly argumentEmitter: IEmitter<Argument[]>,
   ) {}
 
   public emit(instruction: Instruction, writer: IWriter): void {
