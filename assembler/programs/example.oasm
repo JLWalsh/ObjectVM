@@ -6,14 +6,30 @@
         UI_PRINT
         RETURN_VOID
 
-    #function Engine::GetTorque::(1) // Implicit virtual method
+    #function Engine::GetTorque // Implicit virtual method
+
+    #function Engine::SendTorqueToTransmission
+
+#class Transmission
+
+  #function ReceiveTorque::(Ref, Torque)
+
+#class VoidTransmission::(Transmission)
+
+  #field Torque UINT
+
+  #function ReceiveTorque::(Ref, Torque) -> Transmission::ReceiveTorque
+    LOCAL_LOAD Torque
+    UI_GLOBAL_STORE Torque
 
 #class GasEngine::(Engine)
-    #memsize GasEngine store UINT
 
-    #function GasEngine::New::(1)
-        LOCAL_LOAD 1
-        UI_GLOBAL_STORE 0
+    #field SerialCode UINT
+    #field Transmission REF
+
+    #function GasEngine::New::(Ref, SerialCode)
+        LOCAL_LOAD SerialCode
+        UI_GLOBAL_STORE SerialCode
         RETURN_VOID
 
     // Not implementation, implicit override of Engine::PrintSerialCode
@@ -26,6 +42,12 @@
     #function GasEngine::GetTorque -> Engine::GetTorque // Defines function id for engine -> get torque
         UI_GLOBAL_LOAD 0
         RETURN
+
+    #function GasEngine::SendTorqueToTransmission::(Ref, TransmissionRef) -> Engine::SendTorqueToTransmission
+        LOCAL_LOAD TransmissionRef
+        LOCAL_LOAD Ref
+        INVOKE_VIRTUAL GasEngine::GetTorque
+        INVOKE_VIRTUAL Transmission::ReceiveTorque
 
     #static function GasEngine::GetDefaultSerialCode::(1)
         UI_PUSH 0

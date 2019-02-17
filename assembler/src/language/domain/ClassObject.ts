@@ -1,9 +1,9 @@
-import {IncrementalNumberGenerator} from '../../utils/IncrementalNumberGenerator';
+import {IncrementalNumberGenerator} from "../../utils/IncrementalNumberGenerator";
 
-import {ClassObjectReference} from './ClassObjectReference';
-import {NoSuchFunctionError} from './errors/NoSuchFunctionError';
-import {StaticFunction} from './Function';
-import {ClassObjectFunctionReference} from './FunctionReference';
+import {ClassObjectReference} from "./ClassObjectReference";
+import {NoSuchFunctionError} from "./errors/NoSuchFunctionError";
+import {StaticFunction} from "./Function";
+import {ClassObjectFunctionReference} from "./FunctionReference";
 
 export class ClassObject {
   private readonly generatedFunctionIds: Map<StaticFunction, number>;
@@ -19,8 +19,16 @@ export class ClassObject {
     this.idGenerator = new IncrementalNumberGenerator();
   }
 
+  public getFunctions(): StaticFunction[] {
+    return this.functions;
+  }
+
+  public getSize(): number {
+    return this.functions.reduce((size, func) => size + func.getSize(), 0);
+  }
+
   public buildReferenceFor(functionName: string): ClassObjectFunctionReference {
-    const functionFound = this.functions.find(f => f.isNamed(functionName));
+    const functionFound = this.functions.find((f) => f.isNamed(functionName));
     if (!functionFound) {
       throw new NoSuchFunctionError(functionName, this);
     }

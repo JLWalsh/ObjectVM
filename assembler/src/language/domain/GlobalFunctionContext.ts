@@ -1,8 +1,8 @@
-import {NoSuchFunctionError} from './errors/NoSuchFunctionError';
-import {StaticFunction} from './Function';
-import {GlobalFunctionReference} from './FunctionReference';
+import {NoSuchFunctionError} from "./errors/NoSuchFunctionError";
+import {StaticFunction} from "./Function";
+import {GlobalFunctionReference} from "./FunctionReference";
 
-export class GlobalFunctionContext {
+export class GlobalsContext {
   private readonly functionBytecodePositions: Map<StaticFunction, number>;
   private previousFunctionBytecodeOffset: number;
 
@@ -14,9 +14,13 @@ export class GlobalFunctionContext {
     this.previousFunctionBytecodeOffset = initialBytecodeOffset;
   }
 
+  public getSize(): number {
+    return this.globalFunctions.reduce((size, func) => size + func.getSize(), 0);
+  }
+
   public buildReferenceFor(functionName: string): GlobalFunctionReference {
     const functionFound =
-        this.globalFunctions.find(f => f.isNamed(functionName));
+        this.globalFunctions.find((f) => f.isNamed(functionName));
     if (!functionFound) {
       throw new NoSuchFunctionError(functionName);
     }

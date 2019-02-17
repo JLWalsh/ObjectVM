@@ -1,5 +1,5 @@
-import {ArgumentType} from './Argument';
-import {Opcode} from './Opcode';
+import {ArgumentType} from "./Argument";
+import {Opcode} from "./Opcode";
 
 export class InstructionPrototype {
   public static for(opcode: Opcode): InstructionPrototype {
@@ -17,6 +17,10 @@ export class InstructionPrototype {
 
   public getArgs(): ArgumentType[] {
     return this.args;
+  }
+
+  public getOpcode(): Opcode {
+    return this.opcode;
   }
 
   public withArg(arg: ArgumentType) {

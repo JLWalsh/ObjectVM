@@ -1,9 +1,12 @@
-import {Range} from '../../math/Range';
+import {Range} from "../../math/Range";
 
-import {CHAR_BYTE} from './../Byte';
-import {IntegerOutOfRangeError} from './errors/IntegerOutOfRangeError';
+import {IntegerOutOfRangeError} from "./errors/IntegerOutOfRangeError";
 
 export class UnsignedInteger {
+
+  public static withSize(bitSize: number) {
+    return new UnsignedInteger.Builder(bitSize);
+  }
   private static Builder = class Builder {
     constructor(private readonly bitSize: number) {}
 
@@ -21,11 +24,7 @@ export class UnsignedInteger {
 
       return Range.fromTo(0, maxValue);
     }
-  }
-
-  public static withSize(bitSize: number) {
-    return new UnsignedInteger.Builder(bitSize);
-  }
+  };
 
   private constructor(
       private readonly bitSize: number, private readonly value: number) {}

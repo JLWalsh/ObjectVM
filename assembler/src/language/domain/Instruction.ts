@@ -1,5 +1,6 @@
-import {Argument} from './Argument';
-import {InstructionPrototype} from './InstructionPrototype';
+import {Argument} from "./Argument";
+import {InstructionPrototype} from "./InstructionPrototype";
+import { Opcode } from "./Opcode";
 
 export class Instruction {
   constructor(
@@ -9,5 +10,13 @@ export class Instruction {
 
   public getSize(): number {
     return this.args.reduce((totalSize, arg) => totalSize + arg.getSize(), 0);
+  }
+
+  public getOpcode(): Opcode {
+    return this.prototype.
+  }
+
+  public getArguments(): Argument[] {
+    return this.args;
   }
 }

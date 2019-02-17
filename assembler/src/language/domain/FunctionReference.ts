@@ -1,5 +1,5 @@
-import {ClassObjectReference} from './ClassObjectReference';
-import {ClassFunction} from './Function';
+import {ClassObjectReference} from "./ClassObjectReference";
+import {ClassFunction} from "./Function";
 
 abstract class FunctionReference {
   constructor(protected readonly numberOfArguments: number) {}

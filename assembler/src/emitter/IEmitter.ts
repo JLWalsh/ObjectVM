@@ -1,4 +1,5 @@
+import { IWriter } from "./IWriter";
 
 export interface IEmitter<T> {
-  emitToBytes(value: T): number;
+  emit(value: T, writer: IWriter): void;
 }

@@ -1,7 +1,11 @@
-import {Range} from '../../math/Range';
-import {IntegerOutOfRangeError} from './errors/IntegerOutOfRangeError';
+import {Range} from "../../math/Range";
+import {IntegerOutOfRangeError} from "./errors/IntegerOutOfRangeError";
 
 export class Integer {
+
+  public static withSize(bitSize: number) {
+    return new Integer.Builder(bitSize);
+  }
   private static SIGN_BIT_SIZE = 1;
 
   private static Builder = class Builder {
@@ -22,10 +26,6 @@ export class Integer {
 
       return Range.fromTo(minValue, maxValue);
     }
-  }
-
-  public static withSize(bitSize: number) {
-    return new Integer.Builder(bitSize);
   }
 
   private constructor(
