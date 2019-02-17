@@ -32,6 +32,10 @@ export class TokenizedLine {
     return this.tokens;
   }
 
+  public getErrors(): SyntaxError[] {
+    return this.errors;
+  }
+
   public toString() {
     return this.tokens.map((t) => t.toString()).join(',');
   }

@@ -89,7 +89,7 @@ export class Parser {
         this.opcodeParser.parse(rawOpcode.getParsedValue() as string);
     if (!opcode) {
       const error = new ParseError(`Unrecognized opcode: ${opcode}`);
-      return Line.fromSingleError(LineType.INSTRUCTION, error);
+      return Line.fromError(LineType.INSTRUCTION, error);
     }
 
     const instructionPrototype = this.instructions.find((i) => i.isFor(opcode));
@@ -99,7 +99,7 @@ export class Parser {
     }
 
     const parsedArguments: Argument[] = [];
-    const parseErrors: SyntaxError[] = [];
+    const parseErrors: ParseError[] = [];
     instructionPrototype.getArgs().forEach(arg => {
       const argumentParser = this.findParserFor(arg);
       if (!argumentParser) {
@@ -107,7 +107,7 @@ export class Parser {
       }
 
       const parsed = argumentParser.parse(reader);
-      if (parsed instanceof SyntaxError) {
+      if (parsed instanceof ParseError) {
         parseErrors.push(parsed);
       }
 

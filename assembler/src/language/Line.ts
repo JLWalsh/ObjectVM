@@ -18,7 +18,7 @@ export class Line {
     return new Line(LineType.META, metaInstruction);
   }
 
-  public static fromSingleError(type: LineType, error: ParseError): Line {
+  public static fromError(type: LineType, error: ParseError): Line {
     return new Line(type, undefined, [error]);
   }
 

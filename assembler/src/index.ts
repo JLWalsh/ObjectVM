@@ -10,7 +10,10 @@ const programSource = readFileSync('./programs/example.oasm', {
 const program = Program.fromString(programSource);
 
 const tokenizedProgram = new Tokenizer().tokenize(program);
+tokenizedProgram.getErrors().forEach(e => {
+  console.warn(e.toString());
+});
 
-const parsedProgram = new Parser().parse(tokenizedProgram);
-
-console.warn(parsedProgram);
+// const parsedProgram =
+// Parser.withDefaultInstructions().parse(tokenizedProgram);
+// console.warn(parsedProgram);
