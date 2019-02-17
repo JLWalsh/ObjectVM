@@ -1,7 +1,6 @@
 import {ParseError} from '../parser/ParseError';
 
-import {SyntaxError} from '../tokenizer/SyntaxError';
-import {Instruction} from './Instruction';
+import {Instruction} from './domain/Instruction';
 import {MetaInstruction} from './MetaInstruction';
 
 export enum LineType {

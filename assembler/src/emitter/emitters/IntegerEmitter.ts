@@ -1,4 +1,4 @@
-import {Integer} from '../../language/types/Integer';
+import {Integer} from '../../language/domain/Integer';
 
 import {IEmitter} from './../IEmitter';
 

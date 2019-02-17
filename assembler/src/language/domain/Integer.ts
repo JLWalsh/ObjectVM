@@ -34,4 +34,8 @@ export class Integer {
   public getValue(): number {
     return this.value;
   }
+
+  public getSize(): number {
+    return this.bitSize;
+  }
 }

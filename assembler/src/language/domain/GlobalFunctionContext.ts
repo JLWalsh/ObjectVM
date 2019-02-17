@@ -35,7 +35,7 @@ export class GlobalFunctionContext {
     }
 
     const position = this.previousFunctionBytecodeOffset;
-    this.previousFunctionBytecodeOffset += staticFunction.getBytecodeSize();
+    this.previousFunctionBytecodeOffset += staticFunction.getSize();
     this.functionBytecodePositions.set(staticFunction, position);
 
     return position;

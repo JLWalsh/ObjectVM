@@ -1,4 +1,4 @@
-import {Instruction} from '../Instruction';
+import {Instruction} from './Instruction';
 
 export class StaticFunction {
   constructor(
@@ -10,8 +10,9 @@ export class StaticFunction {
     return this.name === name;
   }
 
-  public getBytecodeSize(): number {
-    return 0;
+  public getSize(): number {
+    return this.instructions.reduce(
+        (totalSize, instruction) => totalSize + instruction.getSize(), 0);
   }
 
   public getNumberOfArguments(): number {

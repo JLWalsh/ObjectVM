@@ -1,11 +1,9 @@
 import {Argument, ArgumentType} from '../language/Argument';
-import {Instruction} from '../language/Instruction';
+import {Instruction} from '../language/domain/Instruction';
 import {InstructionPrototype} from '../language/InstructionPrototype';
 import {Line, LineType} from '../language/Line';
 import {MetaInstructionType} from '../language/MetaInstruction';
 import {Opcode} from '../language/Opcode';
-import {TokenType} from '../tokenizer/ParsedToken';
-import {SyntaxError} from '../tokenizer/SyntaxError';
 import {TokenizedLine, TokenizedLineType} from '../tokenizer/TokenizedLine';
 import {TokenizedProgram} from '../tokenizer/TokenizedProgram';
 
