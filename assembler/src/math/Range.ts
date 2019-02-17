@@ -5,6 +5,7 @@ export class Range {
   }
 
   private constructor(
+      // TODO make sure the to < from
       private readonly from: number,
       private readonly to: number,
   ) {}

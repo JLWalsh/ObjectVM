@@ -17,10 +17,8 @@ export class Integer {
     }
 
     private getValueRange(): Range {
-      const bitsForNumber = this.bitSize - Integer.SIGN_BIT_SIZE;
-      const bitsForEachSign = bitsForNumber / 2;
-      const maxValue = (2 ^ bitsForEachSign);
-      const minValue = -((2 ^ bitsForEachSign) - 1);
+      const maxValue = (Math.pow(2, this.bitSize)) / 2;
+      const minValue = -(maxValue - 1);
 
       return Range.fromTo(minValue, maxValue);
     }
@@ -32,4 +30,8 @@ export class Integer {
 
   private constructor(
       private readonly bitSize: number, private readonly value: number) {}
+
+  public getValue(): number {
+    return this.value;
+  }
 }

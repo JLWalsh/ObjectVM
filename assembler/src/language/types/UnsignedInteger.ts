@@ -17,7 +17,7 @@ export class UnsignedInteger {
     }
 
     private getValueRange(): Range {
-      const maxValue = (2 ^ this.bitSize) - 1;
+      const maxValue = (Math.pow(2, this.bitSize)) - 1;
 
       return Range.fromTo(0, maxValue);
     }
@@ -29,4 +29,8 @@ export class UnsignedInteger {
 
   private constructor(
       private readonly bitSize: number, private readonly value: number) {}
+
+  public getValue(): number {
+    return this.value;
+  }
 }

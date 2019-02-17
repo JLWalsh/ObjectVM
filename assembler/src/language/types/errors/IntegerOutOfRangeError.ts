@@ -1,10 +1,8 @@
 import {Range} from '../../../math/Range';
 
-export class IntegerOutOfRangeError extends Error {
+export class IntegerOutOfRangeError {
   constructor(
       private readonly value: number,
       private readonly range: Range,
-  ) {
-    super();
-  }
+  ) {}
 }

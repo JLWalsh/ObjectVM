@@ -18,8 +18,8 @@
 
     // Not implementation, implicit override of Engine::PrintSerialCode
     #function GasEngine::PrintSerialCode -> Engine::PrintSerialCode OtherEngine::PrintSerialCode // Overwrites lookup table for gas engine -> engine -> print serial code
-        UI_PUSH 5
-        UI_PRINT
+        INVOKE_STATIC GasEngine::GetDefaultSerialCode
+        INVOKE_GLOBAL PrintEngineStats
         RETURN_VOID
 
     // Implementation of Engine::GetTorque
@@ -27,14 +27,18 @@
         UI_GLOBAL_LOAD 0
         RETURN
 
-#function PrintEngineStats::(1)
+    #static function GasEngine::GetDefaultSerialCode::(1)
+        UI_PUSH 0
+        RETURN
+
+#function PrintEngineStats::(1) // Implicitely static function 
     LOCAL_LOAD 0
     INVOKE_VIRTUAL Engine::GetTorque
     UI_PRINT
     INVOKE_VIRTUAL Engine::PrintSerialCode
     RETURN_VOID
 
-#main
+#function main
 NEW GasEngine
 DUP
 UI_PUSH 3

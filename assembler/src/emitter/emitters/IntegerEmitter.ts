@@ -1,3 +1,5 @@
+import {Integer} from '../../language/types/Integer';
+
 import {IEmitter} from './../IEmitter';
 
 export class IntegerEmitter implements IEmitter<Integer> {
