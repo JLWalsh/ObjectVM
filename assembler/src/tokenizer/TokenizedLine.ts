@@ -1,6 +1,6 @@
-import { Chars } from "./Chars";
-import { Token, TokenType } from "./ParsedToken";
-import { ParseError } from "./ParseError";
+import {Chars} from './Chars';
+import {Token, TokenType} from './ParsedToken';
+import {SyntaxError} from './SyntaxError';
 
 export enum TokenizedLineType {
   INSTRUCTION,
@@ -9,12 +9,11 @@ export enum TokenizedLineType {
 }
 
 export class TokenizedLine {
-
   public constructor(
-    private readonly rawLine: string,
-    private readonly tokens: Token[],
-    private readonly lineNumber: number,
-    private readonly errors: ParseError[] = [],
+      private readonly rawLine: string,
+      private readonly tokens: Token[],
+      private readonly lineNumber: number,
+      private readonly errors: SyntaxError[] = [],
   ) {}
 
   public hasErrors(): boolean {
@@ -25,13 +24,20 @@ export class TokenizedLine {
     return this.getType() === type;
   }
 
+  public isEmpty(): boolean {
+    return this.getType() === TokenizedLineType.NOTHING;
+  }
+
   public getTokens(): Token[] {
     return this.tokens;
   }
 
+  public getErrors(): SyntaxError[] {
+    return this.errors;
+  }
+
   public toString() {
-    return this.tokens.map((t) => t.toString())
-                      .join(",");
+    return this.tokens.map((t) => t.toString()).join(',');
   }
 
   private getType(): TokenizedLineType {

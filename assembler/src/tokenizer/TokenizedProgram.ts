@@ -1,9 +1,8 @@
-import { TokenizedLine } from "./TokenizedLine";
+import {TokenizedLine} from './TokenizedLine';
 
 export class TokenizedProgram {
-
   constructor(
-    private readonly lines: TokenizedLine[],
+      private readonly lines: TokenizedLine[],
   ) {}
 
   public getLines(): TokenizedLine[] {
@@ -14,7 +13,11 @@ export class TokenizedProgram {
     return this.lines[index];
   }
 
+  public getErrors(): SyntaxError[] {
+    return [];
+  }
+
   public hasErrors(): boolean {
-    return !this.lines.every((line) => !line.hasErrors());
+    return !this.lines.some((line) => !line.hasErrors());
   }
 }

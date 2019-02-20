@@ -1,17 +1,17 @@
-import { Coordinate } from "../Coordinate";
-import { Program } from "../language/Program";
-import { Char } from "./Char";
-import { Chars } from "./Chars";
-import { LineReader } from "./LineReader";
-import { Token, TokenType } from "./ParsedToken";
-import { ParseError } from "./ParseError";
-import { TokenizedLine } from "./TokenizedLine";
-import { TokenizedProgram } from "./TokenizedProgram";
+import {Coordinate} from '../Coordinate';
+
+import {Char} from './Char';
+import {Chars} from './Chars';
+import {LineReader} from './LineReader';
+import {Token, TokenType} from './ParsedToken';
+import {Program} from './ProgramSource';
+import {SyntaxError} from './SyntaxError';
+import {TokenizedLine} from './TokenizedLine';
+import {TokenizedProgram} from './TokenizedProgram';
 
 export class Tokenizer {
-
   private lexemes: Token[] = [];
-  private errors: ParseError[] = [];
+  private errors: SyntaxError[] = [];
   private lineReader?: LineReader;
   private currentLine: number = 0;
 
@@ -67,19 +67,22 @@ export class Tokenizer {
   }
 
   private parseWord() {
-    while (!this.lineReader!.isAtEnd() && Char.isAlpha(this.lineReader!.peek())) {
+    while (!this.lineReader!.isAtEnd() &&
+           Char.isAlpha(this.lineReader!.peek())) {
       this.lineReader!.advance();
     }
 
     const word = this.lineReader!.extract();
-    const lexeme = new Token(word, word, TokenType.WORD, this.getCurrentCoordinates());
+    const lexeme =
+        new Token(word, word, TokenType.WORD, this.getCurrentCoordinates());
     this.lexemes.push(lexeme);
   }
 
   private parseString() {
-    let parsedString = "";
+    let parsedString = '';
 
-    while (!this.lineReader!.isAtEnd() && this.lineReader!.peek() !== Chars.QUOTE) {
+    while (!this.lineReader!.isAtEnd() &&
+           this.lineReader!.peek() !== Chars.QUOTE) {
       parsedString += this.lineReader!.advance();
 
       if (this.lineReader!.match(Chars.ESCAPE_NEXT_CHAR)) {
@@ -88,16 +91,19 @@ export class Tokenizer {
     }
 
     if (!this.lineReader!.match(Chars.QUOTE)) {
-      this.addError("Unterminated string.");
+      this.addError('Unterminated string.');
     }
 
     const stringLiteral = this.lineReader!.extract();
-    const lexeme = new Token(stringLiteral, parsedString, TokenType.STRING, this.getCurrentCoordinates());
+    const lexeme = new Token(
+        stringLiteral, parsedString, TokenType.STRING,
+        this.getCurrentCoordinates());
     this.lexemes.push(lexeme);
   }
 
   private parseNumber() {
-    while (!this.lineReader!.isAtEnd() && this.lineReader!.matchFunc(Char.isPartOfNumber)) {
+    while (!this.lineReader!.isAtEnd() &&
+           this.lineReader!.matchFunc(Char.isPartOfNumber)) {
       // do nothing
     }
 
@@ -108,13 +114,15 @@ export class Tokenizer {
       this.addError(`Failed to parse number: ${parsedNumber}.`);
     }
 
-    const lexeme = new Token(numberLiteral, parsedNumber, TokenType.NUMBER, this.getCurrentCoordinates());
+    const lexeme = new Token(
+        numberLiteral, parsedNumber, TokenType.NUMBER,
+        this.getCurrentCoordinates());
     this.lexemes.push(lexeme);
   }
 
   private addLexeme(lexemeType: TokenType) {
     if (!this.lineReader) {
-      throw new Error("Illegal state: line reader is undefined");
+      throw new Error('Illegal state: line reader is undefined');
     }
 
     const coordinate = this.getCurrentCoordinates();
@@ -125,7 +133,7 @@ export class Tokenizer {
   }
 
   private addError(message: string) {
-    const error = new ParseError(message, this.getCurrentCoordinates());
+    const error = new SyntaxError(message, this.getCurrentCoordinates());
     this.errors.push(error);
   }
 
