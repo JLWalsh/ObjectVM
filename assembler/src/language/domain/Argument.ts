@@ -1,5 +1,5 @@
 import {Size} from "../math/Size";
-import {Integer} from "./Integer";
+import {Integer} from "./types/Integer";
 
 export enum ArgumentType {
   INT,

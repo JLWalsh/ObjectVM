@@ -1,5 +1,5 @@
-import {IntegerOutOfRangeError} from '../errors/IntegerOutOfRangeError';
-import {UnsignedInteger} from '../UnsignedInteger';
+import {NumericOutOfRangeError} from '../errors/NumericOutOfRangeError';
+import {UnsignedInteger} from '../types/UnsignedInteger';
 
 describe('UnsignedInteger', () => {
   describe('given unsigned integer builder', () => {
@@ -27,20 +27,20 @@ describe('UnsignedInteger', () => {
       expect(integer.getValue()).toEqual(MAX_VALUE_FOR_BIT_SIZE);
     });
 
-    it('should throw IntegerOutOfRangeError when value is inferior to min value',
+    it('should throw NumericOutOfRangeError when value is inferior to min value',
        () => {
          const buildThatShouldThrow = () =>
              builder.createWithValue(MIN_VALUE_FOR_BIT_SIZE - 1);
 
-         expect(buildThatShouldThrow).toThrowError(IntegerOutOfRangeError);
+         expect(buildThatShouldThrow).toThrowError(NumericOutOfRangeError);
        });
 
-    it('should throw IntegerOutOfRangeError when value exceeds max value',
+    it('should throw NumericOutOfRangeError when value exceeds max value',
        () => {
          const buildThatShouldThrow = () =>
              builder.createWithValue(MAX_VALUE_FOR_BIT_SIZE + 1);
 
-         expect(buildThatShouldThrow).toThrowError(IntegerOutOfRangeError);
+         expect(buildThatShouldThrow).toThrowError(NumericOutOfRangeError);
        });
   });
 });

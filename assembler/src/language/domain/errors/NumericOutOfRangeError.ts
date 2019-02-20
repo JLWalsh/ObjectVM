@@ -1,6 +1,6 @@
-import {Range} from '../../../math/Range';
+import {Range} from "../../../math/Range";
 
-export class IntegerOutOfRangeError {
+export class NumericOutOfRangeError {
   constructor(
       private readonly value: number,
       private readonly range: Range,

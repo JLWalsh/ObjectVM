@@ -1,6 +1,6 @@
-import {Range} from "../../math/Range";
+import {Range} from "../../../math/Range";
 
-import {IntegerOutOfRangeError} from "./errors/IntegerOutOfRangeError";
+import {NumericOutOfRangeError} from "../errors/NumericOutOfRangeError";
 
 export class UnsignedInteger {
 
@@ -13,7 +13,7 @@ export class UnsignedInteger {
     public createWithValue(value: number) {
       const range = this.getValueRange();
       if (!range.contains(value)) {
-        throw new IntegerOutOfRangeError(value, range);
+        throw new NumericOutOfRangeError(value, range);
       }
 
       return new UnsignedInteger(this.bitSize, value);
