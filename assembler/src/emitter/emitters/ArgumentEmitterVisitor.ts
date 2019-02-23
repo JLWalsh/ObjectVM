@@ -1,6 +1,6 @@
 import { IArgumentVisitor } from "../../language/domain/Argument";
 import {INumeric} from "../../language/domain/Numeric";
-import { Integer } from "../../language/domain/types/Integer";
+import { IntegerArgument } from "../../language/domain/arguments/IntegerArgument";
 import { IEmitter } from "../IEmitter";
 import { IWriter } from "../IWriter";
 
@@ -30,7 +30,7 @@ export class ArgumentEmitterVisitor implements IArgumentVisitor {
         private readonly emitters: IArgumentEmitters,
     ) {}
 
-    public visitInteger(integer: Integer): void {
+    public visitInteger(integer: IntegerArgument): void {
         this.emitters.numericEmitter.emit(integer, this.writer);
     }
 }

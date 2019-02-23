@@ -13,4 +13,12 @@ export class Range {
   public contains(value: number): boolean {
     return (value >= this.from) && (value <= this.to);
   }
+
+  public getFrom(): number {
+    return this.from;
+  }
+
+  public getTo(): number {
+    return this.to;
+  }
 }
